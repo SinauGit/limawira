@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <label for="sale_ok" position="after">
                 <div>
-                    <field name="requires_down_payment" />
+                    <field name="requires_down_payment"/>
                     <label for="requires_down_payment"/>
                 </div>
             </label>
