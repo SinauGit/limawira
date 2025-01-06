@@ -7,15 +7,15 @@ class StockPicking(models.Model):
     @api.constrains('state')
     def _check_down_payment_before_delivery(self):
         """
-        Prevent delivery validation if the associated sales order
-        contains products requiring down payment and the payment is not completed.
+        Prevent delivery validation if the customer requires down payment
+        and the payment is not completed.
         """
         for picking in self:
             if picking.state == 'done' and picking.sale_id:
                 sale_order = picking.sale_id
-                requires_dp = any(line.product_id.requires_down_payment for line in sale_order.order_line)
-                if requires_dp and sale_order.invoice_status != 'invoiced':
-                    raise ValidationError(
-                        _("You cannot validate this delivery. Down payment has not been received "
-                          "for products requiring advance payment.")
-                    )
+                if sale_order.partner_id.requires_down_payment:
+                    if sale_order.invoice_status != 'invoiced':
+                        raise ValidationError(
+                            _("You cannot validate this delivery. Down payment has not been received "
+                              "for this customer who requires advance payment.")
+                        )

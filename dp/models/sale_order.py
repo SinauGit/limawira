@@ -6,14 +6,11 @@ class SaleOrder(models.Model):
 
     def _check_down_payment(self):
         """
-        Check if the order contains products requiring down payment
+        Check if the customer requires down payment
         and ensure down payment invoice is paid.
         """
         for order in self:
-            dp_products = order.order_line.filtered(
-                lambda l: l.product_id.requires_down_payment
-            )
-            if dp_products:
+            if order.partner_id.requires_down_payment:
                 dp_invoices = order.invoice_ids.filtered(
                     lambda i: i.move_type == 'out_invoice' 
                     and i.payment_state in ['paid', 'in_payment']
@@ -21,6 +18,6 @@ class SaleOrder(models.Model):
                 )
                 if not dp_invoices:
                     raise ValidationError(
-                        "Down payment is required for some products in this order. "
+                        "Down payment is required for this customer. "
                         "Please create and pay the down payment invoice before proceeding."
                     )
