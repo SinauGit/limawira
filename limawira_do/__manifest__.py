@@ -1,6 +1,6 @@
 {
     'name': 'Custom Delivery Slip',
-    "version": "17.0.1.0.0",
+    "version": "18.0.1.0.0",
     'summary': 'Custom Delivery Slip with Signature Section',
     'description': """
         Customize delivery slip report by adding signature section
