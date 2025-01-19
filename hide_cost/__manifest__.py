@@ -12,6 +12,7 @@
     'depends': ['project'],
     'data': [
         'security/ir.model.access.csv',
+        'views/product_template_view.xml',
     ],
     'installable': True,
     'application': False,
