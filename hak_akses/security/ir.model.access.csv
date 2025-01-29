@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_res_partner_admin_lww,res.partner admin lww,base.model_res_partner,hak_akses.group_admin_lww,1,0,0,0
+access_res_partner_stock_manager,res.partner stock manager,base.model_res_partner,stock.group_stock_manager,1,0,0,0

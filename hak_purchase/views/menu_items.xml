@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- Membuat menu Operations di Purchase -->
+    <menuitem id="menu_purchase_warehouse_mgmt" 
+              name="Operations" 
+              parent="purchase.menu_purchase_root" 
+              sequence="100"/>
+
+    <menuitem id="menu_purchase_deliveries" 
+              name="Deliveries"
+              parent="menu_purchase_warehouse_mgmt"
+              sequence="10"
+              action="stock.method_action_picking_tree_outgoing"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+    
+    <menuitem id="menu_purchase_physical" 
+              name="Physical Inventory"
+              parent="menu_purchase_warehouse_mgmt"
+              sequence="11"
+              action="stock.action_view_inventory_tree"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_landed_cost" 
+              name="Landed Costs" 
+              parent="menu_purchase_warehouse_mgmt"
+              action="stock_landed_costs.action_stock_landed_cost"
+              sequence="12"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_reporting" 
+              name="Reporting Stock" 
+              parent="purchase.menu_purchase_root" 
+              sequence="101"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_stock" 
+              name="Stock" 
+              parent="menu_purchase_reporting"
+              action="stock.action_product_stock_view"
+              sequence="1"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_locations" 
+              name="Locations" 
+              parent="menu_purchase_reporting"
+              action="stock.action_view_quants"
+              sequence="2"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_history" 
+              name="Moves History" 
+              parent="menu_purchase_reporting"
+              action="stock.stock_move_line_action"
+              sequence="3"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_analysis" 
+              name="Moves Analysis" 
+              parent="menu_purchase_reporting"
+              action="stock.stock_move_action"
+              sequence="4"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+    
+    <menuitem id="menu_purchase_valuation" 
+              name="Valuation" 
+              parent="menu_purchase_reporting"
+              action="stock.action_location_form"
+              sequence="5"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_sales" 
+              name="Sales" 
+              parent="purchase.menu_purchase_root" 
+              sequence="200"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_orders" 
+              name="Orders" 
+              parent="menu_purchase_sales"
+              action="sale.action_orders"
+              sequence="1"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_salesteams" 
+              name="Sales Teams" 
+              parent="menu_purchase_sales"
+              action="sales_team.crm_team_action_sales"
+              sequence="2"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_toinvoice" 
+              name="To Invoice" 
+              parent="menu_purchase_sales" 
+              sequence="10"
+              groups="hak_purchase.group_purchase_admin_lww"/>   
+
+
+    <menuitem id="menu_purchase_order_invoice" 
+              name="Order to Invoice" 
+              parent="menu_purchase_toinvoice"
+              action="sale.action_orders_to_invoice"
+              sequence="1"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+
+    <menuitem id="menu_purchase_orders_upselling" 
+              name="Order to Upsell" 
+              parent="menu_purchase_toinvoice"
+              action="sale.action_orders_upselling"
+              sequence="2"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+
+    <menuitem id="menu_purchase_sales_reporting" 
+              name="Reporting" 
+              parent="menu_purchase_sales" 
+              sequence="11"
+              groups="hak_purchase.group_purchase_admin_lww"/> 
+
+
+    <menuitem id="menu_purchase_reporting_sales" 
+              name=" Sales" 
+              parent="menu_purchase_sales_reporting"
+              action="sale.action_order_report_all"
+              sequence="1"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_reporting_salesperson" 
+              name=" Salespersons" 
+              parent="menu_purchase_sales_reporting"
+              action="sale.action_order_report_salesperson"
+              sequence="2"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+    <menuitem id="menu_purchase_reporting_products" 
+              name=" Products" 
+              parent="menu_purchase_sales_reporting"
+              action="sale.action_order_report_products"
+              sequence="3"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+
+    <menuitem id="menu_purchase_reporting_customers" 
+              name=" Customers" 
+              parent="menu_purchase_sales_reporting"
+              action="sale.action_order_report_customers"
+              sequence="4"
+              groups="hak_purchase.group_purchase_admin_lww"/>
+
+</odoo>

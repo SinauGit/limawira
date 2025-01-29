@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stock_picking_purchase_admin,stock.picking purchase admin,stock.model_stock_picking,hak_purchase.group_purchase_admin_lww,1,1,0,0
+access_stock_quant_purchase_admin,stock.quant purchase admin,stock.model_stock_quant,hak_purchase.group_purchase_admin_lww,1,1,0,0
+access_stock_change_product_qty,access.stock.change.product.qty,stock.model_stock_change_product_qty,hak_purchase.group_purchase_admin_lww,1,1,1,0
+access_stock_quant_package_stock_user,stock.quant.package stock user,stock.model_stock_quant_package,hak_purchase.group_purchase_admin_lww,1,1,1,0
+access_stock_quantity_history,access.stock.quantity.history,stock.model_stock_quantity_history,hak_purchase.group_purchase_admin_lww,1,1,1,0
+ccess_stock_landed_cost","stock.landed.cost","stock_landed_costs.model_stock_landed_cost","hak_purchase.group_purchase_admin_lww",1,1,1,1
+"access_stock_landed_cost_lines","stock.landed.cost.lines","stock_landed_costs.model_stock_landed_cost_lines","hak_purchase.group_purchase_admin_lww",1,1,1,1
+access_stock_move_line_user,stock.move.line user,stock.model_stock_move_line,hak_purchase.group_purchase_admin_lww,1,1,1,1
+access_sale_order_purchase,sale.order.manager,sale.model_sale_order,hak_purchase.group_purchase_admin_lww,1,1,1,1
+access_sale_order_cancel_purchase,access.sale.order.cancel,sale.model_sale_order_cancel,hak_purchase.group_purchase_admin_lww,1,1,1,1
+access_sale_order_discount_purchase,access_sale_order_discount,sale.model_sale_order_discount,hak_purchase.group_purchase_admin_lww,1,1,1,1
+access_sale_report_salesman_purchase,sale.report,sale.model_sale_report,hak_purchase.group_purchase_admin_lww,1,1,1,1

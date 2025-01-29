@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <!-- Admin Purchase LWW -->
+        <record id="group_purchase_admin_lww" model="res.groups">
+            <field name="name">Admin Purchase LWW</field>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+            <field name="implied_ids" eval="[
+                (4, ref('purchase.group_purchase_manager')),
+                (4, ref('uom.group_uom'))
+            ]"/>
+        </record>
+
+        <!-- User Purchase LWW -->
+        <record id="group_purchase_user_lww" model="res.groups">
+            <field name="name">Purchase User LWW</field>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+            <field name="implied_ids" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- <data> -->
+    <!-- Override menu Landed Costs agar hanya bisa diakses group accounting -->
+    <menuitem id="stock_landed_costs.menu_stock_landed_cost" 
+              name="Landed Costs" 
+              parent="stock.menu_stock_adjustments"
+              action="stock_landed_costs.action_stock_landed_cost"
+              sequence="115"
+              groups="account.group_account_manager"/>
+
+    <!-- <menuitem action="action_stock_landed_cost" name="Landed Costs" parent="stock.menu_stock_adjustments" id="menu_stock_landed_cost" sequence="115" groups="stock.group_stock_manager" /> -->
+    <!-- Menambahkan menu Vendors di Inventory -->
+    <menuitem id="menu_inventory_vendors" 
+            name="Vendors" 
+            parent="stock.menu_stock_root"
+            sequence="100"
+            action="account.res_partner_action_supplier" 
+            groups="hak_akses.group_admin_lww"/>
+    <!-- </data> -->
+</odoo>
