@@ -9,7 +9,7 @@
     'website': '',
     'category': 'Purchase',
     'license': 'LGPL-3',
-    'depends': ['purchase', 'product', 'hak_purchase'],
+    'depends': ['account', 'purchase', 'product', 'hak_purchase'],
     'data': [
         'security/ir.model.access.csv',
         'views/purchase_views.xml',
