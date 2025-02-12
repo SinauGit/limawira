@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_order_line_discount,sale.order.line.discount,sale.model_sale_order_line,dpm_discount_amount.group_fixed_discount,1,1,1,1
+access_account_move_line_discount,account.move.line.discount,account.model_account_move_line,dpm_discount_amount.group_fixed_discount,1,1,1,1

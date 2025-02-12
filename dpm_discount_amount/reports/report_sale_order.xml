@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document_discount_fixed" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//table[hasclass('o_main_table')]/thead/tr/th[last()]" position="before">
+            <th t-if="doc.order_line.filtered(lambda l: l.discount_fixed)" class="text-right">Diskon (Rp)</th>
+        </xpath>
+        <xpath expr="//table[hasclass('o_main_table')]/tbody//tr/td[last()]" position="before">
+            <td t-if="doc.order_line.filtered(lambda l: l.discount_fixed)" class="text-right">
+                <span t-field="line.discount_fixed"/>
+            </td>
+        </xpath>
+    </template>
+</odoo> 

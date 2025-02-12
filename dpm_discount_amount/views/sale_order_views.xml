@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_inherit_discount_fixed" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.discount.fixed</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree//field[@name='discount']" position="attributes">
+                <attribute name="digits">[16,2]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='discount']" position="attributes">
+                <attribute name="digits">[16,2]</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/tree//field[@name='discount']" position="before">
+                <field name="discount_fixed" 
+                       groups="dpm_discount_amount.group_fixed_discount" 
+                       optional="show"
+                       force_save="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='discount']" position="before">
+                <field name="discount_fixed" 
+                       groups="dpm_discount_amount.group_fixed_discount"
+                       force_save="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo> 
