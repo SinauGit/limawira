@@ -19,3 +19,25 @@ class ProductTemplate(models.Model):
                     "Product names must be unique regardless of letter case.",
                     product.name
                 ))
+
+class ProductCategory(models.Model):
+    _inherit = 'product.category'
+
+    @api.constrains('name', 'parent_id')
+    def _check_unique_category_name(self):
+        for category in self:
+            domain = [
+                ('id', '!=', category.id),
+                ('name', 'ilike', category.name),
+                ('parent_id', '=', category.parent_id.id),
+            ]
+            duplicate = self.search(domain).filtered(
+                lambda c: c.name.lower() == category.name.lower()
+            )
+            
+            if duplicate:
+                raise ValidationError(_(
+                    "Product Category with name '%s' already exists under the same parent category "
+                    "(case insensitive). Category names must be unique within the same level.",
+                    category.name
+                ))
