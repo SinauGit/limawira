@@ -14,7 +14,7 @@
               groups="hak_purchase.group_purchase_admin_lww"/>
     
     <menuitem id="menu_purchase_physical" 
-              name="Physical Inventory"
+              name="Stock Opname"
               parent="menu_purchase_warehouse_mgmt"
               sequence="11"
               action="stock.action_view_inventory_tree"
