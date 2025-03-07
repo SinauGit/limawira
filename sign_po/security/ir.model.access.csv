@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_bi_purchase_order_signature_bi_purchase_order_signature,bi_purchase_order_signature.bi_purchase_order_signature,model_bi_purchase_order_signature_bi_purchase_order_signature,base.group_user,1,1,1,1
