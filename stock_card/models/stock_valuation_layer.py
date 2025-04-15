@@ -12,14 +12,14 @@ class StockValuationLayer(models.Model):
     )
     
     credit = fields.Monetary(
-        string='Credit',
+        string='Value Credit',
         compute='_compute_credit_debit',
         store=True,
         currency_field='currency_id'
     )
     
     debit = fields.Monetary(
-        string='Debit',
+        string='Value Debit',
         compute='_compute_credit_debit',
         store=True,
         currency_field='currency_id'
