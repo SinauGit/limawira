@@ -9,6 +9,14 @@
                 <field name="stock_move_id" optional="show"/>
                 <field name="partner_id" optional="show"/>
             </xpath>
+            <xpath expr="//field[@name='quantity']" position="after">
+                <field name="quantity_debit" optional="show"/>
+                <field name="quantity_credit" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='value']" position="after">
+                <field name="debit" optional="show"/>
+                <field name="credit" optional="show"/>
+            </xpath>
         </field>
     </record>
 </odoo> 
