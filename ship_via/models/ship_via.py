@@ -4,10 +4,10 @@ class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
     ship_via = fields.Selection([
-        ('1', 'Lokal: Diantar'),
-        ('2', 'Lokal: Diambil'),
-        ('3', 'Import: Air'),
-        ('4', 'Import: Sea'),
+        ('1', 'Diantar'),
+        ('2', 'Diambil'),
+        ('3', 'Air'),
+        ('4', 'Sea'),
     ], string='Ship Via')
 
 
