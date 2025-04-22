@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="purchase_order_discount_form" model="ir.ui.view">
+        <field name="name">purchase.order.discount.form</field>
+        <field name="model">purchase.order.discount</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="purchase_order_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="tax_ids" invisible="1"/>
+                    <group>
+                        <field name="discount_amount"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Terapkan" 
+                            name="action_apply_discount" 
+                            type="object" 
+                            class="btn btn-primary" 
+                            data-hotkey="q"/>
+                    <button string="Batal" 
+                            class="btn btn-secondary" 
+                            special="cancel" 
+                            data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_purchase_order_discount" model="ir.actions.act_window">
+        <field name="name">Terapkan Diskon</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.order.discount</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_purchase_order"/>
+        <field name="binding_view_types">form</field>
+    </record>
+</odoo> 
