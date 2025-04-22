@@ -7,7 +7,7 @@
     'data': [
         # 'security/ir.model.access.csv',
         # 'views/res_config_settings_views.xml',
-        'views/purchase_order_views.xml',
+        # 'views/purchase_order_views.xml',
         'views/account_move_views.xml',
         # 'wizard/purchase_order_discount_views.xml',
     ],
