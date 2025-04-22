@@ -11,7 +11,7 @@ class AccountMove(models.Model):
         [('percent', 'Persentase'), ('amount', 'Jumlah')],
         string='Discount Type',
         default='amount')
-    discount_rate = fields.Float('Discount', digits=(16, 2),)
+    discount_rate = fields.Float('Discount Amount', digits=(16, 2),)
     amount_discount = fields.Monetary(string='Diskon', store=True,
                                       compute='_compute_amount', readonly=True,)
 
