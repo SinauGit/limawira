@@ -21,3 +21,12 @@ class SaleOrder(models.Model):
                         "Down payment is required for this customer. "
                         "Please create and pay the down payment invoice before proceeding."
                     )
+
+    class SaleOrder(models.Model):
+        _inherit = 'sale.order'
+
+        project_id = fields.Many2one(
+            'project.project',
+            string='Project',
+            tracking=True  # <--- INI YANG DITAMBAHKAN
+        )
