@@ -217,7 +217,7 @@
                                         <!-- No -->
                                             <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
                                         <!-- Part Number -->
-                                            <td class="text-center" style="font-size: 15px;"><span t-esc="line.name or ''" style="font-size: 15px;"/></td>
+                                            <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_template_id.default_code or ''" style="font-size: 15px;"/></td>
                                         <!-- Product Name -->
                                             <td class="text-center" style="font-size: 15px;"><span t-esc="line.name or ''" style="font-size: 15px;"/></td>
                                         <!-- QTY -->
@@ -238,44 +238,26 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="row" style="margin-bottom: 5px; margin-top: 5px; border-bottom: 2px solid #35bdaf">
+                    <!-- <div class="row" style="margin-bottom: 5px; margin-top: 5px; border-bottom: 2px solid #35bdaf">
                         <div class="col-8"/>
                         <div class="col-4">
                             <p style="text-align: left; font-size: 16px;"><em style="font-weight: bold;">Sub Total: </em>
                                 <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/>
                             </p>
                         </div>
-                    </div>
+                    </div> -->
                     <div style="page-break-after:auto;">
                         <!-- Total Section -->
-                        <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
-                            <table class="table table-sm" style="margin-left: 5.5rem; margin-bottom: 5px; border: 0.5px; width: 80%;">
-                                <thead style="border: 0.5px;">
-                                    <tr>
-                                        <th colspan="4" style="font-weight: bold; font-size: 16px; text-align: center; background-color: #efefef">
-                                            T  O  T  A  L
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th style="font-size: 16px; text-align: center; font-weight: bold;">CURRENCY</th>
-                                        <th style="font-size: 16px; text-align: center; font-weight: bold;">SUB TOTAL</th>
-                                        <th style="font-size: 16px; text-align: center; font-weight: bold;">TAX</th>
-                                        <th style="font-size: 16px; text-align: center; font-weight: bold;">GRAND TOTAL</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    <!-- Currency -->
-                                        <td class="text-center" style="font-size: 15px;"><span t-esc="o.currency_id.name or ''" style="font-size: 15px;"/></td>
-                                    <!-- Sub Total -->
-                                        <td class="text-center" style="font-size: 15px;"><span t-esc="'{:,.2f}'.format(o.amount_untaxed)" style="font-size: 15px;"/></td>
-                                    <!-- Tax -->
-                                        <td class="text-center" style="font-size: 15px;"><span t-esc="'{:,.2f}'.format(o.amount_tax)" style="font-size: 15px;"/></td>
-                                    <!-- Grand Total -->
-                                        <td class="text-center" style="font-size: 15px;"><span t-esc="'{:,.2f}'.format(o.amount_total)" style="font-size: 15px;"/></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="row" style="margin-bottom: 3px; margin-top: 5px;">
+                            <div class="col-7"></div>
+                            <div class="col-5">
+                                <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Untaxed Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed + o.amount_discount)"/></p>
+                                <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Discount</span> <span t-esc="'{:,.2f}'.format(o.amount_discount)"/></p>
+                                <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Total</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/></p>
+                                <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Tax Base Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed * 11/12)"/></p>
+                                <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Taxes 12%</span> <span t-esc="'{:,.2f}'.format(o.amount_tax)"/></p>
+                                <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style= " font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
+                            </div>
                         </div>
                         <!-- Note Section -->
                         <div class="row" style="margin-bottom: 10px; margin-top: 10px;">

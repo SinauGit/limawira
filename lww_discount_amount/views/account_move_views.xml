@@ -7,8 +7,9 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='discount']" position="attributes">
+            <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='discount']" position="attributes">
                 <attribute name="digits">[16, 2]</attribute>
+                <attribute name="groups">product.group_discount_per_so_line</attribute>
             </xpath>
             <xpath expr="//field[@name='tax_totals']" position="after">
                 <field name="amount_discount" readonly="1" force_save="1"/>
@@ -18,6 +19,21 @@
                     <!-- <field name="discount_type" width="50px"/> -->
                     <field name="discount_rate" class="oe_inline"/>
                 </group>
+            </xpath>
+            <!-- Ensure discount field is visible in form view as well -->
+            <xpath expr="//field[@name='invoice_line_ids']/form//field[@name='price_unit']" position="after">
+                <field name="discount" groups="product.group_discount_per_so_line"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/form//field[@name='discount']" position="attributes">
+                <attribute name="digits">[16, 2]</attribute>
+            </xpath>
+            <!-- Button to update discount calculation -->
+            <xpath expr="//field[@name='tax_totals']" position="before">
+                <button name="button_dummy"
+                        invisible="state not in ['draft']"
+                        string="(update)"
+                        type="object"
+                        class="oe_edit_only oe_link"/>
             </xpath>
         </field>
     </record>
