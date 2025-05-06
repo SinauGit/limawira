@@ -1,19 +1,17 @@
 from odoo import api, fields, models
 
 
-class AccountMove(models.Model):
-    """Kelas ini mewarisi "account.move" model dan menambahkan discount_type,
-    discount_rate, amount_discount
-     """
+class AccountInvoice(models.Model):
+    
     _inherit = "account.move"
 
     discount_type = fields.Selection(
-        [('percent', 'Persentase'), ('amount', 'Jumlah')],
-        string='Discount Type',
-        default='amount')
-    discount_rate = fields.Float('Discount', digits=(16, 2),)
+        [('percent', 'All Percentage'), ('amount', 'Amount'), ('line_discount', 'Per Line')],
+        string='Discount type',
+        default='line_discount')
+    discount_rate = fields.Float('Discount Rate', digits=(16, 2))
     amount_discount = fields.Monetary(string='Discount', store=True,
-                                      compute='_compute_amount', readonly=True,)
+                                      compute='_compute_amount', readonly=True)
 
     @api.depends(
         'line_ids.matched_debit_ids.debit_move_id.move_id.payment_ids.is_matched',
@@ -30,7 +28,7 @@ class AccountMove(models.Model):
         'line_ids.payment_id.state',
         'line_ids.full_reconcile_id')
     def _compute_amount(self):
-        """Fungsi untuk menghitung total berdasarkan diskon dan pajak"""
+        """This function computes amount based on taxed,untaxed"""
         for move in self:
             total_untaxed, total_untaxed_currency = 0.0, 0.0
             total_tax, total_tax_currency = 0.0, 0.0
@@ -38,8 +36,6 @@ class AccountMove(models.Model):
             total, total_currency = 0.0, 0.0
             total_to_pay = move.amount_total
             currencies = set()
-            amount_discount = 0.0
-            
             for line in move.line_ids:
                 if move.is_invoice(True):
                     # === Invoices ===
@@ -66,13 +62,6 @@ class AccountMove(models.Model):
                     if line.debit:
                         total += line.balance
                         total_currency += line.amount_currency
-            
-            # Menghitung jumlah diskon
-            if move.move_type in ('in_invoice', 'in_refund'):
-                for line in move.invoice_line_ids:
-                    price_unit = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-                    amount_discount += (line.price_unit - price_unit) * line.quantity
-            
             sign = move.direction_sign
             move.amount_untaxed = sign * (total_untaxed_currency if len(
                 currencies) == 1 else total_untaxed)
@@ -88,9 +77,6 @@ class AccountMove(models.Model):
             move.amount_total_in_currency_signed = abs(
                 move.amount_total) if move.move_type == 'entry' else -(
                     sign * move.amount_total)
-            move.amount_discount = amount_discount
-            
-            # Logika status pembayaran
             currency = (len(
                 currencies) == 1 and currencies.pop() or
                         move.company_id.currency_id)
@@ -115,9 +101,6 @@ class AccountMove(models.Model):
                     [('reversed_entry_id', '=', move.id),
                      ('state', '=', 'posted'),
                      ('move_type', '=', reverse_type)])
-                # We only set 'reversed' state in case of 1 to 1 full
-                # reconciliation with a reverse entry; otherwise, we use the
-                # regular 'paid' state
                 reverse_moves_full_recs = reverse_moves.mapped(
                     'line_ids.full_reconcile_id')
                 if reverse_moves_full_recs.mapped(
@@ -130,56 +113,62 @@ class AccountMove(models.Model):
 
     @api.onchange('discount_type', 'discount_rate', 'invoice_line_ids')
     def _supply_rate(self):
-        """Fungsi ini menghitung nilai diskon berdasarkan perubahan pada
-        discount_type, discount_rate dan invoice_line_ids"""
-        for inv in self:
-            if inv.move_type in ('in_invoice', 'in_refund'):
-                if inv.discount_type == 'percent':
-                    discount_totals = 0
-                    for line in inv.invoice_line_ids:
-                        line.discount = inv.discount_rate
-                        total_price = line.price_unit * line.quantity
-                        discount_total = total_price - line.price_subtotal
-                        discount_totals = discount_totals + discount_total
-                        inv.amount_discount = discount_totals
-                        line._compute_totals()
-                else:
-                    total = 0.0
-                    for line in inv.invoice_line_ids:
-                        total += (line.quantity * line.price_unit)
-                    if inv.discount_rate != 0 and total > 0:
-                        discount = (inv.discount_rate / total) * 100
-                    else:
-                        discount = inv.discount_rate
-                    for line in inv.invoice_line_ids:
-                        line.discount = discount
-                        inv.amount_discount = inv.discount_rate
-                        line._compute_totals()
-                inv._compute_tax_totals()
 
-    def supply_rate(self):
-        """Alias untuk _supply_rate"""
-        self._supply_rate()
+        for inv in self:
+            if inv.discount_type == 'percent':
+                discount_totals = 0
+                for line in inv.invoice_line_ids:
+                    line.discount = inv.discount_rate
+                    total_price = line.price_unit * line.quantity
+                    discount_total = total_price - line.price_subtotal
+                    discount_totals = discount_totals + discount_total
+                    inv.amount_discount = discount_totals
+                    line._compute_totals()
+            elif inv.discount_type == 'amount':
+                total = 0.0
+                for line in inv.invoice_line_ids:
+                    total += (line.quantity * line.price_unit)
+                if inv.discount_rate != 0:
+                    discount = (inv.discount_rate / total) * 100
+                else:
+                    discount = inv.discount_rate
+                for line in inv.invoice_line_ids:
+                    line.discount = discount
+                    inv.amount_discount = inv.discount_rate
+                    line._compute_totals()
+            elif inv.discount_type == 'line_discount':
+                discount_totals = 0
+                for line in inv.invoice_line_ids:
+                    total_price = line.price_unit * line.quantity
+                    discount_total = total_price * (line.discount / 100)
+                    discount_totals += discount_total
+                inv.amount_discount = discount_totals
+            inv._compute_tax_totals()
 
     def button_dummy(self):
-        """Metode button_dummy untuk memperbarui perhitungan diskon"""
+        """The button_dummy method is intended to perform some action related
+        to the supply rate and always return True"""
         self.supply_rate()
         return True
 
 
-class AccountMoveLine(models.Model):
-    """Kelas ini mewarisi "account.move.line" model dan menambahkan field diskon"""
+class AccountInvoiceLine(models.Model):
+    """This class inherits "account.move.line" model and adds discount field"""
     _inherit = "account.move.line"
+    discount = fields.Float(string='Discount (%)', digits=(16, 20), default=0.0)
 
-    discount = fields.Float(string='Discount (%)', digits=(16, 20), default=0.0,)
-    
-    def _compute_totals(self):
-        """Menghitung ulang jumlah berdasarkan diskon dan harga"""
-        for line in self:
-            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            taxes = line.tax_ids._origin.compute_all(
-                price, line.move_id.currency_id, line.quantity, 
-                product=line.product_id, partner=line.move_id.partner_id
-            )
-            line.price_subtotal = taxes['total_excluded']
-            line.price_total = taxes['total_included'] 
+
+class AccountMove(models.Model):
+    _inherit = "account.move"
+
+    @api.onchange('invoice_line_ids')
+    def _onchange_invoice_line_ids(self):
+        """Fungsi untuk mengupdate amount_discount saat invoice line berubah"""
+        if self.move_type in ['in_invoice', 'in_refund']:
+            discount_totals = 0
+            for line in self.invoice_line_ids:
+                total_price = line.price_unit * line.quantity
+                discount_total = total_price * (line.discount / 100)
+                discount_totals += discount_total
+            self.amount_discount = discount_totals
+        return super(AccountMove, self)._onchange_invoice_line_ids()

@@ -15,3 +15,13 @@ class ResCompany(models.Model):
         string="Percentage of Discount that requires double validation'",
         help="Minimum discount percentage for which a double validation is "
              "required.")
+
+    po_double_validation = fields.Selection([
+        ('one_step', 'Konfirmasi pesanan pembelian dalam satu langkah'),
+        ('two_step', 'Dapatkan 2 tingkat persetujuan untuk mengkonfirmasi pesanan pembelian')
+    ], string="Tingkat Persetujuan", default='one_step',
+        help="Menyediakan mekanisme validasi ganda untuk diskon pembelian.")
+    
+    po_double_validation_limit = fields.Float(
+        string="Persentase Diskon yang memerlukan validasi ganda",
+        help="Persentase diskon minimum yang memerlukan validasi ganda.")

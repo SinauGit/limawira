@@ -26,23 +26,20 @@ class SaleOrder(models.Model):
         ('waiting', 'Waiting Approval'),
     ], string='Status', readonly=True, copy=False, index=True,
         default='draft', help="Status of quotation.")
-    discount_type = fields.Selection(
-        [('percent', 'Percentage'), ('amount', 'Amount')],
-        string='Discount type',
-        default='amount')
-    discount_rate = fields.Float('Discount', digits=(16, 2))
+    discount_type = fields.Selection([
+    ('percent', 'Percentage'), 
+    ('amount', 'Amount'),
+    ('line_discount', 'Per Line')
+], string='Discount type', default='line_discount')
+    discount_rate = fields.Float('Discount Rate', digits=(16, 2))
     amount_discount = fields.Monetary(string='Discount', store=True,
-                                      compute='_amount_all', readonly=True,
-                                      help="Give the amount to be discounted.")
+                                      compute='_amount_all', readonly=True,)
     amount_untaxed = fields.Monetary(string='Untaxed Amount', store=True,
-                                     readonly=True, compute='_amount_all',
-                                     help="Untaxed amount displayed.")
+                                     readonly=True, compute='_amount_all')
     amount_tax = fields.Monetary(string='Taxes', store=True, readonly=True,
-                                 compute='_amount_all',
-                                 help="Taxes of product.")
+                                 compute='_amount_all')
     amount_total = fields.Monetary(string='Total', store=True, readonly=True,
-                                   compute='_amount_all',
-                                   help="Total amount provided.")
+                                   compute='_amount_all')
     margin_test = fields.Float(string="Margin", compute='_compute_margin_test',)
 
     @api.depends('amount_untaxed','amount_tax','amount_total')
@@ -59,14 +56,14 @@ class SaleOrder(models.Model):
                 record.margin_test = False
 
     def action_confirm(self):
-        """This function super action_confirm method"""
         discount = 0.0
         no_line = 0.0
         if self.company_id.so_double_validation == 'two_step':
             for line in self.order_line:
                 no_line += 1
                 discount += line.discount
-            discount = (discount / no_line)
+            if no_line > 0:
+                discount = (discount / no_line)
             if (self.company_id.so_double_validation_limit and discount >
                     self.company_id.so_double_validation_limit):
                 self.state = 'waiting'
@@ -86,25 +83,31 @@ class SaleOrder(models.Model):
 
     @api.onchange('discount_type', 'discount_rate', 'order_line')
     def supply_rate(self):
-        """This function calculates supply rates based on change of
-        discount_type, discount_rate and invoice_line_ids"""
         for order in self:
             if order.discount_type == 'percent':
                 for line in order.order_line:
                     line.discount = order.discount_rate
-            else:
+            elif order.discount_type == 'amount':
                 total = 0.0
                 for line in order.order_line:
                     total += round((line.product_uom_qty * line.price_unit))
                 if order.discount_rate != 0:
-                    discount = (
-                                           order.discount_rate / total) * 100 if total > 0 else 0
+                    discount = (order.discount_rate / total) * 100 if total > 0 else 0
                 else:
                     discount = order.discount_rate
                 for line in order.order_line:
                     line.discount = discount
                     new_sub_price = (line.price_unit * (discount / 100))
                     line.total_discount = line.price_unit - new_sub_price
+            elif order.discount_type == 'line_discount':
+                # Untuk tipe 'line_discount', kita biarkan diskon per line
+                # tidak melakukan perubahan pada baris order, tetapi tetap menghitung amount_discount
+                amount_discount = 0.0
+                for line in order.order_line:
+                    discount_value = (line.product_uom_qty * line.price_unit * line.discount) / 100
+                    amount_discount += discount_value
+                    line.total_discount = discount_value
+                order.amount_discount = amount_discount
 
     def _prepare_invoice(self, ):
         """Super sale order class and update with fields"""

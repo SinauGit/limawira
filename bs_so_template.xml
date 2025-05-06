@@ -115,7 +115,7 @@
                                             Fax <span t-esc="o.company_id.mobile"/>
                                         </td>
                                         <td class="col-3" style="border: 2px solid; border-top: none; border-left: none;">
-                                            Contact : 
+                                            Contact : <span t-esc="o.employee_id.name or ''"/>
                                         </td>
                                     </tr>
                                 </table>
@@ -174,7 +174,7 @@
                                     <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Untaxed Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed + o.amount_discount)"/></p>
                                     <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Discount</span> <span t-esc="'{:,.2f}'.format(o.amount_discount)"/></p>
                                     <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Total</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Tax Base Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_total * 11/12)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Tax Base Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed * 11/12)"/></p>
                                     <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Taxes 12%</span> <span t-esc="'{:,.2f}'.format(o.amount_tax)"/></p>
                                     <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style= " font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
                                 </div>

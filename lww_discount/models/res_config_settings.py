@@ -22,8 +22,25 @@ class ResConfigSettings(models.TransientModel):
              "required."
     )
 
+    po_order_approval = fields.Boolean(
+        string="Persetujuan Diskon Pembelian",
+        default=lambda self: self.env.user.company_id.po_double_validation == 'two_step',
+        help="Aktifkan/nonaktifkan persetujuan untuk diskon pembelian.")
+    
+    po_double_validation = fields.Selection(
+        related='company_id.po_double_validation',
+        string="Tingkat Persetujuan", readonly=False,
+        help="Menyediakan mekanisme validasi ganda untuk diskon pembelian.")
+    
+    po_double_validation_limit = fields.Float(
+        string="Batas diskon yang memerlukan persetujuan dalam %",
+        related='company_id.po_double_validation_limit', readonly=False,
+        help="Persentase diskon minimum yang memerlukan validasi ganda."
+    )
+
     def set_values(self):
         """Function to set values"""
         super(ResConfigSettings, self).set_values()
         self.so_double_validation = 'two_step' if self.so_order_approval \
             else 'one_step'
+        self.po_double_validation = 'two_step' if self.po_order_approval else 'one_step'
