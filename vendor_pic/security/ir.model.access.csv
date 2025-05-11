@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vendor_pic_user,vendor.pic.user,model_vendor_pic,base.group_user,1,0,0,0
+access_vendor_pic_purchase_user,vendor.pic.purchase.user,model_vendor_pic,purchase.group_purchase_user,1,1,1,1
+access_vendor_pic_purchase_manager,vendor.pic.purchase.manager,model_vendor_pic,purchase.group_purchase_manager,1,1,1,1
