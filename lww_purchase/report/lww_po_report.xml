@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- LIMAWIRA -->
+        <report
+            id="lww_po_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.lww_po_template"
+            file="lww_purchase.lww_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- BINA SERVICE -->
+        <report
+            id="bs_po_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.bs_po_template"
+            file="lww_purchase.bs_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+        
+        <!-- SPARTADUA RIBUJAYA -->
+        <report
+            id="spartadua_po_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.spartadua_po_template"
+            file="lww_purchase.spartadua_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- PRATAMA DATAMAKSIMA -->
+        <report
+            id="pratama_po_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.pratama_po_template"
+            file="lww_purchase.pratama_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- IMADEA MAGKASAMA -->
+        <report
+            id="imadea_po_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.imadea_po_template"
+            file="lww_purchase.imadea_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- CARITAS LESTARI BAKTI -->
+        <report
+            id="caritas_po_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.caritas_po_template"
+            file="lww_purchase.caritas_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- SPARINDO ALFA PERSADA -->
+        <report
+            id="sparindo_po_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.sparindo_po_template"
+            file="lww_purchase.sparindo_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- WASTU DAYA PRIMA -->
+        <report
+            id="wastu_po_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.wastu_po_template"
+            file="lww_purchase.wastu_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- AMANERA BERSAMA ABADI -->
+        <report
+            id="amanera_po_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.amanera_po_template"
+            file="lww_purchase.amanera_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- PAPERFORMAT POTRAIT -->
+        <record id="paperformat_portrait" model="report.paperformat">
+            <field name="name">Potrait Format</field>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+            <field name="dpi">90</field>
+        </record>
+        
+        <!-- PAPERFORMAT LANDSCAPE -->
+        <record id="paperformat_landscape" model="report.paperformat">
+            <field name="name">Landscape Format</field>
+            <field name="format">A4</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <!-- LIMAWIRA -->
+        <record id="action_report_limawira_po" model="ir.actions.report">
+            <field name="name">Print PO</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.lww_po_template</field>
+            <field name="report_file">lww_purchase.lww_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
+        </record>
+        
+        <!-- LIMAWIRA PO JASA -->
+        <record id="action_report_lww_po_jasa" model="ir.actions.report">
+            <field name="name">Print PO Jasa</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.lww_po_jasa_template</field>
+            <field name="report_file">lww_purchase.lww_po_jasa_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
+        </record>
+
+        <!-- BINA SERVICE -->
+        <record id="action_report_bs_po" model="ir.actions.report">
+            <field name="name">Print PO Bina Service</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.bs_po_template</field>
+            <field name="report_file">lww_purchase.bs_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
+        </record>
+
+        <!-- SPARTADUA RIBUJAYA -->
+        <record id="action_report_spartadua_po" model="ir.actions.report">
+            <field name="name">Print PO Spartadua</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.spartadua_po_template</field>
+            <field name="report_file">lww_purchase.spartadua_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_landscape"/>
+        </record>
+
+        <!-- PRATAMA DATAMAKSIMA -->
+        <record id="action_report_pratama_po" model="ir.actions.report">
+            <field name="name">Print PO Pratama</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.pratama_po_template</field>
+            <field name="report_file">lww_purchase.pratama_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
+        </record>
+        
+        <!-- IMADE AMGKASAMA -->
+        <record id="action_report_imadea_po" model="ir.actions.report">
+            <field name="name">Print PO Imadea</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.imadea_po_template</field>
+            <field name="report_file">lww_purchase.imadea_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
+        </record>
+
+        <!-- CARITAS LESTARI BAKTI -->
+        <record id="action_report_caritas_po" model="ir.actions.report">
+            <field name="name">Print PO Caritas</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.caritas_po_template</field>
+            <field name="report_file">lww_purchase.caritas_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
+        </record>
+
+        <!-- SPARINDO ALFA PERSADA -->
+        <record id="action_report_sparindo_po" model="ir.actions.report">
+            <field name="name">Print PO Sparindo</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.sparindo_po_template</field>
+            <field name="report_file">lww_purchase.sparindo_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
+        </record>
+
+        <!-- WASTU DAYA PRIMA -->
+        <record id="action_report_wastu_po" model="ir.actions.report">
+            <field name="name">Print PO Wastu</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.wastu_po_template</field>
+            <field name="report_file">lww_purchase.wastu_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_landscape"/>
+        </record>
+
+        <!-- AMANERA BERSAMA ABADI -->
+        <record id="action_report_amanera_po" model="ir.actions.report">
+            <field name="name">Print PO Amanera</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.amanera_po_template</field>
+            <field name="report_file">lww_purchase.amanera_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
+        </record>
+
+    </data>
+</odoo>
