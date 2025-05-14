@@ -7,7 +7,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="is_po_service"/>
-                <field name="customer_id" invisible="is_po_service == False"/>
+                <field name="customer_id" invisible="is_po_service == False"
+                                          required= "is_po_service == True"/>
             </xpath>
         </field>
     </record>
