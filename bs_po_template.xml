@@ -165,7 +165,21 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="row" style="margin-bottom: 5px; margin-top: 5px;">
+
+                            <!-- Total Section -->
+                            <div class="row" style="margin-bottom: 3px; margin-top: 5px;">
+                                <div class="col-7"/>
+                                <div class="col-5">
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Untaxed Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed + o.amount_discount)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Discount</span> <span t-esc="'{:,.2f}'.format(o.amount_discount)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Total</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Tax Base Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed * 11/12)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Taxes 12%</span> <span t-esc="'{:,.2f}'.format(o.amount_tax)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style=" font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
+                                </div>
+                            </div>
+
+                            <!-- <div class="row" style="margin-bottom: 5px; margin-top: 5px;">
                                 <div class="col-10">
                                     <p style="text-align: right; font-size: 16px;"><em style="font-weight: bold;">Sub Total: </em></p>
                                 </div>
@@ -191,9 +205,9 @@
                                     <p style="text-align: right; font-size: 16px;"><em style="font-weight: bold;">Summary </em></p>
                                 </div>
                                 <div class="col-4"/>
-                                <div class="col-1">
+                                <div class="col-1"> -->
                                 <!-- Currency -->
-                                    <p style="font-size: 16px; text-align: left; font-weight: bold;">
+                                    <!-- <p style="font-size: 16px; text-align: left; font-weight: bold;">
                                       <span t-esc="o.currency_id.name or ''" style="font-size: 16px; text-align: right;"/>
                                     </p>
                                 </div>
@@ -202,7 +216,7 @@
                                       <span t-esc="'{:,.2f}'.format(o.amount_total)" style="font-size: 16px; text-align: right;"/>
                                     </p>
                                 </div>
-                            </div>
+                            </div> -->
                             <!-- Note Section -->
                             <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
                                 <div class="col-6 text-left">
@@ -211,7 +225,8 @@
                                             <p style="text-align: right; font-size: 16px;">NOTE : </p>
                                         </div>
                                         <div class="col-9" style="font-size: 16px; border: 1px; margin-left: 0.5rem;">
-                                            <span t-esc="o.notes or ''"/>
+                                            <span t-esc="o.notes or ''"
+                                                  style="display: inline-block; width: calc(100% - 135px); white-space: pre-wrap;" />
                                         </div>
                                     </div>
                                 </div>

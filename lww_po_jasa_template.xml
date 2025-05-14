@@ -1,4 +1,4 @@
-<t t-name="lww_purchase.lww_po_template">
+<t t-name="lww_purchase.lww_po_jasa_template">
             <t t-call="web.external_layout">
                 <t t-foreach="docs" t-as="o">
                     <!-- Header Section -->
@@ -88,13 +88,13 @@
                                     </div>
                                 </div>
                                 <div class="col-6 text-right" style="margin-left: 1rem; ">
-                                    <strong style="font-size: 16px; margin-left: 5rem;">Ship To: </strong>
+                                    <strong style="font-size: 16px; margin-left: 5rem;">End User: </strong>
                                     <div class="row">
                                         <div class="col-3">
                                             <p style="text-align: left; font-size: 16px;"><em>Name: </em></p>
                                         </div>
                                         <div class="col-9" style="font-size: 16px; border: 1px;">
-                                            <span t-esc="o.company_id.name"/>
+                                            <span t-esc="o.customer_id.name"/>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -102,7 +102,7 @@
                                             <p style="text-align: left; font-size: 16px;"><em>Address: </em></p>
                                         </div>
                                         <div class="col-9" style="font-size: 16px; border: 1px;">
-                                            <span t-esc="o.company_id.street"/>
+                                            <span t-esc="o.customer_id.street"/>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -110,7 +110,7 @@
                                             <p style="text-align: left; font-size: 16px;"><em>City: </em></p>
                                         </div>
                                         <div class="col-9" style="font-size: 16px; border: 1px;">
-                                            <span t-esc="o.company_id.city"/>
+                                            <span t-esc="o.customer_id.city"/>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -118,7 +118,7 @@
                                             <p style="text-align: left; font-size: 16px;"><em>Region: </em></p>
                                         </div>
                                         <div class="col-9" style="font-size: 16px; border: 1px;">
-                                            <span t-esc="o.company_id.state_id.name"/>
+                                            <span t-esc="o.customer_id.state_id.name"/>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -126,7 +126,7 @@
                                             <p style="text-align: left; font-size: 16px;"><em>Country: </em></p>
                                         </div>
                                         <div class="col-9" style="font-size: 16px; border: 1px;">
-                                            <span t-esc="o.company_id.country_id.name"/>
+                                            <span t-esc="o.customer_id.country_id.name"/>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -134,7 +134,7 @@
                                             <p style="text-align: left; font-size: 16px;"><em>Phone: </em></p>
                                         </div>
                                         <div class="col-9" style="font-size: 16px; border: 1px;">
-                                            <span t-esc="o.company_id.phone"/>
+                                            <span t-esc="o.customer_id.phone"/>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -230,7 +230,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
                             <div class="row" style="margin-bottom: 3px; margin-top: 5px;">
                                 <div class="col-7"/>
                                 <div class="col-5">
