@@ -12,6 +12,17 @@
             print_report_name="'Purchase Order - %s' % (object.no_po)"
         />
 
+        <!-- LIMAWIRA JASA -->
+        <report
+            id="lww_po_jasa_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.lww_po_jasa_template"
+            file="lww_purchase.lww_po_jasa_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
         <!-- BINA SERVICE -->
         <report
             id="bs_po_report"
@@ -20,6 +31,17 @@
             report_type="qweb-pdf"
             name="lww_purchase.bs_po_template"
             file="lww_purchase.bs_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- BINA SERVICE JASA -->
+        <report
+            id="bs_po_jasa_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.bs_po_jasa_template"
+            file="lww_purchase.bs_po_jasa_template"
             print_report_name="'Purchase Order - %s' % (object.no_po)"
         />
         
@@ -31,6 +53,17 @@
             report_type="qweb-pdf"
             name="lww_purchase.spartadua_po_template"
             file="lww_purchase.spartadua_po_template"
+            print_report_name="'Purchase Order - %s' % (object.no_po)"
+        />
+
+        <!-- SPARTADUA RIBUJAYA JASA -->
+        <report
+            id="spartadua_po_jasa_report"
+            model="purchase.order"
+            string="Purchase Order"
+            report_type="qweb-pdf"
+            name="lww_purchase.spartadua_po_jasa_template"
+            file="lww_purchase.spartadua_po_jasa_template"
             print_report_name="'Purchase Order - %s' % (object.no_po)"
         />
 
@@ -170,12 +203,40 @@
             <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
         </record>
 
+        <!-- BINA SERVICE PO JASA -->
+        <record id="action_report_bs_po_jasa" model="ir.actions.report">
+            <field name="name">Print PO Jasa Bina Service</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.bs_po_jasa_template</field>
+            <field name="report_file">lww_purchase.bs_po_jasa_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_portrait"/>
+        </record>
+
         <!-- SPARTADUA RIBUJAYA -->
         <record id="action_report_spartadua_po" model="ir.actions.report">
             <field name="name">Print PO Spartadua</field>
             <field name="model">purchase.order</field>
             <field name="report_name">lww_purchase.spartadua_po_template</field>
             <field name="report_file">lww_purchase.spartadua_po_template</field>
+            <field name="print_report_name">(object.get_print_report_name())</field>
+            <field name="attachment"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="lww_purchase.paperformat_landscape"/>
+        </record>
+
+        <!-- SPARTADUA RIBUJAYA  JASA-->
+        <record id="action_report_spartadua_po_jasa" model="ir.actions.report">
+            <field name="name">Print PO Spartadua</field>
+            <field name="model">purchase.order</field>
+            <field name="report_name">lww_purchase.spartadua_po_jasa_template</field>
+            <field name="report_file">lww_purchase.spartadua_po-jasa_template</field>
             <field name="print_report_name">(object.get_print_report_name())</field>
             <field name="attachment"/>
             <field name="report_type">qweb-pdf</field>
