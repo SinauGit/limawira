@@ -10,7 +10,7 @@ class PurchaseOrder(models.Model):
         ('not_paid', 'Not Paid'),
         ('partially_paid', 'Partially Paid'),
         ('paid', 'Paid')
-    ], string='Status Pembayaran', compute='_compute_payment_status', store=True, default='no_bill')
+    ], string='Payment Status', compute='_compute_payment_status', store=True, default='no_bill')
     
     bill_count = fields.Integer(string='Jumlah Bill', compute='_compute_bill_count', store=True)
     bill_total = fields.Monetary(string='Total Bill', compute='_compute_bill_amounts', store=True)

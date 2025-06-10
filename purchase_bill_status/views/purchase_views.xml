@@ -32,15 +32,15 @@
             
             <!-- Menambahkan informasi pembayaran di sheet -->
             <xpath expr="//page[@name='purchase_delivery_invoice']" position="after">
-                <page name="payment_info" string="Informasi Pembayaran" invisible="payment_status == 'no_bill'">
+                <page name="payment_info" string="Payment Information" invisible="payment_status == 'no_bill'">
                     <group>
                         <group>
-                            <field name="bill_count" string="Jumlah Bill"/>
-                            <field name="bill_total" string="Total Bill"/>
+                            <field name="bill_count" string="Bill Count"/>
+                            <field name="bill_total" string="Bill Total"/>
                         </group>
                         <group>
-                            <field name="bill_paid" string="Jumlah Terbayar"/>
-                            <field name="bill_unpaid" string="Sisa Pembayaran"/>
+                            <field name="bill_paid" string="Bill Paid"/>
+                            <field name="bill_unpaid" string="Bill Unpaid"/>
                         </group>
                     </group>
                     <!-- <field name="invoice_ids" domain="[('move_type', '=', 'in_invoice')]" readonly="1">
@@ -65,10 +65,10 @@
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='to_approve']" position="after">
                 <separator/>
-                <filter string="Belum Ada Bill" name="no_bill" domain="[('payment_status', '=', 'no_bill')]"/>
-                <filter string="Belum Dibayar" name="not_paid" domain="[('payment_status', '=', 'not_paid')]"/>
-                <filter string="Dibayar Sebagian" name="partially_paid" domain="[('payment_status', '=', 'partially_paid')]"/>
-                <filter string="Lunas" name="paid" domain="[('payment_status', '=', 'paid')]"/>
+                <filter string="No Bill" name="no_bill" domain="[('payment_status', '=', 'no_bill')]"/>
+                <filter string="Not Paid" name="not_paid" domain="[('payment_status', '=', 'not_paid')]"/>
+                <filter string="Partially Paid" name="partially_paid" domain="[('payment_status', '=', 'partially_paid')]"/>
+                <filter string="Paid" name="paid" domain="[('payment_status', '=', 'paid')]"/>
             </xpath>
             <!-- <xpath expr="//filter[@name='groupby_vendor']" position="after">
                 <filter string="Status Pembayaran" name="groupby_payment_status" context="{'group_by': 'payment_status'}"/>
