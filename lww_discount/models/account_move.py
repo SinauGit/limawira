@@ -171,4 +171,3 @@ class AccountMove(models.Model):
                 discount_total = total_price * (line.discount / 100)
                 discount_totals += discount_total
             self.amount_discount = discount_totals
-        return super(AccountMove, self)._onchange_invoice_line_ids()

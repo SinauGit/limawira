@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vendor PIC Form View -->
+    <record id="view_vendor_pic_form" model="ir.ui.view">
+        <field name="name">vendor.pic.form</field>
+        <field name="model">vendor.pic</field>
+        <field name="arch" type="xml">
+            <form string="Person in Charge">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="PIC Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" 
+                                   options="{'no_create': True}" 
+                                   domain="[('supplier_rank', '>', 0)]"/>
+                            <field name="position"/>
+                            <field name="department"/>
+                            <field name="is_primary"/>
+                        </group>
+                        <group>
+                            <field name="phone" widget="phone"/>
+                            <field name="mobile" widget="phone"/>
+                            <field name="email" widget="email"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Add notes about this person..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vendor PIC List View (changed from Tree to List) -->
+    <record id="view_vendor_pic_tree" model="ir.ui.view">
+        <field name="name">vendor.pic.list</field>
+        <field name="model">vendor.pic</field>
+        <field name="arch" type="xml">
+            <list string="Persons in Charge">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="position"/>
+                <field name="department"/>
+                <field name="is_primary" widget="toggle_button"/>
+                <field name="phone"/>
+                <field name="email"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vendor PIC Search View -->
+    <record id="view_vendor_pic_search" model="ir.ui.view">
+        <field name="name">vendor.pic.search</field>
+        <field name="model">vendor.pic</field>
+        <field name="arch" type="xml">
+            <search string="Search Persons in Charge">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="position"/>
+                <field name="department"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <filter string="Primary Contacts" name="primary_contacts" domain="[('is_primary', '=', True)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Vendor" name="group_by_partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Department" name="group_by_department" domain="[]" context="{'group_by': 'department'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vendor PIC Action -->
+    <record id="action_vendor_pic" model="ir.actions.act_window">
+        <field name="name">Persons in Charge</field>
+        <field name="res_model">vendor.pic</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Person in Charge
+            </p>
+            <p>
+                Create Persons in Charge for your vendors to easily
+                keep track of your key contacts at each supplier.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_vendor_pic"
+              name="Vendor PICs"
+              parent="purchase.menu_purchase_root"
+              action="action_vendor_pic"
+              sequence="5"/>
+</odoo>
