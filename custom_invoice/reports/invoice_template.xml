@@ -1,181 +1,135 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data>
-        <!-- Template CSS -->
-        <template id="custom_invoice_css">
-            <link rel="stylesheet" type="text/scss" href="/custom_invoice/static/src/css/invoice_style.scss"/>
-        </template>
+  <template id="custom_invoice_template">
+    <t t-call="web.external_layout">
+      <t t-foreach="docs" t-as="o">
+      <main class="page">
+        <!-- Header -->
+        <div class="row mb-4">
+          <div class="col-6">
+            <strong style="font-size: 16px;">PT. LIMAWIRA WISESA</strong><br/>
+            <span>Graha Mas Pemuda Blok AA No15</span><br/>
+            <span>Jalan Pemuda</span><br/>
+            <span>Jakarta Timur JK 13220</span><br/>
+            <span>Indonesia</span>
+          </div>
 
-        <!-- Main Invoice Template -->
-        <template id="custom_report_invoice_document">
-                <t t-foreach="docs" t-as="o">
-                    <t t-call="web.external_layout">
-                        <t t-call="custom_invoice.custom_invoice_css"/>
-                        <div class="page invoice-container">
-                            <!-- Header Section with Logo and Company Info -->
-                            <div class="row" style="border-bottom: 2px solid #35bdaf;">
-                                <div class="col-6" style="height: 165px; display: flex; flex-direction: column; justify-content: center;">
-                                    <div class="text" style="font-size: 30px; text-align: left; padding-left: 2.5rem; padding-top: 50px;">
-                                        <div class="row">
-                                            <h1 style="font-size: 2rem;">
-                                                <strong>INVOICE</strong>
-                                            </h1>
-                                        </div>
-                                        <div class="row">
-                                            <h1 style="font-size: 1.5rem;">
-                                                <strong><span t-field="o.name"/></strong>
-                                            </h1>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 350px; height: auto;"/>
-                                    <div style="font-size: 12px; line-height: 1.5; text-align: right;">
-                                        <p>
-                                            <span t-esc="o.company_id.street"/> <br/>
-                                            <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.zip"/>, 
-                                            <span t-esc="o.company_id.country_id.name"/><br/>
-                                            Telepon: <span t-esc="o.company_id.phone"/><br/>
-                                            Fax: <span t-esc="o.company_id.mobile"/>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Customer Info Section -->
-                            <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
-                                <div class="col-6 text-left">
-                                    <strong style="font-size: 16px; margin-left: 2rem;">Customer: </strong>
-                                    <div style="margin-left: 2rem;">
-                                        <p style="margin: 0;"><strong><span t-field="o.partner_id.name"/></strong></p>
-                                        <p style="margin: 0;"><span t-field="o.partner_id.street"/></p>
-                                        <p style="margin: 0;"><span t-esc="o.partner_id.city"/> <span t-esc="o.partner_id.state_id.name"/> <span t-esc="o.partner_id.zip"/></p>
-                                        <p style="margin: 0;"><span t-field="o.partner_id.country_id.name"/></p>
-                                        <p style="margin: 0;">Tax ID: <span t-field="o.partner_id.vat"/></p>
-                                    </div>
-                                </div>
-                            </div>
+          <div class="col-6 text-right">
+            <strong style="font-size: 16px;">TO:</strong><br/>
+            <span t-field="o.partner_id.name"/><br/>
+            <span t-field="o.partner_id.street"/><br/>
+            <t t-if="o.partner_id.street2">
+              <span t-field="o.partner_id.street2"/><br/>
+            </t>
+            <t t-if="o.partner_id.city">
+              <span t-field="o.partner_id.city"/>,
+            </t>
+            <span t-field="o.partner_id.state_id.code"/>
+            <span t-field="o.partner_id.zip"/><br/>
+            <span t-field="o.partner_id.country_id.name"/>
+          </div>
+        </div>
 
-                            <!-- Invoice Dates and Reference Section -->
-                            <div class="row" style="margin-bottom: 5px; margin-top: 10px; border-bottom: 2px solid #35bdaf">
-                                <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
-                                    <thead style="border: 0.5px; background-color: #efefef">
-                                        <tr>
-                                            <th style="font-size: 16px; text-align: center;">Invoice Date</th>
-                                            <th style="font-size: 16px; text-align: center;">Due Date</th>
-                                            <th style="font-size: 16px; text-align: center;">Delivery Date</th>
-                                            <th style="font-size: 16px; text-align: center;">Source</th>
-                                            <th style="font-size: 16px; text-align: center;">Reference</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="text-center" style="font-size: 15px;">
-                                                <span t-field="o.invoice_date" t-options='{"format": "dd-MMM-yy"}'/>
-                                            </td>
-                                            <td class="text-center" style="font-size: 15px;">
-                                                <span t-field="o.invoice_date_due" t-options='{"format": "dd-MMM-yy"}'/>
-                                            </td>
-                                            <td class="text-center" style="font-size: 15px;">
-                                                <span t-field="o.invoice_date" t-options='{"format": "dd-MMM-yy"}'/>
-                                            </td>
-                                            <td class="text-center" style="font-size: 15px;">
-                                                <span t-field="o.invoice_origin"/>
-                                            </td>
-                                            <td class="text-center" style="font-size: 15px;">
-                                                <span t-field="o.ref"/>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+        <hr style="border-top: 1px solid black;"/>
 
-                            <!-- Invoice Line Items Table -->
-                            <table class="table table-sm invoice-lines">
-                                <thead>
-                                    <tr>
-                                        <th>Description</th>
-                                        <th class="text-right">Quantity</th>
-                                        <th class="text-right">Unit Price</th>
-                                        <th class="text-right">Taxes</th>
-                                        <th class="text-right">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <t t-foreach="o.invoice_line_ids" t-as="line">
-                                        <tr>
-                                            <td>
-                                                <span t-field="line.name"/>
-                                                <t t-if="line.display_type == 'line_note'">
-                                                    <p t-field="line.name"/>
-                                                </t>
-                                            </td>
-                                            <td class="text-right">
-                                                <span t-field="line.quantity"/> <span t-field="line.product_uom_id.name"/>
-                                            </td>
-                                            <td class="text-right">
-                                                <span t-field="line.price_unit"/>
-                                            </td>
-                                            <td class="text-right">
-                                                <span t-esc="', '.join(map(lambda x: x.name, line.tax_ids))"/>
-                                            </td>
-                                            <td class="text-right">
-                                                <span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                            </td>
-                                        </tr>
-                                    </t>
-                                </tbody>
-                            </table>
+        <!-- Invoice Title & Info -->
+        <div class="row mb-2">
+          <div class="col-12">
+            <h2 style="font-size: 18px;"><strong>Invoice <t t-esc="o.name"/></strong></h2>
+          </div>
+        </div>
 
-                            <!-- Payment Terms Section -->
-                            <div class="row">
-                                <div class="col-6">
-                                    <p><strong>Payment terms:</strong> <span t-field="o.invoice_payment_term_id.name"/></p>
-                                    <p><strong>Payment Communication:</strong> <span t-field="o.name"/></p>
-                                    <p>on this account: <strong t-field="o.company_id.bank_ids[0].acc_number"/></p>
-                                    <p>
-                                        <strong>Terms &amp; Conditions:</strong> 
-                                        <a href="https://example.com/terms">https://example.com/terms</a>
-                                    </p>
-                                </div>
-                                <div class="col-6">
-                                    <table class="table table-sm">
-                                        <tr>
-                                            <td><strong>Untaxed Amount</strong></td>
-                                            <td class="text-right">
-                                                <span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Tax <span t-field="o.amount_tax_signed"/> %</strong></td>
-                                            <td class="text-right">
-                                                <span t-field="o.amount_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-top">
-                                            <td><strong>Total</strong></td>
-                                            <td class="text-right">
-                                                <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
+        <div class="row mb-3">
+          <table class="table table-borderless" style="width: 100%;">
+            <tr>
+              <td style="width: 25%;"><strong>Invoice Date</strong></td>
+              <td style="width: 25%;"><span t-field="o.invoice_date" t-options='{"format": "d MMMM yyyy"}'/></td>
+              <td style="width: 25%;"><strong>Delivery Date</strong></td>
+              <td style="width: 25%;"><span t-field="o.invoice_date_due" t-options='{"format": "d/MM/yyyy"}'/></td>
+            </tr>
+            <tr>
+              <td><strong>Source</strong></td>
+              <td><span t-field="o.invoice_origin"/></td>
+              <td><strong>Reference</strong></td>
+              <td><span t-field="o.ref"/></td>
+            </tr>
+          </table>
+        </div>
 
-                            <!-- Footer with Contact Information -->
-                            <div class="footer-info">
-                                <div class="row">
-                                    <div class="col-8">
-                                        <span t-field="o.company_id.phone"/> <span t-field="o.company_id.email"/> <span t-field="o.company_id.website"/>
-                                    </div>
-                                    <div class="col-4 text-right">
-                                        Page: <span class="page"/> / <span class="topage"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </t>
+        <!-- Line Items -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <table class="table table-sm" style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="border-bottom: 1px solid black;">
+                  <th style="text-align: left; padding: 5px;">Description</th>
+                  <th style="text-align: right; padding: 5px;">Quantity</th>
+                  <th style="text-align: right; padding: 5px;">Unit Price</th>
+                  <th style="text-align: right; padding: 5px;">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-foreach="o.invoice_line_ids" t-as="line">
+                  <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 5px;">
+                      <t t-if="line.product_id.default_code">
+                        [<t t-esc="line.product_id.default_code"/>] 
+                      </t>
+                      <span t-esc="line.name"/>
+                    </td>
+                    <td style="text-align: right; padding: 5px;">
+                      <span t-esc="'{:.2f}'.format(line.quantity)"/> 
+                      <span t-esc="line.product_uom_id.name"/>
+                    </td>
+                    <td style="text-align: right; padding: 5px;">
+                      <span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                    <td style="text-align: right; padding: 5px;">
+                      <span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                  </tr>
                 </t>
-        </template>
-    </data>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Total Summary -->
+        <div class="row justify-content-end mb-3">
+          <div class="col-6">
+            <table class="table table-sm" style="width: 100%;">
+              <tr>
+                <td><strong>Untaxed Amount</strong></td>
+                <td style="text-align: right;">
+                  <span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Taxes</strong></td>
+                <td style="text-align: right;">
+                  <span t-field="o.amount_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td style="text-align: right; font-weight: bold;">
+                  <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="row mt-4" style="border-top: 1px solid #eee; padding-top: 10px;">
+          <div class="col-12 text-center">
+            <span t-field="o.company_id.phone"/> 
+            <span t-field="o.company_id.email"/> 
+            Page 1 / 1
+          </div>
+        </div>
+        </main>
+      </t>
+    </t>
+  </template>
 </odoo>

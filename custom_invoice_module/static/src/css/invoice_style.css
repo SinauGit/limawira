@@ -1,0 +1,41 @@
+.page {
+  font-family: 'Arial', sans-serif;
+  font-size: 12px;
+  color: #3c3c54;
+  position: relative;
+  min-height: 297mm;
+  padding: 20mm;
+  box-sizing: border-box;
+}
+
+.header_table td {
+  vertical-align: top;
+}
+
+.invoice_info_table td {
+  padding: 5px 10px;
+}
+
+.table {
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.totals td {
+  padding: 5px 10px;
+  border-top: 1px solid #ddd;
+}
+
+.totals tr:last-child td {
+  border-top: 2px solid #3c3c54;
+  font-weight: bold;
+}
+
+.footer {
+  font-size: 10px;
+  color: #999;
+}
