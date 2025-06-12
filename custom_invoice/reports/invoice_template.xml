@@ -8,63 +8,86 @@
 
         <!-- Main Invoice Template -->
         <template id="custom_report_invoice_document">
-            <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="web.external_layout">
                         <t t-call="custom_invoice.custom_invoice_css"/>
                         <div class="page invoice-container">
                             <!-- Header Section with Logo and Company Info -->
-                            <div class="row header-section">
-                                <div class="col-6 company-info">
-                                    <div class="company-logo">
-                                        <span t-field="o.company_id.logo" t-options="{'widget': 'image'}"/>
-                                        <p>Your logo</p>
-                                    </div>
-                                    <div>
-                                        <p t-field="o.company_id.name"/>
-                                        <p t-field="o.company_id.street"/>
-                                        <p><t t-esc="o.company_id.city"/> <t t-esc="o.company_id.state_id.name"/> <t t-esc="o.company_id.zip"/></p>
-                                        <p t-field="o.company_id.country_id.name"/>
+                            <div class="row" style="border-bottom: 2px solid #35bdaf;">
+                                <div class="col-6" style="height: 165px; display: flex; flex-direction: column; justify-content: center;">
+                                    <div class="text" style="font-size: 30px; text-align: left; padding-left: 2.5rem; padding-top: 50px;">
+                                        <div class="row">
+                                            <h1 style="font-size: 2rem;">
+                                                <strong>INVOICE</strong>
+                                            </h1>
+                                        </div>
+                                        <div class="row">
+                                            <h1 style="font-size: 1.5rem;">
+                                                <strong><span t-field="o.name"/></strong>
+                                            </h1>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-6 customer-info">
-                                    <div>
-                                        <p t-field="o.partner_id.name"/>
-                                        <p t-field="o.partner_id.street"/>
-                                        <p><t t-esc="o.partner_id.city"/> <t t-esc="o.partner_id.state_id.name"/> <t t-esc="o.partner_id.zip"/></p>
-                                        <p t-field="o.partner_id.country_id.name"/>
-                                        <p>Tax ID: <span t-field="o.partner_id.vat"/></p>
+                                <div class="col-6">
+                                    <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 350px; height: auto;"/>
+                                    <div style="font-size: 12px; line-height: 1.5; text-align: right;">
+                                        <p>
+                                            <span t-esc="o.company_id.street"/> <br/>
+                                            <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.zip"/>, 
+                                            <span t-esc="o.company_id.country_id.name"/><br/>
+                                            Telepon: <span t-esc="o.company_id.phone"/><br/>
+                                            Fax: <span t-esc="o.company_id.mobile"/>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Invoice Information Section -->
-                            <div class="invoice-title">
-                                <h2>Invoice <span t-field="o.name"/></h2>
+                            
+                            <!-- Customer Info Section -->
+                            <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
+                                <div class="col-6 text-left">
+                                    <strong style="font-size: 16px; margin-left: 2rem;">Customer: </strong>
+                                    <div style="margin-left: 2rem;">
+                                        <p style="margin: 0;"><strong><span t-field="o.partner_id.name"/></strong></p>
+                                        <p style="margin: 0;"><span t-field="o.partner_id.street"/></p>
+                                        <p style="margin: 0;"><span t-esc="o.partner_id.city"/> <span t-esc="o.partner_id.state_id.name"/> <span t-esc="o.partner_id.zip"/></p>
+                                        <p style="margin: 0;"><span t-field="o.partner_id.country_id.name"/></p>
+                                        <p style="margin: 0;">Tax ID: <span t-field="o.partner_id.vat"/></p>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Invoice Dates and Reference Section -->
-                            <div class="row invoice-info">
-                                <div class="col-3">
-                                    <strong>Invoice Date</strong>
-                                    <p t-field="o.invoice_date"/>
-                                </div>
-                                <div class="col-3">
-                                    <strong>Due Date</strong>
-                                    <p t-field="o.invoice_date_due"/>
-                                </div>
-                                <div class="col-3">
-                                    <strong>Delivery Date</strong>
-                                    <p t-field="o.invoice_date"/> <!-- Replace with actual delivery date field if available -->
-                                </div>
-                                <div class="col-1">
-                                    <strong>Source</strong>
-                                    <p t-field="o.invoice_origin"/>
-                                </div>
-                                <div class="col-2">
-                                    <strong>Reference</strong>
-                                    <p t-field="o.ref"/>
-                                </div>
+                            <div class="row" style="margin-bottom: 5px; margin-top: 10px; border-bottom: 2px solid #35bdaf">
+                                <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
+                                    <thead style="border: 0.5px; background-color: #efefef">
+                                        <tr>
+                                            <th style="font-size: 16px; text-align: center;">Invoice Date</th>
+                                            <th style="font-size: 16px; text-align: center;">Due Date</th>
+                                            <th style="font-size: 16px; text-align: center;">Delivery Date</th>
+                                            <th style="font-size: 16px; text-align: center;">Source</th>
+                                            <th style="font-size: 16px; text-align: center;">Reference</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-center" style="font-size: 15px;">
+                                                <span t-field="o.invoice_date" t-options='{"format": "dd-MMM-yy"}'/>
+                                            </td>
+                                            <td class="text-center" style="font-size: 15px;">
+                                                <span t-field="o.invoice_date_due" t-options='{"format": "dd-MMM-yy"}'/>
+                                            </td>
+                                            <td class="text-center" style="font-size: 15px;">
+                                                <span t-field="o.invoice_date" t-options='{"format": "dd-MMM-yy"}'/>
+                                            </td>
+                                            <td class="text-center" style="font-size: 15px;">
+                                                <span t-field="o.invoice_origin"/>
+                                            </td>
+                                            <td class="text-center" style="font-size: 15px;">
+                                                <span t-field="o.ref"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
 
                             <!-- Invoice Line Items Table -->
@@ -153,7 +176,6 @@
                         </div>
                     </t>
                 </t>
-            </t>
         </template>
     </data>
 </odoo>
