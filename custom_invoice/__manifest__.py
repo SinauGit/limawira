@@ -1,7 +1,7 @@
 {
     'name': 'Custom Invoice',
     'version': '18.0.1.0.0',
-    'depends': ['account'],
+    'depends': ['base','web', 'account'],
     'data': [
         'reports/invoice_report.xml',
         'reports/invoice_template.xml',

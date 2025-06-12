@@ -1,2 +1,4 @@
 # -*- coding: utf-8 -*-
-# from . import models
+
+# This file is part of custom_invoice module for Odoo 18.
+# The module is designed to customize invoice reports with a custom template.
