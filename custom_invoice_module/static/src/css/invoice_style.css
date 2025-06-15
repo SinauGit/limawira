@@ -25,6 +25,16 @@
   border-bottom: 1px solid #ddd;
 }
 
+.table thead th {
+  border-bottom: 2px solid #3c3c54;
+  font-size: 14px;
+  color: #3c3c54;
+}
+
+.table tbody td {
+  font-size: 13px;
+}
+
 .totals td {
   padding: 5px 10px;
   border-top: 1px solid #ddd;
@@ -38,4 +48,17 @@
 .footer {
   font-size: 10px;
   color: #999;
+}
+
+/* Custom for invoice layout */
+.invoice-title {
+  font-size: 28px;
+  color: #6c5a7c;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+/* Remove margin from main for better alignment */
+main {
+  margin: 0;
 }

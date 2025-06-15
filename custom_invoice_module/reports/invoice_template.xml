@@ -4,93 +4,93 @@
     <t t-call="web.external_layout">
       <t t-foreach="docs" t-as="o">
         <main>
-          <div class="row" style="border-bottom: 2px solid #35bdaf;">
-            <div class="col-12" style="text-align: right;">
-              <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 150px; height: auto;"/>
-              <div style="font-size: 12px; line-height: 1.5; margin-top: 10px;">
-                <p>
-                  <span t-esc="o.company_id.name"/><br/>
-                  <span t-esc="o.company_id.street"/><br/>
-                  <span t-esc="o.company_id.city"/> <span t-esc="o.company_id.state_id.name"/> <span t-esc="o.company_id.zip"/><br/>
-                  <span t-esc="o.company_id.country_id.name"/><br/>
-                  Telepon: <span t-esc="o.company_id.phone"/><br/>
-                </p>
+          <!-- HEADER: Logo & Info Perusahaan di kanan atas -->
+          <div class="row" style="margin-bottom: 30px;">
+            <div class="col-7"></div>
+            <div class="col-5" style="text-align: right;">
+              <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 180px; height: auto; margin-bottom: 5px;"/>
+              <div style="font-size: 12px; line-height: 1.5; text-align: right;">
+                <span t-esc="o.company_id.name"/><br/>
+                <span t-esc="o.company_id.street"/><br/>
+                <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.zip"/>, <span t-esc="o.company_id.country_id.name"/><br/>
+                Telepon: <span t-esc="o.company_id.phone"/>
+                <t t-if="o.company_id.mobile"> | Fax: <span t-esc="o.company_id.mobile"/></t>
               </div>
             </div>
           </div>
-          <!-- TO Section -->
-          <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
-            <div class="col-6"/>
-            <div class="col-6" style="text-align: right;">
-              <strong>TO :</strong><br/>
+
+          <!-- TO Section di kiri (75% lebar) -->
+          <div class="row" style="margin-bottom: 30px;">
+            <div class="col-9" style="max-width: 75%;">
+              <span style="font-weight: bold; font-size: 15px;">TO :</span><br/>
               <span t-field="o.partner_id.name"/><br/>
-              <div t-field="o.partner_id.street"/>
-              <div t-field="o.partner_id.street2"/>
-              <div>
-                <span t-field="o.partner_id.city"/>
-                <span t-field="o.partner_id.state_id.name"/>
-                <span t-field="o.partner_id.zip"/>
-              </div>
-              <div t-field="o.partner_id.country_id.name"/>
+              <span t-field="o.partner_id.street"/><br/>
+              <span t-field="o.partner_id.street2" t-if="o.partner_id.street2"/><br t-if="o.partner_id.street2"/>
+              <span t-field="o.partner_id.city"/>
+              <span t-field="o.partner_id.state_id.name"/>
+              <span t-field="o.partner_id.zip"/><br/>
+              <span t-field="o.partner_id.country_id.name"/>
             </div>
           </div>
 
-          <!-- Invoice Info -->
-          <div class="invoice_info" style="margin-top: 20px;">
-            <h3>Invoice <span t-esc="o.name"/></h3>
-            <table width="100%" class="invoice_info_table" style="border-collapse: collapse; border: none;">
-              <tr>
-                <td style="border: none;"><strong>Invoice Date</strong><br/><span t-field="o.invoice_date"/></td>
-                <td style="border: none;"><strong>Delivery Date</strong><br/><span t-field="o.invoice_date_due"/></td>
-                <td style="border: none;"><strong>Source</strong><br/><t t-esc="o.invoice_origin or ''"/></td>
-                <td style="border: none;"><strong>Reference</strong><br/><t t-esc="o.ref or ''"/></td>
-              </tr>
-            </table>
+          <!-- JUDUL INVOICE -->
+          <div style="margin-bottom: 10px;">
+            <span style="font-size: 28px; color: #6c5a7c; font-weight: 400;">Invoice <span t-esc="o.name"/></span>
           </div>
 
-          <!-- Invoice Lines -->
-          <table class="table table-sm mt32" style="width: 100%; margin-top: 20px; border-collapse: collapse; border: none;">
+          <!-- TABEL INFO INVOICE (borderless) -->
+          <table style="width: 100%; margin-bottom: 10px; border: none; border-collapse: collapse;">
+            <tr>
+              <td style="font-weight: bold;">Invoice Date</td>
+              <td style="font-weight: bold;">Delivery Date</td>
+              <td style="font-weight: bold;">Source</td>
+              <td style="font-weight: bold;">Reference</td>
+            </tr>
+            <tr>
+              <td><span t-field="o.invoice_date"/></td>
+              <td><span t-field="o.invoice_date_due"/></td>
+              <td><span t-esc="o.invoice_origin or ''"/></td>
+              <td><span t-esc="o.ref or ''"/></td>
+            </tr>
+          </table>
+
+          <!-- TABEL PRODUK/JASA (borderless) -->
+          <table class="table table-sm" style="width: 100%; border: none; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
               <tr>
-                <th style="border: none; text-align: left;">Description</th>
-                <th style="border: none; text-align: right;">Quantity</th>
-                <th style="border: none; text-align: right;">Unit Price</th>
-                <th style="border: none; text-align: right;">Amount</th>
+                <th style="text-align: left; font-weight: bold;">Description</th>
+                <th style="text-align: right; font-weight: bold;">Quantity</th>
+                <th style="text-align: right; font-weight: bold;">Unit Price</th>
+                <th style="text-align: right; font-weight: bold;">Amount</th>
               </tr>
             </thead>
             <tbody>
               <t t-foreach="o.invoice_line_ids" t-as="line">
                 <tr>
-                  <td style="border: none;"><span t-field="line.name"/></td>
-                  <td style="text-align: right; border: none;"><span t-field="line.quantity"/> <span t-esc="line.product_uom_id.name"/></td>
-                  <td style="text-align: right; border: none;"><span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
-                  <td style="text-align: right; border: none;"><span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                  <td><span t-field="line.name"/></td>
+                  <td style="text-align: right;"><span t-field="line.quantity"/> <span t-esc="line.product_uom_id.name"/></td>
+                  <td style="text-align: right;"><span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                  <td style="text-align: right;"><span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
                 </tr>
               </t>
             </tbody>
           </table>
 
-          <!-- Totals -->
-          <table class="totals" style="width: 100%; margin-top: 20px; border-collapse: collapse; border: none;">
+          <!-- TOTAL (borderless) -->
+          <table style="width: 40%; float: right; border: none; border-collapse: collapse;">
             <tr>
-              <td style="text-align: right; width: 80%; border: none;">Untaxed Amount</td>
-              <td style="text-align: right; width: 20%; border: none;"><span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+              <td style="text-align: right;">Untaxed Amount</td>
+              <td style="text-align: right;"><span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
             </tr>
             <tr>
-              <td style="text-align: right; border: none;">Taxes</td>
-              <td style="text-align: right; border: none;"><span t-field="o.amount_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+              <td style="text-align: right;">Taxes</td>
+              <td style="text-align: right;"><span t-field="o.amount_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
             </tr>
             <tr>
-              <td style="text-align: right; font-weight: bold; border-top: 1px solid #3c3c54;">Total</td>
-              <td style="text-align: right; font-weight: bold; border-top: 1px solid #3c3c54;"><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+              <td style="text-align: right; font-weight: bold;">Total</td>
+              <td style="text-align: right; font-weight: bold;"><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
             </tr>
           </table>
-
-          <!-- Footer -->
-          <div class="footer" style="position: absolute; bottom: 30px; width: 100%; font-size: 10px; text-align: center; border-top: 1px solid #ccc; padding-top: 5px;">
-            <span>021-47882000 info@limawira.com</span>
-            <span style="float: right;">Page <span class="page"/></span>
-          </div>
         </main>
       </t>
     </t>
