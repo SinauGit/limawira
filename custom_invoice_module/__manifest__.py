@@ -6,11 +6,11 @@
         'reports/invoice_report.xml',
         'reports/invoice_template.xml',
     ],
-    'assets': {
-        'web.assets_common': [
-            'static/src/css/invoice_style.css',
-        ],
-    },
+    # 'assets': {
+    #     'web.assets_common': [
+    #         'static/src/css/invoice_style.css',
+    #     ],
+    # },
     'installable': True,
     'auto_install': False,
     'application': False,
