@@ -4,7 +4,7 @@
     <t t-call="web.external_layout">
       <t t-foreach="docs" t-as="o">
         <main>
-          <!-- HEADER: Logo & Info Perusahaan di kanan atas -->
+          <!-- HEADER: Logo & Company Info on top right -->
           <div class="row" style="margin-bottom: 30px;">
             <div class="col-7"></div>
             <div class="col-5" style="text-align: right;">
@@ -19,7 +19,7 @@
             </div>
           </div>
 
-          <!-- TO Section di kiri (75% lebar) -->
+          <!-- TO Section on left with about 75% width -->
           <div class="row" style="margin-bottom: 30px;">
             <div class="col-9" style="max-width: 75%;">
               <span style="font-weight: bold; font-size: 15px;">TO :</span><br/>
@@ -33,62 +33,62 @@
             </div>
           </div>
 
-          <!-- JUDUL INVOICE -->
+          <!-- INVOICE TITLE -->
           <div style="margin-bottom: 10px;">
             <span style="font-size: 28px; color: #6c5a7c; font-weight: 400;">Invoice <span t-esc="o.name"/></span>
           </div>
 
-          <!-- TABEL INFO INVOICE (borderless) -->
-          <table style="width: 100%; margin-bottom: 10px; border: none; border-collapse: collapse;">
+          <!-- INVOICE INFO TABLE (borderless) -->
+          <table style="width: 100%; margin-bottom: 10px; border-collapse: collapse; border: none;">
             <tr>
-              <td style="font-weight: bold;">Invoice Date</td>
-              <td style="font-weight: bold;">Delivery Date</td>
-              <td style="font-weight: bold;">Source</td>
-              <td style="font-weight: bold;">Reference</td>
+              <td style="font-weight: bold; border: none;">Invoice Date</td>
+              <td style="font-weight: bold; border: none;">Delivery Date</td>
+              <td style="font-weight: bold; border: none;">Source</td>
+              <td style="font-weight: bold; border: none;">Reference</td>
             </tr>
             <tr>
-              <td><span t-field="o.invoice_date"/></td>
-              <td><span t-field="o.invoice_date_due"/></td>
-              <td><span t-esc="o.invoice_origin or ''"/></td>
-              <td><span t-esc="o.ref or ''"/></td>
+              <td style="border: none;"><span t-field="o.invoice_date"/></td>
+              <td style="border: none;"><span t-field="o.invoice_date_due"/></td>
+              <td style="border: none;"><span t-esc="o.invoice_origin or ''"/></td>
+              <td style="border: none;"><span t-esc="o.ref or ''"/></td>
             </tr>
           </table>
 
-          <!-- TABEL PRODUK/JASA (borderless) -->
-          <table class="table table-sm" style="width: 100%; border: none; border-collapse: collapse; margin-bottom: 20px;">
+          <!-- PRODUCT LINES TABLE (borderless except single horizontal line under header) -->
+          <table class="table table-sm" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: none;">
             <thead>
-              <tr>
-                <th style="text-align: left; font-weight: bold;">Description</th>
-                <th style="text-align: right; font-weight: bold;">Quantity</th>
-                <th style="text-align: right; font-weight: bold;">Unit Price</th>
-                <th style="text-align: right; font-weight: bold;">Amount</th>
+              <tr style="border-bottom: 1px solid #000;">
+                <th style="text-align: left; font-weight: bold; border: none;">Description</th>
+                <th style="text-align: right; font-weight: bold; border: none;">Quantity</th>
+                <th style="text-align: right; font-weight: bold; border: none;">Unit Price</th>
+                <th style="text-align: right; font-weight: bold; border: none;">Amount</th>
               </tr>
             </thead>
             <tbody>
               <t t-foreach="o.invoice_line_ids" t-as="line">
                 <tr>
-                  <td><span t-field="line.name"/></td>
-                  <td style="text-align: right;"><span t-field="line.quantity"/> <span t-esc="line.product_uom_id.name"/></td>
-                  <td style="text-align: right;"><span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
-                  <td style="text-align: right;"><span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                  <td style="border: none;"><span t-field="line.name"/></td>
+                  <td style="text-align: right; border: none;"><span t-field="line.quantity"/> <span t-esc="line.product_uom_id.name"/></td>
+                  <td style="text-align: right; border: none;"><span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                  <td style="text-align: right; border: none;"><span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
                 </tr>
               </t>
             </tbody>
           </table>
 
-          <!-- TOTAL (borderless) -->
-          <table style="width: 40%; float: right; border: none; border-collapse: collapse;">
+          <!-- TOTALS TABLE (borderless) -->
+          <table style="width: 40%; float: right; border-collapse: collapse; border: none;">
             <tr>
-              <td style="text-align: right;">Untaxed Amount</td>
-              <td style="text-align: right;"><span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+              <td style="text-align: right; border: none;">Untaxed Amount</td>
+              <td style="text-align: right; border: none;"><span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
             </tr>
             <tr>
-              <td style="text-align: right;">Taxes</td>
-              <td style="text-align: right;"><span t-field="o.amount_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+              <td style="text-align: right; border: none;">Taxes</td>
+              <td style="text-align: right; border: none;"><span t-field="o.amount_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
             </tr>
             <tr>
-              <td style="text-align: right; font-weight: bold;">Total</td>
-              <td style="text-align: right; font-weight: bold;"><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+              <td style="text-align: right; font-weight: bold; border: none;">Total</td>
+              <td style="text-align: right; font-weight: bold; border: none;"><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
             </tr>
           </table>
         </main>
