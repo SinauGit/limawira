@@ -4,7 +4,7 @@
     "summary": "Custom report and print button for downpayment invoices",
     "category": "Accounting",
     "author": "BLACKBOXAI",
-    "depends": ["account"],
+    "depends": ["sale","account"],
     "data": [
         "views/account_move_views.xml",
         "report/downpayment_invoice_report.xml",
