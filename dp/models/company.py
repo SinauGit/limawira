@@ -4,3 +4,4 @@ class ResCompany(models.Model):
     _inherit = 'res.company'
 
     director = fields.Char(string='Director')
+    location_ttd = fields.Char(String ='Location Signature')

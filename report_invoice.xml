@@ -350,7 +350,7 @@
                 </tbody>
             </table>
                 <div style="margin-top: 50px; text-align: center;">
-                    <div>Jakarta,<t t-esc="o.invoice_date.strftime('%d %B %Y') if o.invoice_date else ''"/></div>
+                    <div><t t-esc="o.company_id.location_ttd or ''"/>,<t t-esc="o.invoice_date.strftime('%d %B %Y') if o.invoice_date else ''"/></div>
                     <div style="margin-top: 40px; font-weight: bold; text-decoration: underline; cursor: pointer;">
                        <t t-esc="o.company_id.director or ''"/>
                     </div>
