@@ -7,7 +7,7 @@
     <t t-set="lines" t-value="o.sale_id.order_line.sorted(key=lambda l: (-l.sequence, l.product_id.name, -l.id), reverse=True)"/>
 </t>
 <t t-else="">
-    <t t-set="lines" t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)"/>
+    <t t-set="lines" t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, l.move_name, -l.id), reverse=True)"/>
 </t>
 <t t-set="display_discount" t-value="any(l.discount for l in lines)"/>
                 <t t-set="current_subtotal" t-value="0"/>
