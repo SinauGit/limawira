@@ -3,9 +3,13 @@ from odoo import models, fields, api
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    sale_id = fields.Many2one('sale.order', string='Sale Order', 
-                             related='invoice_line_ids.sale_line_ids.order_id', 
-                             store=True, readonly=True)
+    sale_id = fields.Many2one('sale.order', string='Sale Order', compute='_compute_sale_id', store=True, readonly=True)
+
+    @api.depends('invoice_line_ids.sale_line_ids.order_id')
+    def _compute_sale_id(self):
+        for move in self:
+            sale_orders = move.invoice_line_ids.mapped('sale_line_ids.order_id')
+            move.sale_id = sale_orders[0] if sale_orders else False
 
     def has_downpayment_product(self):
         """Check if invoice contains downpayment product"""

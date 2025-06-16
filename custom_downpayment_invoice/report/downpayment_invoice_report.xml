@@ -5,9 +5,15 @@
         <!-- Replace the invoice lines table tbody -->
         <xpath expr="//tbody[@class='invoice_tbody']" position="replace">
             <tbody class="invoice_tbody">
+                <!-- Force computation of sale_id -->
+                <t t-set="dummy" t-value="o._compute_sale_id()"/>
+                
                 <!-- Prepare data for downpayment display -->
                 <t t-set="dp_data" t-value="o._get_downpayment_display_data(o)"/>
                 <t t-set="display_discount" t-value="any(l.discount for l in o.invoice_line_ids)"/>
+                
+                <!-- Debug Information (remove in production) -->
+                <!-- <tr><td colspan="99">DEBUG: Sale Order = <span t-out="o.sale_id.name or 'None'"/>, Lines = <span t-out="len(dp_data.get('sale_lines', []))"/></td></tr> -->
                 
                 <!-- SECTION 1: INVOICE ITEMS (What's being invoiced - Down Payment) -->
                 <tr class="fw-bold o_line_section">
@@ -18,8 +24,8 @@
                 
                 <!-- Display Invoice Lines -->
                 <t t-set="current_subtotal" t-value="0"/>
-                <t t-foreach="dp_data['invoice_lines']" t-as="line">
-                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"/>
+                <t t-foreach="dp_data.get('invoice_lines', [])" t-as="line">
+                    <t t-set="current_subtotal" t-value="current_subtotal + (line.price_subtotal if line.display_type == 'product' else 0)"/>
                     <tr t-att-class="'fw-bold o_line_section' if line.display_type == 'line_section' else 'fst-italic o_line_note' if line.display_type == 'line_note' else ''">
                         <t t-if="line.display_type == 'product'">
                             <td name="account_invoice_line_name">
@@ -60,20 +66,30 @@
                     </td>
                 </tr>
                 
-                <!-- SECTION 2: COMPLETE ORDER DETAILS (if sale order exists) -->
-                <t t-if="dp_data['show_both_sections']">
+                <!-- SECTION 2: COMPLETE ORDER DETAILS (Always show if sale order exists) -->
+                <t t-if="o.sale_id">
                     <tr style="height: 20px;"><td colspan="99"></td></tr> <!-- Spacer -->
                     
                     <tr class="fw-bold o_line_section">
                         <td colspan="99" style="background-color: #f8f9fa; padding: 8px;">
-                            <strong>🔸 COMPLETE ORDER DETAILS</strong>
+                            <strong>🔸 COMPLETE ORDER DETAILS (Order: <span t-field="o.sale_id.name"/>)</strong>
                         </td>
                     </tr>
                     
                     <!-- Display Sale Order Lines -->
                     <t t-set="order_subtotal" t-value="0"/>
-                    <t t-foreach="dp_data['sale_lines']" t-as="sale_line">
-                        <t t-set="order_subtotal" t-value="order_subtotal + sale_line.price_subtotal"/>
+                    <t t-set="sale_lines" t-value="o.sale_id.order_line.filtered(lambda l: l.display_type in ['product', 'line_section', 'line_note'])"/>
+                    
+                    <t t-if="not sale_lines">
+                        <tr>
+                            <td colspan="99" class="text-center fst-italic">
+                                No order lines found in sale order <span t-field="o.sale_id.name"/>
+                            </td>
+                        </tr>
+                    </t>
+                    
+                    <t t-foreach="sale_lines" t-as="sale_line">
+                        <t t-set="order_subtotal" t-value="order_subtotal + (sale_line.price_subtotal if sale_line.display_type == 'product' else 0)"/>
                         <tr t-att-class="'fw-bold o_line_section' if sale_line.display_type == 'line_section' else 'fst-italic o_line_note' if sale_line.display_type == 'line_note' else ''">
                             <t t-if="sale_line.display_type == 'product'">
                                 <td name="account_invoice_line_name">
@@ -119,6 +135,16 @@
                         <td colspan="99">
                             <strong>Remaining Balance: </strong>
                             <span t-out="order_subtotal - current_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                        </td>
+                    </tr>
+                </t>
+                
+                <!-- No Sale Order Message -->
+                <t t-if="not o.sale_id">
+                    <tr style="height: 20px;"><td colspan="99"></td></tr>
+                    <tr>
+                        <td colspan="99" class="text-center fst-italic">
+                            <em>No related sale order found for this invoice</em>
                         </td>
                     </tr>
                 </t>
