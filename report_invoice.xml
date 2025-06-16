@@ -349,13 +349,13 @@
                     </tr>
                 </tbody>
             </table>
-            <div style="margin-top: 50px; text-align: center;">
-                <div>Jakarta,<t t-esc="o.invoice_date.strftime('%d %B %Y') if o.invoice_date else ''"/></div>
-                <div style="margin-top: 40px; font-weight: bold; text-decoration: underline; cursor: pointer;">
-                   Hendarto Suryono P
+                <div style="margin-top: 50px; text-align: center;">
+                    <div>Jakarta,<t t-esc="o.invoice_date.strftime('%d %B %Y') if o.invoice_date else ''"/></div>
+                    <div style="margin-top: 40px; font-weight: bold; text-decoration: underline; cursor: pointer;">
+                       <t t-esc="o.company_id.director or ''"/>
+                    </div>
+                    <div>Director</div>
                 </div>
-                <div>Director</div>
-            </div>
         </t>
 
 
