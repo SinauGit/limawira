@@ -52,7 +52,7 @@
                                 <div class="text" style="font-size: 24px;">
                                     <strong style="color: blue;">No</strong> :
                                     <div t-foreach="o.reconciled_invoice_ids" t-as="inv">
-                                    <span t-field="inv.name"/>
+                                    <span t-field="inv.invoice_no"/>
                                     </div>
                                 </div>
                             </div>

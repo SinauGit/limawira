@@ -48,7 +48,7 @@
                             <div class="col-3"><p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em>No</em></p></div>
                             <div class="col-9" style="font-size: 16px;">
                                 <div t-foreach="o.reconciled_invoice_ids" t-as="inv">
-                                : <span t-field="inv.name"/>
+                                : <span t-field="inv.invoice_no"/>
                                 </div>
                             </div>
                         </div>
