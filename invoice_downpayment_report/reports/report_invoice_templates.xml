@@ -11,7 +11,7 @@
                 <t t-set="has_downpayment" t-value="any(line.product_id and 'down' in (line.name or '').lower() for line in o.invoice_line_ids)"/>
                 <t t-set="is_downpayment_invoice" t-value="'down' in (o.name or '').lower()"/>
                 <t t-set="print_from_order_line" t-value="print_with_downpayment_lines and (has_downpayment or is_downpayment_invoice)"/>
-                <t t-set="lines" t-value="print_from_order_line and o.invoice_line_ids.mapped('sale_line_ids').filtered(lambda l: l.order_id) or o.invoice_line_ids"/>
+                <t t-set="lines" t-value="print_from_order_line and o.sale_order_line_ids or o.invoice_line_ids"/>
 
                 <t t-foreach="lines" t-as="line">
                     <tr>
