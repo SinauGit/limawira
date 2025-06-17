@@ -1,0 +1,11 @@
+<odoo>
+    <report
+        id="action_invoice_with_downpayment_lines"
+        string="Invoice with Down Payment Lines"
+        model="account.move"
+        report_type="qweb-pdf"
+        name="invoice_downpayment_report.report_invoice_with_downpayment_lines"
+        file="invoice_downpayment_report.report_invoice_with_downpayment_lines"
+        print_report_name="'Invoice DP - %s' % (object.name)"
+    />
+</odoo>
