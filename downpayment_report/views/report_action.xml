@@ -5,8 +5,8 @@
                 <tr class="fw-bold o_line_section">
                     <td t-att-colspan="display_discount and 5 or 4">Sales Order Details</td>
                 </tr>
-        
-                <t t-set="display_discount" t-value="any(l.discount for l in o.invoice_line_ids)"/>
+                        
+                <!-- Discount column and related code removed as per request -->
                 <t t-foreach="[l for l in o.get_related_sale_order_lines() if not l.display_type and l.product_id]" t-as="so_line">
                     <tr>
                         <td><span t-field="so_line.name"/></td>
@@ -17,16 +17,7 @@
                         <td class="text-end text-nowrap">
                             <span t-field="so_line.price_unit"/>
                         </td>
-        
-                        <t t-if="display_discount">
-                            <td class="text-end text-nowrap">
-                                <t t-if="so_line.discount">
-                                    <span t-field="so_line.discount" t-options='{"widget": "float", "precision": 2}'/>
-                                </t>
-                                <t t-else=""><span>-</span></t>
-                            </td>
-                        </t>
-        
+
                         <td class="text-end text-nowrap">
                             <span t-field="so_line.price_subtotal"/>
                         </td>
