@@ -1,15 +1,18 @@
 <odoo>
     <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
+        <!-- Only show sales order details if there's exactly ONE down payment line -->
         <xpath expr="//table[@name='invoice_line_table']/tbody" position="before">
-            <t t-if="o.has_down_payment() and o.get_related_sale_order_lines()">
+            <t t-if="o.should_show_downpayment_template()">
                 <tr class="fw-bold o_line_section">
                     <td t-att-colspan="display_discount and 5 or 4">Sales Order Details</td>
                 </tr>
                         
-                <!-- Discount column and related code removed as per request -->
+                <!-- Show sale order lines excluding display_type lines and ensuring product exists -->
                 <t t-foreach="[l for l in o.get_related_sale_order_lines() if not l.display_type and l.product_id]" t-as="so_line">
                     <tr>
-                        <td><span t-field="so_line.name"/></td>
+                        <td>
+                            <span t-field="so_line.name"/>
+                        </td>
                         <td class="text-end text-nowrap">
                             <span t-field="so_line.product_uom_qty"/>
                             <span t-field="so_line.product_uom"/>
@@ -17,12 +20,16 @@
                         <td class="text-end text-nowrap">
                             <span t-field="so_line.price_unit"/>
                         </td>
-
                         <td class="text-end text-nowrap">
                             <span t-field="so_line.price_subtotal"/>
                         </td>
                     </tr>
                 </t>
+                
+                <!-- Add separator line after sales order details -->
+                <tr class="fw-bold o_line_section">
+                    <td t-att-colspan="display_discount and 5 or 4">Invoice Lines</td>
+                </tr>
             </t>
         </xpath>
     </template>
