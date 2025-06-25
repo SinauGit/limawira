@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<record id="view_sale_advance_payment_inv_form_inherit" model="ir.ui.view">
+    <field name="name">sale.advance.payment.inv.form.inherit</field>
+    <field name="model">sale.advance.payment.inv</field>
+    <field name="inherit_id" ref="sale.view_sale_advance_payment_inv"/>
+    <field name="arch" type="xml">
+        <field name="advance_payment_method" position="after">
+        <field name="payment_type" invisible="advance_payment_method != 'percentage' and advance_payment_method != 'fixed'"/>
+        </field>
+    </field>
+</record>
+</odoo> 
