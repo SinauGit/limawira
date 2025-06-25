@@ -1,6 +1,6 @@
 <odoo>
     <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
-        <xpath expr="//table[@name='invoice_line_table']/tbody" position="after">
+        <xpath expr="//table[@name='invoice_line_table']/tbody" position="before">
             <t t-if="o.has_down_payment() and o.get_related_sale_order_lines()">
                 <tr class="fw-bold o_line_section">
                     <td t-att-colspan="display_discount and 5 or 4">Sales Order Details</td>
