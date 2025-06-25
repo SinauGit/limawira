@@ -1,6 +1,24 @@
 # models/account_move.py
 from odoo import models, fields, api, _
 
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Override create untuk update section name di invoice"""
+        moves = super().create(vals_list)
+        
+        for move in moves:
+            # Update section name untuk down payment invoices
+            section_lines = move.line_ids.filtered(
+                lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
+            )
+            for section in section_lines:
+                section.name = _('Down Payment / Termin')
+        
+        return moves
+
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
     
@@ -17,7 +35,12 @@ class AccountMoveLine(models.Model):
         lines = super().create(vals_list)
         
         for line in lines:
-            if line.is_downpayment and line.sale_line_ids:
+            # Handle section lines
+            if line.display_type == 'line_section' and line.is_downpayment:
+                line.name = _('Down Payment / Termin')
+            
+            # Handle down payment lines
+            elif line.is_downpayment and line.sale_line_ids:
                 # Copy payment_type dan sequence dari SO line
                 so_line = line.sale_line_ids[0]
                 if hasattr(so_line, 'payment_type'):

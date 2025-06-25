@@ -18,12 +18,9 @@ class SaleAdvancePaymentInv(models.TransientModel):
         return values
     
     def _prepare_down_payment_section_values(self, order):
-        """Override untuk ubah name section berdasarkan payment_type"""
+        """Override untuk ubah name section menjadi 'Down Payment / Termin'"""
         values = super()._prepare_down_payment_section_values(order)
-        if self.payment_type == 'installment':
-            values['name'] = _('Termin')
-        else:
-            values['name'] = _('Down Payment')
+        values['name'] = _('Down Payment / Termin')
         return values
     
     def _get_down_payment_description(self, order):

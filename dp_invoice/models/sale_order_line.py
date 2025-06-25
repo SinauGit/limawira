@@ -49,14 +49,8 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         
         if self.display_type:
-            # Untuk section, tampilkan berdasarkan payment_type yang dominan di SO
-            installment_lines = self.order_id.order_line.filtered(
-                lambda l: l.is_downpayment and not l.display_type and l.payment_type == 'installment'
-            )
-            if installment_lines:
-                return _("Termin")
-            else:
-                return _("Down Payment")
+            # Untuk section, selalu tampilkan "Down Payment / Termin"
+            return _("Down Payment / Termin")
 
         dp_state = self._get_downpayment_state()
         
