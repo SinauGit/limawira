@@ -15,7 +15,7 @@ class AccountMove(models.Model):
                 lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
             )
             for section in section_lines:
-                section.name = _('Down Payment / Termin')
+                section.name = _('test')
         
         return moves
 
@@ -37,7 +37,7 @@ class AccountMoveLine(models.Model):
         for line in lines:
             # Handle section lines
             if line.display_type == 'line_section' and line.is_downpayment:
-                line.name = _('Down Payment / Termin')
+                line.name = _('Test')
             
             # Handle down payment lines
             elif line.is_downpayment and line.sale_line_ids:

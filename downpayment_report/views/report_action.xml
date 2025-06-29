@@ -25,11 +25,6 @@
                         </td>
                     </tr>
                 </t>
-                
-                <!-- Add separator line after sales order details -->
-                <tr class="fw-bold o_line_section">
-                    <td t-att-colspan="display_discount and 5 or 4">Invoice Lines</td>
-                </tr>
             </t>
         </xpath>
     </template>

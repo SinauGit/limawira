@@ -6,11 +6,6 @@
         <!-- Pindah TO: Customer di atas Judul Invoice -->
         <div class="mb-4" style="text-align: left;">
             <t t-if="o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)">
-                <div class="mb-3">
-                    <strong class="d-block">Shipping Address</strong>
-                    <div t-field="o.partner_shipping_id" 
-                         t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
-                </div>
                 <strong class="d-block mb-1">TO :</strong>
                 <address class="mb-0" t-field="o.partner_id"
                          t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'

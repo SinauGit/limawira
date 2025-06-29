@@ -50,7 +50,7 @@ class SaleOrderLine(models.Model):
         
         if self.display_type:
             # Untuk section, selalu tampilkan "Down Payment / Termin"
-            return _("Down Payment / Termin")
+            return _("Test")
 
         dp_state = self._get_downpayment_state()
         
