@@ -7,28 +7,28 @@
                             <div style="width: 100%; border-bottom: 1px solid #000; margin-bottom: 10px;">
                                 <div class="row">
                                     <div class="col-7">
-                                        <div class="row"> 
-                                            <div class="col-4 text-left" style="width: 70%; font-size: 16px; padding-left: 1.5rem;">
-                                                <strong>Tanggal &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; : </strong>
-                                                <span t-esc="o.date.strftime('%d  %B  %Y')"/>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-4 text-left" style="width: 70%; font-size: 16px; padding-left: 1.5rem;">
-                                                <strong>Tanggal Akhir : </strong>
-                                                <span t-esc="inv.invoice_date_due.strftime('%d  %B  %Y')"/>
-                                            </div>
-                                        </div>
+                                        <table class="table-borderless" style="font-size: 16px; margin-left: 1rem;">
+                                            <tr>
+                                                <td style="padding-right: 3px;"><strong>Tanggal</strong></td>
+                                                <td style="padding-right: 3px;">:</td>
+                                                <td><span t-esc="o.date.strftime('%d %B %Y')"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-right: 3px;"><strong>Tanggal Akhir</strong></td>
+                                                <td style="padding-right: 3px;">:</td>
+                                                <td><span t-esc="inv.invoice_date_due.strftime('%d %B %Y')"/></td>
+                                            </tr>
+                                        </table>
                                     </div>
                                     <div class="col-5" style="padding-right: 1.5rem; text-align: right;">
                                 <!-- Logo Perusahaan -->
                                 <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 150px; height: auto;"/>
                                         <!-- Alamat Perusahaan -->
                                         <div style="line-height: 1.5; text-align: right;">
-                                            <p style="font-weight: bold; margin-bottom: 2px; margin-left: 20px; font-size: 24px"><span t-esc="o.company_id.name or ''" style="font-weight: bold;"/></p>
-                                            <p style="font-size: 14px;">
+                                            <!--<p style="font-weight: bold; margin-bottom: 2px; margin-left: 20px; font-size: 24px"><span t-esc="o.company_id.name or ''" style="font-weight: bold;"/></p>-->
+                                            <p style="font-size: 12px;">
                                                 <span t-esc="o.company_id.street"/> <br/>
-                                                <!-- <span t-if="o.company_id.street2" t-esc="o.company_id.street2"/> <br/> -->
+                                                <span t-if="o.company_id.street2" t-esc="o.company_id.street2"/> <br/> 
                                                 <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.country_id.name"/><br/>
                                                 Telepon: <span t-esc="o.company_id.phone"/><br/>
                                                 <!--Fax: <span t-esc="o.company_id.mobile"/>-->
