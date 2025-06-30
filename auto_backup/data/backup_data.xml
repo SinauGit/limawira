@@ -3,7 +3,7 @@
     <data noupdate="1">
         <record id="backup_scheduler" model="ir.cron">
             <field name="name">Backup scheduler</field>
-            <field name="model_id" ref="model_db_backup"/>
+            <field name="model_id" ref="base.model_db_backup"/>
             <field name="state">code</field>
             <field name="code">model.schedule_backup()</field>
             <field name="priority">5</field>
@@ -11,7 +11,7 @@
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="active">False</field>
-            <field name="doall">False</field>
+            <!-- <field name="doall">False</field> -->
         </record>
     </data>
 </odoo>

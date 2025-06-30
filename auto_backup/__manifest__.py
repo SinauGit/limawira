@@ -32,6 +32,6 @@
         'security/user_groups.xml',
         'security/ir.model.access.csv',
         'views/backup_view.xml',
-        'data/backup_data.xml',
+        # 'data/backup_data.xml',
     ],
 }

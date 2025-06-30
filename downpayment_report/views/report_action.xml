@@ -1,6 +1,5 @@
 <odoo>
     <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
-        <!-- Only show sales order details if there's exactly ONE down payment line -->
         <xpath expr="//table[@name='invoice_line_table']/tbody" position="before">
             <t t-if="o.should_show_downpayment_template()">
                 <tr class="fw-bold o_line_section">
