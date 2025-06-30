@@ -19,19 +19,20 @@
     'author': "Yenthe Van Ginneken",
     'website': "http://www.odoo.yenthevg.com",
     'category': 'Administration',
-    'version': '1.0',
+    'version': '18.0.0.1',
     'installable': True,
     'license': 'LGPL-3',
     'module_type': 'official',
 
     # any module necessary for this one to work correctly
     'depends': ['base'],
+    'external_dependencies': {'python': ['paramiko']},
 
     # always loaded
     'data': [
         'security/user_groups.xml',
         'security/ir.model.access.csv',
         'views/backup_view.xml',
-        # 'data/backup_data.xml',
+        'data/backup_data.xml',
     ],
 }

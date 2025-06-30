@@ -3,7 +3,7 @@
     <data>
         <!-- Template for Kwitansi -->
         <template id="bs_po_jasa_template">
-            <t t-call="web.external_layout">
+            <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="o">
                     <!-- Header Section -->
                     <div class="row">
