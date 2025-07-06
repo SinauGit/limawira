@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+    <!-- Inherit existing action for partial revaluation -->
+    <record id="action_revalue_layers_inherit" model="ir.actions.act_window">
+        <field name="name">Adjust Valuation (Custom)</field>
+        <field name="res_model">stock.valuation.layer.revaluation</field>
+        <field name="view_mode">form</field>
+        <field name="binding_model_id" ref="stock_account.model_stock_valuation_layer"/>
+        <field name="binding_view_types">list</field>
+        <field name="target">new</field>
+        <field name="context">{'revaluation_mode': 'partial'}</field>
+    </record>
+
+    <!-- Action for partial revaluation dari menu -->
+    <record id="action_partial_stock_valuation_layer_revaluation" model="ir.actions.act_window">
+        <field name="name">Partial Stock Valuation Revaluation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.valuation.layer.revaluation</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'revaluation_mode': 'partial'}</field>
+    </record>
+
+    <!-- Menu item untuk partial revaluation -->
+    <record id="menu_partial_stock_valuation_revaluation" model="ir.ui.menu">
+        <field name="name">Partial Stock Revaluation</field>
+        <field name="parent_id" ref="stock.menu_warehouse_report"/>
+        <field name="action" ref="action_partial_stock_valuation_layer_revaluation"/>
+        <field name="sequence">25</field>
+    </record>
+
+</odoo>

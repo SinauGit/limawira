@@ -30,9 +30,9 @@
                                         </h1>
                                         <div style="font-size: 24px; border-top: 1px solid; border-bottom: 1px solid;">
                                             <strong style="color: blue;">No</strong> :
-                                            <div t-foreach="o.reconciled_invoice_ids" t-as="inv">
-                                            <span t-field="inv.invoice_no"/>
-                                            </div>
+                                            <t t-foreach="o.reconciled_invoice_ids" t-as="inv">
+                                                <span t-field="inv.invoice_no"/>
+                                            </t>
                                         </div>
                                     </div>
                                 </div>
@@ -140,9 +140,11 @@
                                 <br/>
                                 <br/>
                                 <br/>
-                                <div>Antonius Santoso.</div>
-                                <span style="border-bottom: 1px solid black; width: 200px; display: inline-block; margin-right: 20px;"/>
-                                <div>Direktur</div>
+                                <div style="text-align: center; line-height: 1;">
+                                    <div style="margin-bottom: 0px;">Antonius Santoso.</div>
+                                    <div style="border-bottom: 1px solid black; width: 200px; margin: 0 auto;"></div>
+                                    <div style="margin-top: 2px;">Direktur</div>
+                                </div>
                             </div>
                         </div>
 

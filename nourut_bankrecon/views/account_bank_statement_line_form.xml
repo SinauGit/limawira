@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bank_statement_line_quick_create_form_inherit" model="ir.ui.view">
+        <field name="name">account.bank.statement.line.quick.create.form.inherit</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="inherit_id" ref="account_accountant.view_bank_statement_line_quick_create_form_bank_rec_widget"/>
+        <field name="arch" type="xml">
+            <!-- Add Notes field to quick create form -->
+            <xpath expr="//field[@name='payment_ref']" position="after">
+                <field name="narration" required="1" readonly="is_reconciled and amount != 0" nolabel="1" placeholder="No Urut"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
