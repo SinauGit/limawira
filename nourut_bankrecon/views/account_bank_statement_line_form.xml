@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <!-- Add Notes field to quick create form -->
             <xpath expr="//field[@name='payment_ref']" position="after">
-                <field name="narration" required="1" readonly="is_reconciled and amount != 0" nolabel="1" placeholder="No Urut"/>
+                <field name="no_journal" required="1" readonly="is_reconciled and amount != 0" nolabel="1" placeholder="No Urut"/>
             </xpath>
         </field>
     </record>
