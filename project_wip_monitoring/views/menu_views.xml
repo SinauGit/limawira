@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <menuitem id="menu_wip_project_analytic_items"
+                  name="WIP Project Monitoring"
+                  parent="account.menu_finance_entries"
+                  action="action_account_analytic_line_wip"
+                  sequence="25"
+                  groups="account.group_account_user"/>
+
+    </data>
+</odoo>

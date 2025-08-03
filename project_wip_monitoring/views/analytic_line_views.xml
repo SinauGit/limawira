@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- List View for WIP Project Analytic Items -->
+        <record id="view_account_analytic_line_list_wip" model="ir.ui.view">
+            <field name="name">account.analytic.line.list.wip</field>
+            <field name="model">account.analytic.line</field>
+            <field name="arch" type="xml">
+                <list string="WIP Project Analytic Items" 
+                      create="false" 
+                      edit="false" 
+                      delete="false"
+                      expand="1"
+                      decoration-bf="1">
+                    <field name="date"/>
+                    <field name="display_name"/>
+                    <field name="account_id" string="Project"/>
+                    <field name="account_id" string="Project 2" optional="hide"/>
+                    <field name="account_id" string="project 3" optional="hide"/>
+                    <field name="company_id"/>
+                    <field name="amount" sum="Total"/>
+                    <field name="ref" optional="hide"/>
+                    <field name="move_line_id" optional="hide"/>
+                    <field name="general_account_id" column_invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View for WIP Project Analytic Items -->
+        <record id="view_account_analytic_line_search_wip" model="ir.ui.view">
+            <field name="name">account.analytic.line.search.wip</field>
+            <field name="model">account.analytic.line</field>
+            <field name="arch" type="xml">
+                <search string="Search WIP Project Analytic Items">
+                    <field name="name" string="Description"/>
+                    <field name="date"/>
+                    <field name="account_id" string="Project Account"/>
+                    <field name="general_account_id" string="Financial Account"/>
+                    <field name="ref"/>
+                    <field name="move_line_id"/>
+                    <field name="company_id"/>
+                    
+                    <filter string="Today" name="today"
+                            domain="[('date','=',context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Month" name="month"
+                            domain="[('date','&gt;=',context_today().strftime('%Y-%m-01'))]"/>
+                    
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Date" name="group_date" context="{'group_by':'date'}"/>
+                        <filter string="Project Account" name="group_project" context="{'group_by':'account_id'}"/>
+                        <filter string="Reference" name="group_ref" context="{'group_by':'ref'}"/>
+                        <filter string="Journal Item" name="group_journal_item" context="{'group_by':'move_line_id'}"/>
+                        <filter string="Company" name="group_company" context="{'group_by':'company_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Form View for WIP Project Analytic Items -->
+        <record id="view_account_analytic_line_form_wip" model="ir.ui.view">
+            <field name="name">account.analytic.line.form.wip</field>
+            <field name="model">account.analytic.line</field>
+            <field name="arch" type="xml">
+                <form string="WIP Project Analytic Item" create="false" edit="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date" readonly="1"/>
+                                <field name="display_name" readonly="1"/>
+                                <field name="account_id" readonly="1"/>
+                                <field name="general_account_id" readonly="1"/>
+                                <field name="auto_account_id" readonly="1"/>
+                                <field name="ref" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="move_line_id" readonly="1"/>
+                                <field name="company_id" readonly="1"/>
+                                <field name="amount" readonly="1"/>
+                                <field name="currency_id" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+        <!-- Kanban View for WIP Project Analytic Items -->
+        <record id="view_account_analytic_line_kanban_wip" model="ir.ui.view">
+            <field name="name">account.analytic.line.kanban.wip</field>
+            <field name="model">account.analytic.line</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" create="false" edit="false" delete="false">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="account_id"/>
+                    <field name="amount"/>
+                    <field name="currency_id"/>
+                    <field name="ref"/>
+                    <field name="company_id"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="d-flex justify-content-between">
+                                <field class="fw-bold fs-5" name="name"/>
+                                <field class="text-end fw-bold fs-5" name="date"/>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <field class="text-muted" name="account_id"/>
+                                <field class="justify-content-end" name="amount" widget="monetary"/>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <field class="text-muted small" name="ref"/>
+                                <field class="text-muted small text-end" name="company_id"/>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Graph View for WIP Project Analytic Items -->
+        <record id="view_account_analytic_line_graph_wip" model="ir.ui.view">
+            <field name="name">account.analytic.line.graph.wip</field>
+            <field name="model">account.analytic.line</field>
+            <field name="arch" type="xml">
+                <graph string="WIP Project Analytics" type="bar" sample="1">
+                    <field name="account_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="amount" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Pivot View for WIP Project Analytic Items -->
+        <record id="view_account_analytic_line_pivot_wip" model="ir.ui.view">
+            <field name="name">account.analytic.line.pivot.wip</field>
+            <field name="model">account.analytic.line</field>
+            <field name="arch" type="xml">
+                <pivot string="WIP Project Analytics" sample="1">
+                    <field name="account_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="amount" type="measure"/>
+                    <field name="company_id" type="row"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- <record id="view_account_analytic_line_grid_wip" model="ir.ui.view">
+            <field name="name">account.analytic.line.grid.wip</field>
+            <field name="model">account.analytic.line</field>
+            <field name="arch" type="xml">
+                <grid string="WIP Project Analytics Grid" 
+                      create="false" 
+                      edit="false" 
+                      delete="false"
+                      adjustment="object"
+                      adjust_name="adjust_grid">
+                    <field name="account_id" type="row" section="1"/>
+                    <field name="ref" type="row"/>
+                    <field name="date" type="col">
+                        <range name="week" string="Week" span="week" step="day"/>
+                        <range name="month" string="Month" span="month" step="day"/>
+                        <range name="year" string="Year" span="year" step="month"/>
+                    </field>
+                    <field name="amount" type="measure" widget="monetary"/>
+                    <button string="Adjust" type="object" name="action_adjust_grid" class="btn-secondary"/>
+                </grid>
+            </field>
+        </record> -->
+
+        <record id="action_account_analytic_line_wip" model="ir.actions.act_window">
+            <field name="name">WIP Project Monitoring</field>
+            <field name="res_model">account.analytic.line</field>
+            <field name="view_mode">list,kanban,form,graph,pivot,grid</field>
+            <field name="domain">[('general_account_id.code', '=', '1061')]</field>
+            <field name="context">{
+                'group_by': ['account_id', 'ref', 'move_line_id'],
+                'create': False,
+                'edit': False,
+                'delete': False,
+                'hide_breadcrumbs': True,
+            }</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_account_analytic_line_list_wip')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('analytic.view_account_analytic_line_kanban')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('analytic.view_account_analytic_line_form')}),
+                (0, 0, {'view_mode': 'graph', 'view_id': ref('analytic.view_account_analytic_line_graph')}),
+                (0, 0, {'view_mode': 'grid', 'view_id': ref('analytic_enterprise.account_analytic_line_report_view_grid')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('analytic.view_account_analytic_line_pivot')})]"/>
+            <field name="search_view_id" ref="view_account_analytic_line_search_wip"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No WIP Project Monitoring found.
+                </p>
+                <p>
+                    This view shows Wip Project Monitoring filtered by account code '1061' (WIP Project).
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>
