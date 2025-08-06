@@ -82,8 +82,37 @@ class StockMove(models.Model):
             return False
         return True
 
+    # PERBAIKAN: Override create method untuk memastikan location_id ter-set
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            # Pastikan location_id dan location_dest_id ter-set
+            if not vals.get('location_id') and vals.get('picking_id'):
+                picking = self.env['stock.picking'].browse(vals['picking_id'])
+                if picking and picking.location_id:
+                    vals['location_id'] = picking.location_id.id
+            
+            if not vals.get('location_dest_id') and vals.get('picking_id'):
+                picking = self.env['stock.picking'].browse(vals['picking_id'])
+                if picking and picking.location_dest_id:
+                    vals['location_dest_id'] = picking.location_dest_id.id
+                    
+        return super().create(vals_list)
+
     def _action_done(self, cancel_backorder=False):
         for move in self:
+            # PERBAIKAN: Validasi location sebelum action_done
+            if not move.location_id:
+                raise models.ValidationError(
+                    f"Source location is mandatory for move {move.name}. "
+                    f"Please set the location_id before validating."
+                )
+            if not move.location_dest_id:
+                raise models.ValidationError(
+                    f"Destination location is mandatory for move {move.name}. "
+                    f"Please set the location_dest_id before validating."
+                )
+                
             move.move_line_ids.analytic_distribution = move.analytic_distribution
             if not move._need_validate_distribution():
                 continue
@@ -111,6 +140,13 @@ class StockMoveLine(models.Model):
         res = super()._prepare_stock_move_vals()
         if self.analytic_distribution:
             res.update({"analytic_distribution": self.analytic_distribution})
+        
+        # PERBAIKAN: Pastikan location_id dan location_dest_id ter-set dari move line
+        if not res.get('location_id') and self.location_id:
+            res['location_id'] = self.location_id.id
+        if not res.get('location_dest_id') and self.location_dest_id:
+            res['location_dest_id'] = self.location_dest_id.id
+            
         return res
 
     def write(self, vals):

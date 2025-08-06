@@ -5,8 +5,7 @@ class StockPicking(models.Model):
     _name = "stock.picking"
     _inherit = ["stock.picking", "analytic.mixin"]
 
-    original_analytic_distribution = fields.Json(
-    )
+    original_analytic_distribution = fields.Json()
     analytic_distribution = fields.Json(inverse="_inverse_analytic_distribution")
 
     @api.depends(
@@ -58,7 +57,29 @@ class StockPicking(models.Model):
         """
         for picking in self:
             if picking.analytic_distribution:
-                picking.move_ids_without_package.write(
+                # PERBAIKAN: Pastikan moves sudah punya location sebelum update
+                moves_to_update = picking.move_ids_without_package.filtered(
+                    lambda m: m.location_id and m.location_dest_id
+                )
+                moves_to_update.write(
                     {"analytic_distribution": picking.analytic_distribution}
                 )
             picking.original_analytic_distribution = picking.analytic_distribution
+
+    def button_validate(self):
+        # PERBAIKAN: Validasi locations sebelum validate
+        for picking in self:
+            for move in picking.move_ids_without_package:
+                if not move.location_id:
+                    raise models.ValidationError(
+                        f"Source location is missing for move {move.name} "
+                        f"in picking {picking.name}. Please set the source location."
+                    )
+                if not move.location_dest_id:
+                    raise models.ValidationError(
+                        f"Destination location is missing for move {move.name} "
+                        f"in picking {picking.name}. Please set the destination location."
+                    )
+        
+        self = self.with_context(validate_analytic=True)
+        return super().button_validate()
