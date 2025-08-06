@@ -1,7 +1,6 @@
 {
     'name': 'Hak Akses Accounting LWW',
     'version': '1.0',
-    'summary': 'Kustomisasi hak akses accounting untuk LWW',
     'depends': ['account'],
     'data': [
         # 'security/res_groups.xml',

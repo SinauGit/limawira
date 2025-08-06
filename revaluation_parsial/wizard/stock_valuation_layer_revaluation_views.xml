@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stock_valuation_layer_revaluation_form_inherit" model="ir.ui.view">
+        <field name="name">stock.valuation.layer.revaluation.form.inherit</field>
+        <field name="model">stock.valuation.layer.revaluation</field>
+        <field name="inherit_id" ref="stock_account.stock_valuation_layer_revaluation_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="revaluation_mode" widget="radio" readonly="1"/>
+            </xpath>
+            
+            <xpath expr="//group[1]" position="after">
+                <group attrs="{'invisible': [('revaluation_mode', '!=', 'partial')]}">
+                    <field name="selected_layer_ids" nolabel="1" colspan="2">
+                        <tree editable="bottom">
+                            <field name="reference" readonly="1"/>
+                            <field name="product_id" readonly="1" optional="hide"/>
+                            <field name="lot_id" readonly="1" optional="show"/>
+                            <field name="original_qty" readonly="1" string="Available Qty"/>
+                            <field name="selected_qty" string="Qty to Revalue" 
+                                   attrs="{'readonly': [('selected_qty', '&lt;=', 0)]}"/>
+                            <field name="value_per_unit" readonly="1" string="Value/Unit"/>
+                            <field name="selected_value" readonly="1" string="Selected Value"/>
+                        </tree>
+                    </field>
+                </group>
+            </xpath>
+            
+            <xpath expr="//group[last()]" position="after">
+                <div class="alert alert-info" role="alert" attrs="{'invisible': [('revaluation_mode', '!=', 'partial')]}">
+                    <strong>Partial Revaluation Mode:</strong><br/>
+                    Only the selected quantities from the layers above will be revalued. 
+                    You can adjust the "Qty to Revalue" for each layer as needed.
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

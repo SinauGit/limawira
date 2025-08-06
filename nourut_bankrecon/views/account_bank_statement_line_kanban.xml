@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bank_statement_line_kanban_inherit_alt" model="ir.ui.view">
+        <field name="name">account.bank.statement.line.kanban.inherit.alt</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="inherit_id" ref="account_accountant.view_bank_statement_line_kanban_bank_rec_widget"/>
+        <field name="arch" type="xml">
+            <!-- Add Notes field to kanban view -->
+            <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="notes"/>
+            </xpath>
+            
+            <!-- Add Notes display inside the main container -->
+            <xpath expr="//div[@style='width:100%']" position="inside">
+                <!-- Row 3 - Notes -->
+                <div t-if="record.notes.raw_value" class="d-flex mt-1">
+                    <div class="text-truncate flex-fill text-muted small">
+                        <i class="fa fa-sticky-note-o me-1 text-info" title="Notes"/>
+                        <span class="fst-italic">
+                            <t t-esc="record.notes.raw_value"/>
+                        </span>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

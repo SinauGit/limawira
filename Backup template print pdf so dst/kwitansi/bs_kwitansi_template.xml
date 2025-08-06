@@ -1,0 +1,174 @@
+<t t-name="lww_kwitansi.bs_kwitansi_template">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="o">
+                  <main>
+                    <div class="page">
+                        <div t-foreach="o.reconciled_invoice_ids" t-as="inv">
+                            <div style="width: 100%; border-bottom: 1px solid #000; margin-bottom: 10px;">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <table class="table-borderless" style="font-size: 16px; margin-left: 1rem;">
+                                            <tr>
+                                                <td style="padding-right: 3px;"><strong>Tanggal</strong></td>
+                                                <td style="padding-right: 3px;">:</td>
+                                                <td><span t-esc="o.date.strftime('%d %B %Y')"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-right: 3px;"><strong>Tanggal Akhir</strong></td>
+                                                <td style="padding-right: 3px;">:</td>
+                                                <td><span t-esc="inv.invoice_date_due.strftime('%d %B %Y')"/></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-5" style="padding-right: 1.5rem; text-align: right;">
+                                <!-- Logo Perusahaan -->
+                                <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 150px; height: auto;"/>
+                                        <!-- Alamat Perusahaan -->
+                                        <div style="line-height: 1.5; text-align: right;">
+                                            <!--<p style="font-weight: bold; margin-bottom: 2px; margin-left: 20px; font-size: 24px"><span t-esc="o.company_id.name or ''" style="font-weight: bold;"/></p>-->
+                                            <p style="font-size: 12px;">
+                                                <span t-esc="o.company_id.street"/> <br/>
+                                                <span t-if="o.company_id.street2" t-esc="o.company_id.street2"/> <br/> 
+                                                <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.country_id.name"/><br/>
+                                                Telepon: <span t-esc="o.company_id.phone"/><br/>
+                                                <!--Fax: <span t-esc="o.company_id.mobile"/>-->
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="oe_structure"/>
+                        <div class="row">
+                            <div class="col-7" style="height: 70px; display: flex; border: none;">
+                                <div class="text" style="background-color: none; border: none; font-size: 30px; text-align: left; padding-left: 1.5rem;">
+                                    <h1 style="font-size: 4rem;">
+                                    <em>Kwitansi</em>
+                                    </h1>
+                                </div>
+                            </div>
+                            <!-- <div class='col-2'></div> -->
+                            <!-- Logo dan Alamat Perusahaan -->
+                            <div class="col-5">
+                                <br/>
+                                <div class="text" style="font-size: 24px;">
+                                    <strong style="color: blue;">No</strong> :
+                                    <t t-foreach="o.reconciled_invoice_ids" t-as="inv">
+                                    <span t-field="inv.invoice_no"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <!-- Customer dan alamat customer -->
+                        <div class="row">
+                            <div class="col-3">
+                                <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Terima dari</em> : </p>
+                            </div>
+                            <div class="col-9" style="font-size: 16px; border-bottom: 1px solid #000;">
+                                <span t-esc="o.partner_id.name"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-3"/>
+                            <div class="col-9" style="font-size: 16px; border-bottom: 1px solid #000;">
+                                <span t-esc="o.partner_id.street"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-3"/>
+                            <div class="col-9" style="font-size: 16px; border-bottom: 1px solid #000;">
+                                <span t-esc="o.partner_id.city"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <!-- Nominal disebutkan -->
+                        <div class="row">
+                            <div class="col-3">
+                                <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Uang sebanyak</em> : </p>
+                            </div>
+                            <div class="col-9" style="font-size: 16px; border-bottom: 1px solid #000;">
+                                <span t-esc="o.amount_to_word"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <!-- Note atau Memo -->
+                        <div class="row">
+                            <div class="col-3"><p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Keterangan</em> : </p></div>
+                            <div class="col-9" style="font-size: 16px; border-bottom: 1px solid #000;">
+                                <span t-esc="o.memo" style="text-align: left; padding-right: 1rem;"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <br/>
+                    </div>
+                    <br/>
+                    <span style="border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-right: 20px;"/>
+                    <br/>
+                    <div>
+                        <!-- Informasi Bank -->
+                        <div class="row">
+                            <div class="col-3">
+                                <p style="text-align: left; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Mohon ditransfer ke: </em></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;">Bank</p>
+                            </div>
+                            <div class="col-10" style="font-size: 16px;"> 
+                                : <span t-field="o.partner_bank_id.bank_id.name"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;">No Rek</p>
+                            </div>
+                            <div class="col-10" style="font-size: 16px;"> 
+                                : <span t-field="o.partner_bank_id.acc_number"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;">Atas Nama</p>
+                            </div>
+                            <div class="col-6" style="font-size: 16px;"> 
+                                : <span t-field="o.company_id"/>
+                            </div>
+                            <div class="col-4 text text-center">
+                                Hormat kami,
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <div>Gunawan Harsaputra.</div>
+                                <span style="border-bottom: 1px solid black; width: 200px; display: inline-block; margin-right: 20px;"/>
+                                <div>Direktur</div>
+                            </div>
+                        </div>
+                        <!-- Jumlah Uang dan TTD -->
+                        <div class="row">
+                            <div class="col-6">
+                                <table width="100%">
+                                    <tr class="text text-center" style="border-bottom: 1px solid;">
+                                        Total : 
+                                        <th>
+                                            <span style="font-size:26px;padding-top:10px;padding-bottom:10px;" t-esc="o.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id, &quot;precision&quot;: 0}"/>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<span style="border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-right: 20px;"/>-->
+                    <!--<br/>-->
+                    <!--<footer>-->
+                    <!--    <p style="font-size: 12px; text-align: center;"><em>Mohon bukti transfer difax ke No: 021 - 88951097, harap cantumkan No. Invoice</em></p>-->
+                    <!--</footer>-->
+                  </main>
+                </t>
+            </t>
+        </t>

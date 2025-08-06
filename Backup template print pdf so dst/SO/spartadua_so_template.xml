@@ -1,190 +1,190 @@
 <t t-name="lww_sales.spartadua_so_template">
-    <t t-call="web.external_layout">
-        <t t-foreach="docs" t-as="o">
-            <!-- Header Section -->
-            <div class="row">
-                <div class="col-4" style="height: 100px; display: flex; flex-direction: column; justify-content: center; padding-top: 50px;">
-                    <div style="font-size: 16px; line-height: 1.5; text-align: left;">
-                        <p style="font-weight: bold; margin-bottom: 2px; font-size: 20px"><span t-esc="o.company_id.name or ''" style="font-weight: bold;"/></p>
-                        <p>
-                            <span t-esc="o.company_id.street"/> <br/>
-                            <span t-esc="o.company_id.city"/> <br/>
-                            <span t-esc="o.company_id.state_id.name"/> <span t-esc="o.company_id.zip"/> <span t-esc="o.company_id.country_id.name"/><br/>
-                            Telepon: <span t-esc="o.company_id.phone"/><br/>
-                            Fax: <span t-esc="o.company_id.mobile"/>
-                        </p>
-                    </div>
-                </div>
-                <div class="col-4" style="height: 150px; display: flex; flex-direction: column; justify-content: center;">
-                    <div class="text" style="font-size: 26px; text-align: center; padding-left: 2.5rem; padding-top: 25px;">
-                        <h1 style="font-size: 26px;">
-                            <strong><u>SALES ORDER</u></strong>
-                        </h1>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="row" style="text-align: right;">
-                        <div class="col-4"/>
-                        <div class="col-8">
-                            <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 180px; height: auto;"/>
-                        </div>
-                    </div>
-                    <div class="row" style="padding-top: 70px;">
-                        <div class="col-4">
-                            <!-- <p style='text-align: left; font-size: 16px;'>Shipping To : </p> -->
-                        </div>
-                        <div class="col-8" style="font-size: 16px; border: 1px;">
-                            <!-- <span t-esc="o.picking_type_id.company_id.name or ''"/> -->
-                            <!-- : <span t-esc="o.date_approve.strftime('%d-%b-%y') or ''"/> -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Main Section -->
-            <main>
-                <div class="page" style="padding: 1px;">
-                    <!-- Supplier Section -->
-                    <div class="row" style="margin-bottom: 5px; font-size: 16px;">
-                        <div class="col-6">
-                            <table class="table table-sm" style="margin-bottom: 5px; border: 1px solid;">
-                                <tr>
-                                    <td class="col-3" style="border: 1px solid; border-bottom: none; border-right: none;">
-                                        &amp;nbsp;Customer Name
-                                    </td>
-                                    <td class="col-9" style="border: 1px solid; border-left: none; border-bottom: none;">
-                                        : <span t-esc="o.partner_id.name or '-'" style="text-align: left; font-size: 16px; margin-left: 3px;"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-3" style="border: 1px solid; border-top: none; border-bottom: none; border-right: none;">
-                                        &amp;nbsp;Address
-                                    </td>
-                                    <td class="col-9" style="border: 1px solid; border-left: none; border-bottom: none; border-top: none;">
-                                        : <span t-esc="o.partner_id.street"/>, <span t-esc="o.partner_id.city"/>, <br/>
-                                          <span t-esc="o.partner_id.state_id.name"/> <span t-esc="o.partner_id.zip"/>, <span t-esc="o.partner_id.country_id.name"/><br/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-3" style="border: 1px solid; border-top: none; border-bottom: none; border-right: none;">
-                                        &amp;nbsp;Phone/Fax No.
-                                    </td>
-                                    <td class="col-9" style="border: 1px solid; border-left: none; border-bottom: none; border-top: none;">
-                                        : <span t-esc="o.partner_id.phone or '-'" style="text-align: left; font-size: 16px; margin-left: 3px;"/> / <span t-esc="o.partner_id.mobile or '-'" style="text-align: left; font-size: 16px; margin-left: 5px;"/>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        &amp;nbsp;
-                        <div class="col-6">
-                            <table class="table table-sm" style="margin-bottom: 5px; border: 1px solid;">
-                                <tr>
-                                    <td class="col-4" style="border: 1px solid; border-bottom: none; border-right: none;">
-                                        &amp;nbsp;Sales order No.
-                                    </td>
-                                    <td class="col-8" style="border: 1px solid; border-left: none; border-bottom: none;">
-                                        : <span t-esc="(o.name + ' ' + o.no_so) if o.name and o.no_so else (o.name or o.no_so or '')" style="text-align: left; font-size: 16px; margin-left: 5px;"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-4" style="border: 1px solid; border-top: none; border-bottom: none; border-right: none;">
-                                        &amp;nbsp;Order Date
-                                    </td>
-                                    <td class="col-8" style="border: 1px solid; border-left: none; border-bottom: none; border-top: none;">
-                                        : <span t-esc="o.date_order.strftime('%d-%b-%y') or ''" style="font-size: 15px;"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-4" style="border: 1px solid; border-top: none; border-right: none;">
-                                        &amp;nbsp;Currency
-                                    </td>
-                                    <td class="col-8" style="border: 1px solid; border-left: none; border-top: none;">
-                                        : <span t-esc="o.currency_id.name or ''" style="text-align: left; font-size: 16px; margin-left: 5px;"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-4" style="border: 1px solid; border-top: none; border-bottom: none; border-right: none;">
-                                        &amp;nbsp;Sales
-                                    </td>
-                                    <td class="col-8" style="border: 1px solid; border-left: none; border-bottom: none; border-top: none;">
-                                        : <span t-esc="o.employee_id.name or ''" style="font-size: 15px;"/>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- Table Product -->
-                    <t t-set="lines_to_report" t-value="o._get_order_lines_to_report()"/>
-                    <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
-                        <table class="table table-sm" style="margin-bottom: 5px; border: 1px;">
-                            <thead style="border: 1px;">
-                                <tr>
-                                    <th style="font-size: 16px; text-align: center; font-weight: bold;">No</th>
-                                    <th style="font-size: 16px; text-align: center; font-weight: bold;">Item Code</th>
-                                    <th style="font-size: 16px; text-align: center; font-weight: bold;">Item</th>
-                                    <th style="font-size: 16px; text-align: center; font-weight: bold;">Price</th>
-                                    <th style="font-size: 16px; text-align: center; font-weight: bold;">Quantity</th>
-                                    <th style="font-size: 16px; text-align: center; font-weight: bold;">Amount</th>
-                                    <th style="font-size: 16px; text-align: center; font-weight: bold;">Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody style="border: none;">
-                                <t t-set="counter" t-value="0"/>
-                                <t t-foreach="lines_to_report" t-as="line">
-                                    <t t-set="counter" t-value="counter + 1"/>
-                                    <tr t-att-class="'fw-bold o_line_section' if (line.display_type == 'line_section' or line.product_type == 'combo') else 'fst-italic o_line_note' if line.display_type == 'line_note' else ''">
-                                    <!-- No -->
-                                        <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
-                                    <!-- Part Number -->
-                                        <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or '-'" style="font-size: 15px;"/></td>
-                                    <!-- Product Name -->
-                                        <td class="text-center" style="font-size: 15px;"><span t-esc="line.name or '-'" style="font-size: 15px;"/></td>
-                                    <!-- Price -->
-                                        <td class="text-center" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit) or ''" style="font-size: 15px; text-align: right;"/></td>
-                                    <!-- QTY -->
-                                        <td class="text-center" style="font-size: 15px; "><span t-esc="int(line.product_uom_qty) or ''" style="font-size: 15px;"/></td>
-                                    <!-- Amount -->
-                                        <td class="text-center" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit * line.product_uom_qty) or ''" style="font-size: 15px; text-align: right;"/></td>
-                                    <!-- Remarks -->
-                                        <td class="text-center" style="font-size: 15px;"/>
-                                    </tr>
-                                </t>
-                            </tbody>
-                        </table>
-                    </div>
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="o">
+                    <!-- Header Section -->
                     <div class="row">
-                        <!-- Left side with signatures -->
-                        <div class="col-6 text-left" style="margin-top: 20px;">
-                            <!-- Signature -->
-                            <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
-                                <div class="col-6">
-                                    <p style="text-align: left; font-size: 16px; margin-left: 75px;">Prepared by, </p>
-                                    <p style="text-align: center; margin-top: 120px; border-bottom: 1px solid; width: 80%;"/>
-                                </div>
-                                <div class="col-6" style="font-size: 16px; margin-left: 0.5rem;">
-                                    <p style="text-align: left; font-size: 16px; margin-left: 75px;">Approved by, </p>
-                                    <p style="text-align: center; margin-top: 120px; border-bottom: 1px solid; width: 80%;"/>
-                                </div>
+                        <div class="col-4" style="height: 100px; display: flex; flex-direction: column; justify-content: center; padding-top: 50px;">
+                            <div style="font-size: 16px; line-height: 1.5; text-align: left;">
+                                <p style="font-weight: bold; margin-bottom: 2px; font-size: 20px"><span t-esc="o.company_id.name or ''" style="font-weight: bold;"/></p>
+                                <p>
+                                    <span t-esc="o.company_id.street"/> <br/>
+                                    <span t-esc="o.company_id.city"/> <br/>
+                                    <span t-esc="o.company_id.state_id.name"/> <span t-esc="o.company_id.zip"/> <span t-esc="o.company_id.country_id.name"/><br/>
+                                    Telepon: <span t-esc="o.company_id.phone"/><br/>
+                                    Fax: <span t-esc="o.company_id.mobile"/>
+                                </p>
                             </div>
                         </div>
-                        
-                        <!-- Right side with totals -->
-                        <div class="col-6">
-                            <!-- Total Section -->
-                            <div class="row" style="margin-bottom: 3px; margin-top: 5px;">
-                                <div class="col-1"></div>
-                                <div class="col-11">
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Untaxed Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed + o.amount_discount)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Discount</span> <span t-esc="'{:,.2f}'.format(o.amount_discount)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Total</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Tax Base Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed * 11/12)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Taxes 12%</span> <span t-esc="'{:,.2f}'.format(o.amount_tax)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
+                        <div class="col-4" style="height: 150px; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="text" style="font-size: 26px; text-align: center; padding-left: 2.5rem; padding-top: 25px;">
+                                <h1 style="font-size: 26px;">
+                                    <strong><u>SALES ORDER</u></strong>
+                                </h1>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="row" style="text-align: right;">
+                                <div class="col-4"/>
+                                <div class="col-8">
+                                    <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 180px; height: auto;"/>
+                                </div>
+                            </div>
+                            <div class="row" style="padding-top: 70px;">
+                                <div class="col-4">
+                                    <!-- <p style='text-align: left; font-size: 16px;'>Shipping To : </p> -->
+                                </div>
+                                <div class="col-8" style="font-size: 16px; border: 1px;">
+                                    <!-- <span t-esc="o.picking_type_id.company_id.name or ''"/> -->
+                                    <!-- : <span t-esc="o.date_approve.strftime('%d-%b-%y') or ''"/> -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </main>
+                    <!-- Main Section -->
+                    <main>
+                        <div class="page" style="padding: 1px;">
+                            <!-- Supplier Section -->
+                            <div class="row" style="margin-bottom: 5px; font-size: 16px;">
+                                <div class="col-6">
+                                    <table class="table table-sm" style="margin-bottom: 5px; border: 1px solid;">
+                                        <tr>
+                                            <td class="col-3" style="border: 1px solid; border-bottom: none; border-right: none;">
+                                                &amp;nbsp;Customer Name
+                                            </td>
+                                            <td class="col-9" style="border: 1px solid; border-left: none; border-bottom: none;">
+                                                : <span t-esc="o.partner_id.name or '-'" style="text-align: left; font-size: 16px; margin-left: 3px;"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-3" style="border: 1px solid; border-top: none; border-bottom: none; border-right: none;">
+                                                &amp;nbsp;Address
+                                            </td>
+                                            <td class="col-9" style="border: 1px solid; border-left: none; border-bottom: none; border-top: none;">
+                                                : <span t-esc="o.partner_id.street"/>, <span t-esc="o.partner_id.city"/>, <br/>
+                                                <span t-esc="o.partner_id.state_id.name"/> <span t-esc="o.partner_id.zip"/>, <span t-esc="o.partner_id.country_id.name"/><br/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-3" style="border: 1px solid; border-top: none; border-bottom: none; border-right: none;">
+                                                &amp;nbsp;Phone/Fax No.
+                                            </td>
+                                            <td class="col-9" style="border: 1px solid; border-left: none; border-bottom: none; border-top: none;">
+                                                : <span t-esc="o.partner_id.phone or '-'" style="text-align: left; font-size: 16px; margin-left: 3px;"/> / <span t-esc="o.partner_id.mobile or '-'" style="text-align: left; font-size: 16px; margin-left: 5px;"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                &amp;nbsp;
+                                <div class="col-6">
+                                    <table class="table table-sm" style="margin-bottom: 5px; border: 1px solid;">
+                                        <tr>
+                                            <td class="col-4" style="border: 1px solid; border-bottom: none; border-right: none;">
+                                                &amp;nbsp;Sales order No.
+                                            </td>
+                                            <td class="col-8" style="border: 1px solid; border-left: none; border-bottom: none;">
+                                                : <span t-esc="(o.name + ' ' + o.no_so) if o.name and o.no_so else (o.name or o.no_so or '')" style="text-align: left; font-size: 16px; margin-left: 5px;"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-4" style="border: 1px solid; border-top: none; border-bottom: none; border-right: none;">
+                                                &amp;nbsp;Order Date
+                                            </td>
+                                            <td class="col-8" style="border: 1px solid; border-left: none; border-bottom: none; border-top: none;">
+                                                : <span t-esc="o.date_order.strftime('%d-%b-%y') or ''" style="font-size: 15px;"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-4" style="border: 1px solid; border-top: none; border-right: none;">
+                                                &amp;nbsp;Currency
+                                            </td>
+                                            <td class="col-8" style="border: 1px solid; border-left: none; border-top: none;">
+                                                : <span t-esc="o.currency_id.name or ''" style="text-align: left; font-size: 16px; margin-left: 5px;"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-4" style="border: 1px solid; border-top: none; border-bottom: none; border-right: none;">
+                                                &amp;nbsp;Sales
+                                            </td>
+                                            <td class="col-8" style="border: 1px solid; border-left: none; border-bottom: none; border-top: none;">
+                                                : <span t-esc="o.employee_id.name or ''" style="font-size: 15px;"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- Table Product -->
+                            <t t-set="lines_to_report" t-value="o._get_order_lines_to_report()"/>
+                            <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
+                                <table class="table table-sm" style="margin-bottom: 5px; border: 1px;">
+                                    <thead style="border: 1px;">
+                                        <tr>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">No</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">Item Code</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">Item</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">Price</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">Quantity</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">Amount</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="border: none;">
+                                        <t t-set="counter" t-value="0"/>
+                                        <t t-foreach="lines_to_report" t-as="line">
+                                            <t t-set="counter" t-value="counter + 1"/>
+                                            <tr t-att-class="'fw-bold o_line_section' if (line.display_type == 'line_section' or line.product_type == 'combo') else 'fst-italic o_line_note' if line.display_type == 'line_note' else ''">
+                                            <!-- No -->
+                                                <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
+                                            <!-- Part Number -->
+                                                <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or '-'" style="font-size: 15px;"/></td>
+                                            <!-- Product Name -->
+                                                <td class="text-center" style="font-size: 15px;"><span t-esc="line.name or '-'" style="font-size: 15px;"/></td>
+                                            <!-- Price -->
+                                                <td class="text-center" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit) or ''" style="font-size: 15px; text-align: right;"/></td>
+                                            <!-- QTY -->
+                                                <td class="text-center" style="font-size: 15px; "><span t-esc="int(line.product_uom_qty) or ''" style="font-size: 15px;"/></td>
+                                            <!-- Amount -->
+                                                <td class="text-center" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit * line.product_uom_qty) or ''" style="font-size: 15px; text-align: right;"/></td>
+                                            <!-- Remarks -->
+                                                <td class="text-center" style="font-size: 15px;"/>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <!-- Left side with signatures -->
+                                <div class="col-6 text-left" style="margin-top: 20px;">
+                                    <!-- Signature -->
+                                    <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
+                                        <div class="col-6">
+                                            <p style="text-align: left; font-size: 16px; margin-left: 75px;">Prepared by, </p>
+                                            <p style="text-align: center; margin-top: 120px; border-bottom: 1px solid; width: 80%;"/>
+                                        </div>
+                                        <div class="col-6" style="font-size: 16px; margin-left: 0.5rem;">
+                                            <p style="text-align: left; font-size: 16px; margin-left: 75px;">Approved by, </p>
+                                            <p style="text-align: center; margin-top: 120px; border-bottom: 1px solid; width: 80%;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Right side with totals -->
+                                <div class="col-6">
+                                    <!-- Total Section -->
+                                    <div class="row" style="margin-bottom: 3px; margin-top: 5px;">
+                                        <div class="col-1"/>
+                                        <div class="col-11">
+                                            <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Total</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed + o.amount_discount)"/></p>
+                                            <p t-if="o.amount_discount > 0" style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Discount</span> <span t-esc="'{:,.2f}'.format(o.amount_discount)"/></p>
+                                            <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Value Before VAT</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/></p>
+                                            <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">VAT Base Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed * 11/12)"/></p>
+                                            <p t-if="o.amount_tax > 0" style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">VAT</span> <span t-esc="'{:,.2f}'.format(o.amount_tax)"/></p>
+                                            <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style= " font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </t>
+            </t>
         </t>
-    </t>
-</t>

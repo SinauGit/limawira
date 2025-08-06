@@ -1,10 +1,6 @@
 {
     'name': 'Hide Cost',
     "version": "18.0.1.0.0",
-    'summary': 'Hide Cost ',
-    'description': """
-        This module Hide Cost for sales
-    """,
     'author': 'Rizky Abdi Syahputra Hasibuan',
     'website': '',
     'category': 'Project',

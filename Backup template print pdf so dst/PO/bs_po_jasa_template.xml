@@ -3,7 +3,7 @@
     <data>
         <!-- Template for Kwitansi -->
         <template id="bs_po_jasa_template">
-            <t t-call="web.external_layout">
+            <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="o">
                     <!-- Header Section -->
                     <div class="row">
@@ -174,12 +174,12 @@
                             <div class="row" style="margin-bottom: 3px; margin-top: 5px;">
                                 <div class="col-7"/>
                                 <div class="col-5">
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Untaxed Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed + o.amount_discount)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Discount</span> <span t-esc="'{:,.2f}'.format(o.amount_discount)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Total</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Tax Base Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed * 11/12)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Taxes 12%</span> <span t-esc="'{:,.2f}'.format(o.amount_tax)"/></p>
-                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style=" font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Total</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed + o.amount_discount)"/></p>
+                                    <p t-if="o.amount_discount > 0" style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Discount</span> <span t-esc="'{:,.2f}'.format(o.amount_discount)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Value Before VAT</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">VAT Base Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed * 11/12)"/></p>
+                                    <p t-if="o.amount_tax > 0" style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">VAT</span> <span t-esc="'{:,.2f}'.format(o.amount_tax)"/></p>
+                                    <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style= " font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
                                 </div>
                             </div>
 

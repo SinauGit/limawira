@@ -4,14 +4,6 @@
     'version': '1.0',
     'category': 'Purchases',
     'summary': 'Menampilkan status pembayaran bill pada purchase order',
-    'description': """
-Purchase Bill Status
-===================
-Modul ini menambahkan informasi status pembayaran bill dari suatu purchase order
-langsung pada tampilan purchase order.
-    """,
-    'author': 'PT. LIMAWIRA WISESA',
-    'website': 'https://www.limawira.com',
     'depends': [
         'base',
         'purchase',
