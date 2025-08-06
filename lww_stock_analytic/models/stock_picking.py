@@ -1,3 +1,4 @@
+# ===== STOCK PICKING FIX =====
 from odoo import api, fields, models
 
 
@@ -5,8 +6,7 @@ class StockPicking(models.Model):
     _name = "stock.picking"
     _inherit = ["stock.picking", "analytic.mixin"]
 
-    original_analytic_distribution = fields.Json(
-    )
+    original_analytic_distribution = fields.Json()
     analytic_distribution = fields.Json(inverse="_inverse_analytic_distribution")
 
     @api.depends(
@@ -55,10 +55,37 @@ class StockPicking(models.Model):
     def _inverse_analytic_distribution(self):
         """
         If analytic distribution is set on picking, write it on all moves
+        FIXED: Prevent circular calls and validate move integrity
         """
         for picking in self:
+            # Prevent infinite recursion
+            if self.env.context.get('skip_picking_inverse'):
+                continue
+                
             if picking.analytic_distribution:
-                picking.move_ids_without_package.write(
-                    {"analytic_distribution": picking.analytic_distribution}
+                # Get valid moves only (with required fields)
+                valid_moves = picking.move_ids_without_package.filtered(
+                    lambda m: m.id and m.product_id and 
+                    getattr(m, 'location_id', False) and 
+                    getattr(m, 'location_dest_id', False)
                 )
+                
+                if valid_moves:
+                    # Use context to prevent circular inverse calls
+                    ctx = dict(self.env.context, 
+                              skip_picking_inverse=True,
+                              skip_move_line_inverse=True)
+                    
+                    # Update moves one by one to handle any individual failures
+                    for move in valid_moves:
+                        try:
+                            move.with_context(ctx).write({
+                                "analytic_distribution": picking.analytic_distribution
+                            })
+                        except Exception as e:
+                            # Log the error but continue with other moves
+                            _logger.warning(f"Failed to update analytic distribution for move {move.id}: {e}")
+                            continue
+                            
+            # Always update original_analytic_distribution
             picking.original_analytic_distribution = picking.analytic_distribution

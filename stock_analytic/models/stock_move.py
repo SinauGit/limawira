@@ -7,22 +7,39 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import api, fields, models
-
+import logging
+_logger = logging.getLogger(__name__)
 
 class StockMove(models.Model):
     _name = "stock.move"
     _inherit = ["stock.move", "analytic.mixin"]
 
-    analytic_distribution = fields.Json(
-        inverse="_inverse_analytic_distribution",
-    )
+    analytic_distribution = fields.Json(inverse="_inverse_analytic_distribution")
 
     def _inverse_analytic_distribution(self):
-        """If analytic distribution is set on move, write it on all move lines"""
+        """
+        If analytic distribution is set on move, write it on all move lines
+        FIXED: Prevent circular calls and validate move line integrity
+        """
         for move in self:
-            move.move_line_ids.write(
-                {"analytic_distribution": move.analytic_distribution}
-            )
+            # Prevent infinite recursion from picking inverse
+            if self.env.context.get('skip_move_line_inverse'):
+                continue
+                
+            if move.analytic_distribution and move.move_line_ids:
+                # Filter valid move lines
+                valid_lines = move.move_line_ids.filtered(lambda ml: ml.id)
+                
+                if valid_lines:
+                    # Use context to prevent circular calls
+                    ctx = dict(self.env.context, skip_move_inverse=True)
+                    
+                    try:
+                        valid_lines.with_context(ctx).write({
+                            "analytic_distribution": move.analytic_distribution
+                        })
+                    except Exception as e:
+                        _logger.warning(f"Failed to update analytic distribution for move lines of move {move.id}: {e}")
 
     def _prepare_account_move_line(
         self, qty, cost, credit_account_id, debit_account_id, svl_id, description
@@ -49,11 +66,7 @@ class StockMove(models.Model):
         """
         res = super()._prepare_procurement_values()
         if self.analytic_distribution:
-            res.update(
-                {
-                    "analytic_distribution": self.analytic_distribution,
-                }
-            )
+            res.update({"analytic_distribution": self.analytic_distribution})
         return res
 
     def _prepare_move_line_vals(self, quantity=None, reserved_quant=None):
@@ -84,7 +97,15 @@ class StockMove(models.Model):
 
     def _action_done(self, cancel_backorder=False):
         for move in self:
-            move.move_line_ids.analytic_distribution = move.analytic_distribution
+            # Safely update move line analytic distribution
+            if move.move_line_ids and move.analytic_distribution:
+                try:
+                    move.move_line_ids.with_context(skip_move_inverse=True).write({
+                        'analytic_distribution': move.analytic_distribution
+                    })
+                except Exception as e:
+                    _logger.warning(f"Failed to sync analytic distribution in _action_done for move {move.id}: {e}")
+                    
             if not move._need_validate_distribution():
                 continue
             move._validate_distribution(
@@ -98,6 +119,7 @@ class StockMove(models.Model):
         return super()._action_done(cancel_backorder=cancel_backorder)
 
 
+# ===== STOCK MOVE LINE FIX =====
 class StockMoveLine(models.Model):
     _name = "stock.move.line"
     _inherit = ["stock.move.line", "analytic.mixin"]
@@ -114,6 +136,23 @@ class StockMoveLine(models.Model):
         return res
 
     def write(self, vals):
-        if "analytic_distribution" in vals:
-            self.move_id.analytic_distribution = vals["analytic_distribution"]
-        return super().write(vals)
+        """
+        FIXED: Prevent circular inverse calls when updating analytic distribution
+        """
+        result = super().write(vals)
+        
+        # Only update move if not in circular prevention context
+        if ("analytic_distribution" in vals and 
+            not self.env.context.get('skip_move_inverse')):
+            
+            # Update related moves with context to prevent circular calls
+            moves_to_update = self.mapped('move_id').filtered(lambda m: m.id)
+            if moves_to_update:
+                ctx = dict(self.env.context, skip_move_line_inverse=True)
+                try:
+                    for move in moves_to_update:
+                        move.with_context(ctx).analytic_distribution = vals["analytic_distribution"]
+                except Exception as e:
+                    _logger.warning(f"Failed to update move analytic distribution from move line: {e}")
+                    
+        return result

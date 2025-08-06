@@ -9,7 +9,7 @@
     "name": "Stock Analytic",
     "summary": "Adds analytic distribution in stock move",
     "version": "18.0.1.1.0",
-    "author": "Julius Network Solutions, "
+    "author": "Julius Network Solutions dan Revised By Rizky Abdi "
     "ClearCorp, OpenSynergy Indonesia, "
     "Hibou Corp., "
     "Odoo Community Association (OCA)",

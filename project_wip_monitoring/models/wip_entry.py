@@ -8,10 +8,8 @@ class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     is_wip_hanging = fields.Boolean(
-        string='WIP Hanging',
         compute='_compute_is_wip_hanging', 
         store=True,
-        help="Indicates if this line is a hanging WIP entry"
     )
 
     @api.depends('account_id', 'account_id.account_type', 'account_id.code', 'debit', 'credit', 'balance')

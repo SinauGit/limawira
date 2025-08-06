@@ -16,8 +16,8 @@
                     <field name="date"/>
                     <field name="display_name"/>
                     <field name="account_id" string="Project"/>
-                    <field name="account_id" string="Project 2" optional="hide"/>
-                    <field name="account_id" string="project 3" optional="hide"/>
+                    <!-- <field name="account_id" string="Project 2" optional="hide"/>
+                    <field name="account_id" string="project 3" optional="hide"/> -->
                     <field name="company_id"/>
                     <field name="amount" sum="Total"/>
                     <field name="ref" optional="hide"/>
@@ -175,7 +175,7 @@
             <field name="name">WIP Project Monitoring</field>
             <field name="res_model">account.analytic.line</field>
             <field name="view_mode">list,kanban,form,graph,pivot,grid</field>
-            <field name="domain">[('general_account_id.code', '=', '1061')]</field>
+            <field name="domain">[('general_account_id.code', 'in', ['1061', '701'])]</field>
             <field name="context">{
                 'group_by': ['account_id', 'ref', 'move_line_id'],
                 'create': False,
