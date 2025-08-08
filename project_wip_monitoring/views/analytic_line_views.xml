@@ -11,10 +11,10 @@
                       create="false" 
                       edit="false" 
                       delete="false"
-                      expand="1"
+                      expand="0"
                       decoration-bf="1">
                     <field name="date"/>
-                    <field name="display_name"/>
+                    <field name="display_name" string="Description"/>
                     <field name="account_id" string="Project"/>
                     <field name="account_id" string="Project 2" optional="hide"/>
                     <field name="account_id" string="project 3" optional="hide"/>
@@ -35,7 +35,7 @@
                 <search string="Search WIP Project Analytic Items">
                     <field name="name" string="Description"/>
                     <field name="date"/>
-                    <field name="account_id" string="Project Account"/>
+                    <field name="account_id" string="Project"/>
                     <field name="general_account_id" string="Financial Account"/>
                     <field name="ref"/>
                     <field name="move_line_id"/>
@@ -45,11 +45,14 @@
                             domain="[('date','=',context_today().strftime('%Y-%m-%d'))]"/>
                     <filter string="This Month" name="month"
                             domain="[('date','&gt;=',context_today().strftime('%Y-%m-01'))]"/>
+
+                    <filter string="Non-Zero Projects" name="non_zero_projects"
+                            domain="[('account_id', 'in', [])]"/>
                     
                     <separator/>
                     <group expand="0" string="Group By">
                         <filter string="Date" name="group_date" context="{'group_by':'date'}"/>
-                        <filter string="Project Account" name="group_project" context="{'group_by':'account_id'}"/>
+                        <filter string="Project" name="group_project" context="{'group_by':'account_id'}"/>
                         <filter string="Reference" name="group_ref" context="{'group_by':'ref'}"/>
                         <filter string="Journal Item" name="group_journal_item" context="{'group_by':'move_line_id'}"/>
                         <filter string="Company" name="group_company" context="{'group_by':'company_id'}"/>
@@ -58,118 +61,6 @@
             </field>
         </record>
 
-        <!-- Form View for WIP Project Analytic Items -->
-        <record id="view_account_analytic_line_form_wip" model="ir.ui.view">
-            <field name="name">account.analytic.line.form.wip</field>
-            <field name="model">account.analytic.line</field>
-            <field name="arch" type="xml">
-                <form string="WIP Project Analytic Item" create="false" edit="false">
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="date" readonly="1"/>
-                                <field name="display_name" readonly="1"/>
-                                <field name="account_id" readonly="1"/>
-                                <field name="general_account_id" readonly="1"/>
-                                <field name="auto_account_id" readonly="1"/>
-                                <field name="ref" readonly="1"/>
-                            </group>
-                            <group>
-                                <field name="move_line_id" readonly="1"/>
-                                <field name="company_id" readonly="1"/>
-                                <field name="amount" readonly="1"/>
-                                <field name="currency_id" readonly="1"/>
-                            </group>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-
-
-        <!-- Kanban View for WIP Project Analytic Items -->
-        <record id="view_account_analytic_line_kanban_wip" model="ir.ui.view">
-            <field name="name">account.analytic.line.kanban.wip</field>
-            <field name="model">account.analytic.line</field>
-            <field name="arch" type="xml">
-                <kanban class="o_kanban_mobile" create="false" edit="false" delete="false">
-                    <field name="name"/>
-                    <field name="date"/>
-                    <field name="account_id"/>
-                    <field name="amount"/>
-                    <field name="currency_id"/>
-                    <field name="ref"/>
-                    <field name="company_id"/>
-                    <templates>
-                        <t t-name="card">
-                            <div class="d-flex justify-content-between">
-                                <field class="fw-bold fs-5" name="name"/>
-                                <field class="text-end fw-bold fs-5" name="date"/>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <field class="text-muted" name="account_id"/>
-                                <field class="justify-content-end" name="amount" widget="monetary"/>
-                            </div>
-                            <div class="d-flex justify-content-between mt-2">
-                                <field class="text-muted small" name="ref"/>
-                                <field class="text-muted small text-end" name="company_id"/>
-                            </div>
-                        </t>
-                    </templates>
-                </kanban>
-            </field>
-        </record>
-
-        <!-- Graph View for WIP Project Analytic Items -->
-        <record id="view_account_analytic_line_graph_wip" model="ir.ui.view">
-            <field name="name">account.analytic.line.graph.wip</field>
-            <field name="model">account.analytic.line</field>
-            <field name="arch" type="xml">
-                <graph string="WIP Project Analytics" type="bar" sample="1">
-                    <field name="account_id" type="row"/>
-                    <field name="date" type="col" interval="month"/>
-                    <field name="amount" type="measure"/>
-                </graph>
-            </field>
-        </record>
-
-        <!-- Pivot View for WIP Project Analytic Items -->
-        <record id="view_account_analytic_line_pivot_wip" model="ir.ui.view">
-            <field name="name">account.analytic.line.pivot.wip</field>
-            <field name="model">account.analytic.line</field>
-            <field name="arch" type="xml">
-                <pivot string="WIP Project Analytics" sample="1">
-                    <field name="account_id" type="row"/>
-                    <field name="date" type="col" interval="month"/>
-                    <field name="amount" type="measure"/>
-                    <field name="company_id" type="row"/>
-                </pivot>
-            </field>
-        </record>
-
-        <!-- <record id="view_account_analytic_line_grid_wip" model="ir.ui.view">
-            <field name="name">account.analytic.line.grid.wip</field>
-            <field name="model">account.analytic.line</field>
-            <field name="arch" type="xml">
-                <grid string="WIP Project Analytics Grid" 
-                      create="false" 
-                      edit="false" 
-                      delete="false"
-                      adjustment="object"
-                      adjust_name="adjust_grid">
-                    <field name="account_id" type="row" section="1"/>
-                    <field name="ref" type="row"/>
-                    <field name="date" type="col">
-                        <range name="week" string="Week" span="week" step="day"/>
-                        <range name="month" string="Month" span="month" step="day"/>
-                        <range name="year" string="Year" span="year" step="month"/>
-                    </field>
-                    <field name="amount" type="measure" widget="monetary"/>
-                    <button string="Adjust" type="object" name="action_adjust_grid" class="btn-secondary"/>
-                </grid>
-            </field>
-        </record> -->
 
         <record id="action_account_analytic_line_wip" model="ir.actions.act_window">
             <field name="name">WIP Project Monitoring</field>
@@ -182,6 +73,7 @@
                 'edit': False,
                 'delete': False,
                 'hide_breadcrumbs': True,
+                'filter_zero_amount_projects': True,
             }</field>
             <field name="view_ids" eval="[(5, 0, 0),
                 (0, 0, {'view_mode': 'list', 'view_id': ref('view_account_analytic_line_list_wip')}),
