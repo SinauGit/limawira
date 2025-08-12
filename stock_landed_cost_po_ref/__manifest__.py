@@ -1,5 +1,5 @@
 {
-    "name": "Landed Cost: Show Single Related PO & Validate",
+    "name": "Landed Cost: Show Single Related PO",
     "version": "18.0.1.0.0",
     "depends": [
         "stock_landed_costs",
