@@ -2,8 +2,6 @@
 {
     'name': 'Purchase Bill Status',
     'version': '1.0',
-    'category': 'Purchases',
-    'summary': 'Menampilkan status pembayaran bill pada purchase order',
     'depends': [
         'base',
         'purchase',
@@ -16,5 +14,4 @@
     'installable': True,
     'auto_install': False,
     'application': False,
-    'license': 'LGPL-3',
 }
