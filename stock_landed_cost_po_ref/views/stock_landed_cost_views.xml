@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_landed_cost_form_inherit_po_ref" model="ir.ui.view">
+    <field name="name">stock.landed.cost.form.inherit.po.ref</field>
+    <field name="model">stock.landed.cost</field>
+    <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/>
+    <field name="arch" type="xml">
+      <!-- Taruh persis di atas field Transfers -->
+      <xpath expr="//field[@name='picking_ids']" position="before">
+        <field name="purchase_order_id" readonly="1"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

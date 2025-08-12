@@ -7,6 +7,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class StockMove(models.Model):
@@ -17,10 +18,10 @@ class StockMove(models.Model):
         inverse="_inverse_analytic_distribution",
     )
 
+    # stock.move
     def _inverse_analytic_distribution(self):
-        """If analytic distribution is set on move, write it on all move lines"""
         for move in self:
-            move.move_line_ids.write(
+            move.move_line_ids.with_context(_skip_move_sync=True).write(
                 {"analytic_distribution": move.analytic_distribution}
             )
 
@@ -103,12 +104,12 @@ class StockMove(models.Model):
         for move in self:
             # PERBAIKAN: Validasi location sebelum action_done
             if not move.location_id:
-                raise models.ValidationError(
+                raise ValidationError(
                     f"Source location is mandatory for move {move.name}. "
                     f"Please set the location_id before validating."
                 )
             if not move.location_dest_id:
-                raise models.ValidationError(
+                raise ValidationError(
                     f"Destination location is mandatory for move {move.name}. "
                     f"Please set the location_dest_id before validating."
                 )
@@ -149,7 +150,11 @@ class StockMoveLine(models.Model):
             
         return res
 
+    # stock.move.line
     def write(self, vals):
-        if "analytic_distribution" in vals:
-            self.move_id.analytic_distribution = vals["analytic_distribution"]
+        if "analytic_distribution" in vals and not self.env.context.get("_skip_move_sync"):
+            new_dist = vals["analytic_distribution"]
+            for ml in self:
+                if ml.move_id and ml.move_id.analytic_distribution != new_dist:
+                    ml.move_id.write({"analytic_distribution": new_dist})
         return super().write(vals)
