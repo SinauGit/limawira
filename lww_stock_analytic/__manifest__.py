@@ -1,11 +1,14 @@
 {
-    "name": "Stock_Analytic",
-    "version": "18.0.1.0.0",
+    "name": "Stock Move Auto Analytic",
+    "version": "18.0.2.1.0",
+    "license": "LGPL-3",
     "depends": [
-        "stock_analytic",
-        # "base_view_inheritance_extension",
+        "stock",
+        "analytic",
+        "sale_stock",
+        "project_stock",
+        "stock_analytic"
     ],
-    "data": [
-        "views/stock_picking.xml",
-    ],
+    "installable": True,
+    "application": False
 }
