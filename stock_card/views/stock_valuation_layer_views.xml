@@ -5,18 +5,26 @@
         <field name="model">stock.valuation.layer</field>
         <field name="inherit_id" ref="stock_account.stock_valuation_layer_tree"/>
         <field name="arch" type="xml">
+            <!-- Tambahkan kolom referensi & partner -->
             <xpath expr="//field[@name='reference']" position="after">
                 <field name="stock_move_id" optional="show"/>
                 <field name="partner_id" optional="show"/>
             </xpath>
+
+            <!-- Pisahkan qty debit/credit -->
             <xpath expr="//field[@name='quantity']" position="after">
                 <field name="quantity_debit" optional="show"/>
                 <field name="quantity_credit" optional="show"/>
             </xpath>
+
+            <!-- Pisahkan value debit/credit -->
             <xpath expr="//field[@name='value']" position="after">
                 <field name="debit" optional="show"/>
                 <field name="credit" optional="show"/>
+                <!-- Running balance -->
+                <field name="running_quantity" optional="show"/>
+                <field name="running_value" optional="show"/>
             </xpath>
         </field>
     </record>
-</odoo> 
+</odoo>
