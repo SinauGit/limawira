@@ -5,7 +5,6 @@
         <field name="model">stock.valuation.layer</field>
         <field name="inherit_id" ref="stock_account.stock_valuation_layer_tree"/>
         <field name="arch" type="xml">
-            <!-- Tambahkan kolom referensi & partner -->
             <xpath expr="//field[@name='reference']" position="after">
                 <field name="stock_move_id" optional="show"/>
                 <field name="partner_id" optional="show"/>
@@ -13,18 +12,30 @@
 
             <!-- Pisahkan qty debit/credit -->
             <xpath expr="//field[@name='quantity']" position="after">
-                <field name="quantity_debit" optional="show"/>
-                <field name="quantity_credit" optional="show"/>
+                <field name="quantity_debit" optional="show" sum="Quantity Debit"/>
+                <field name="quantity_credit" optional="show" sum="Quantity Credit"/>
             </xpath>
 
             <!-- Pisahkan value debit/credit -->
             <xpath expr="//field[@name='value']" position="after">
-                <field name="debit" optional="show"/>
-                <field name="credit" optional="show"/>
+                <field name="debit" optional="show" sum="Value Debit"/>
+                <field name="credit" optional="show" sum="Value Credit"/>
                 <!-- Running balance -->
                 <field name="running_quantity" optional="show"/>
                 <field name="running_value" optional="show"/>
             </xpath>
         </field>
     </record>
+
+    <record id="stock_valuation_layer_tree_inherit_default_order" model="ir.ui.view">
+        <field name="name">stock.valuation.layer.tree.inherit.default_order</field>
+        <field name="model">stock.valuation.layer</field>
+        <field name="inherit_id" ref="stock_account.stock_valuation_layer_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="default_order">create_date asc,id asc</attribute>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
