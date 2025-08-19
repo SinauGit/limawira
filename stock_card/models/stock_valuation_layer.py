@@ -38,8 +38,6 @@ class StockValuationLayer(models.Model):
         store=True,
         digits='Product Unit of Measure'
     )
-
-    # === Running Balance (tanpa store) ===
     running_quantity = fields.Float(
         string='Balance Quantity',
         compute='_compute_running_balance',
