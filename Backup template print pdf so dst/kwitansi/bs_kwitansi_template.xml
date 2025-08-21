@@ -84,7 +84,6 @@
                             </div>
                         </div>
                         <br/>
-                        <!-- Nominal disebutkan -->
                         <div class="row">
                             <div class="col-3">
                                 <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Uang sebanyak</em> : </p>
@@ -94,7 +93,7 @@
                             </div>
                         </div>
                         <br/>
-                        <!-- Note atau Memo -->
+
                         <div class="row">
                             <div class="col-3"><p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Keterangan</em> : </p></div>
                             <div class="col-9" style="font-size: 16px; border-bottom: 1px solid #000;">
@@ -108,7 +107,7 @@
                     <span style="border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-right: 20px;"/>
                     <br/>
                     <div>
-                        <!-- Informasi Bank -->
+
                         <div class="row">
                             <div class="col-3">
                                 <p style="text-align: left; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Mohon ditransfer ke: </em></p>
@@ -149,7 +148,6 @@
                                 <div>Direktur</div>
                             </div>
                         </div>
-                        <!-- Jumlah Uang dan TTD -->
                         <div class="row">
                             <div class="col-6">
                                 <table width="100%">

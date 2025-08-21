@@ -1,5 +1,5 @@
 {
-    'name': ']Down Payment Validation',
+    'name': 'Down Payment Validation',
     'version': '18.0.1.0.0',
     'author': 'Rizky',
     'depends': ['sale', 'stock', 'account'],

@@ -1,4 +1,8 @@
-<t t-name="lww_kwitansi.lww_kwitansi_template">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Template for Kwitansi -->
+        <template id="lww_kwitansi_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="o">
                   <main>
@@ -73,7 +77,6 @@
                                 &amp;nbsp;&amp;nbsp;<span t-esc="o.partner_id.city"/>
                             </div>
                         </div>
-                        <!-- Nominal disebutkan -->
                         <div class="row">
                             <div class="col-3">
                                 <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em>Banyaknya uang</em></p>
@@ -94,7 +97,6 @@
                                 </div>
                             </div>
                         </div> -->
-                        <!-- Note atau Memo -->
                         <div class="row">
                             <div class="col-3"><p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em>Untuk Pembayaran</em></p></div>
                             <div class="col-9" style="font-size: 16px;">
@@ -172,4 +174,15 @@
                   </main>
                 </t>
             </t>
-        </t>
+        </template>
+
+        <!-- Wrapper Template -->
+        <template id="lww_kwitansi">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="lww_kwitansi_template" t-lang="o.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -1,4 +1,8 @@
-<t t-name="lww_sales.spartadua_so_template">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Template for Kwitansi -->
+        <template id="spartadua_so_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="o">
                     <!-- Header Section -->
@@ -167,18 +171,17 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Right side with totals -->
                                 <div class="col-6">
                                     <!-- Total Section -->
                                     <div class="row" style="margin-bottom: 3px; margin-top: 5px;">
                                         <div class="col-1"/>
                                         <div class="col-11">
                                             <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Total</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed + o.amount_discount)"/></p>
-                                            <p t-if="o.amount_discount > 0" style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Discount</span> <span t-esc="'{:,.2f}'.format(o.amount_discount)"/></p>
+                                            <p t-if="o.amount_discount &gt; 0" style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Discount</span> <span t-esc="'{:,.2f}'.format(o.amount_discount)"/></p>
                                             <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">Value Before VAT</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/></p>
                                             <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">VAT Base Amount</span> <span t-esc="'{:,.2f}'.format(o.amount_untaxed * 11/12)"/></p>
-                                            <p t-if="o.amount_tax > 0" style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">VAT</span> <span t-esc="'{:,.2f}'.format(o.amount_tax)"/></p>
-                                            <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style= " font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
+                                            <p t-if="o.amount_tax &gt; 0" style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style="float: left;">VAT</span> <span t-esc="'{:,.2f}'.format(o.amount_tax)"/></p>
+                                            <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style=" font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
                                         </div>
                                     </div>
                                 </div>
@@ -187,4 +190,15 @@
                     </main>
                 </t>
             </t>
-        </t>
+        </template>
+
+        <!-- Wrapper Template -->
+        <template id="spartadua_so">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="spartadua_so_template" t-lang="o.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
