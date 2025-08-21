@@ -1,4 +1,8 @@
-<t t-name="lww_kwitansi.spartadua_kwitansi_template">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Template for Kwitansi -->
+        <template id="spartadua_kwitansi_template">
             <t t-call="web.basic_layout" pageLayout="landscape">
                 <t t-foreach="docs" t-as="o">
                   <main>
@@ -168,4 +172,15 @@
                   </main>
                 </t>
             </t>
-        </t>
+        </template>
+
+        <!-- Wrapper Template -->
+        <template id="spartadua_kwitansi">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="spartadua_kwitansi_template" t-lang="o.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
