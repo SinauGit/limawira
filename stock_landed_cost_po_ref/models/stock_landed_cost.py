@@ -4,6 +4,14 @@ from odoo.exceptions import ValidationError
 class StockLandedCost(models.Model):
     _inherit = "stock.landed.cost"
 
+    vendor_bill_amount_total = fields.Monetary(
+        string='Total Vendor Bill',
+        related='vendor_bill_id.amount_total',
+        # currency_field='vendor_bill_currency_id',
+        store=True,
+        readonly=True,
+    )
+
     purchase_order_id = fields.Many2one(
         "purchase.order",
         string="Purchase Order",
