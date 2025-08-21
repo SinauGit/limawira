@@ -206,5 +206,34 @@
             </field>
         </record>
 
+        <record id="view_account_analytic_line_list_wip" model="ir.ui.view">
+            <field name="name">account.analytic.line.list.wip</field>
+            <field name="model">account.analytic.line</field>
+            <field name="arch" type="xml">
+                <list string="WIP Project Analytic Items"
+                    create="false" edit="false" delete="false" expand="0"
+                    decoration-bf="1">
+                    <header>
+                        <button name="action_export_wip_by_project_xlsx"
+                                string="Export Excel"
+                                type="object"
+                                class="btn-primary"/>
+                    </header>
+
+                    <!-- kolom-kolom Anda tetap -->
+                    <field name="date"/>
+                    <field name="display_name" string="Description"/>
+                    <field name="account_id" string="Project"/>
+                    <field name="account_id" string="Project 2" optional="hide"/>
+                    <field name="account_id" string="project 3" optional="hide"/>
+                    <field name="company_id"/>
+                    <field name="amount" sum="Total"/>
+                    <field name="ref" optional="hide"/>
+                    <field name="move_line_id" optional="hide"/>
+                    <field name="general_account_id" column_invisible="1"/>
+                </list>
+            </field>
+        </record>
+
     </data>
 </odoo>

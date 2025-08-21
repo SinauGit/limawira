@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <data>
+
+    <record id="view_stock_landed_cost_form_inherit_vendor_bill_total" model="ir.ui.view">
+      <field name="name">stock.landed.cost.form.inherit.vendor.bill.total</field>
+      <field name="model">stock.landed.cost</field>
+      <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='vendor_bill_id']" position="after">
+          <field name="vendor_bill_amount_total" readonly="1"/>
+        </xpath>
+      </field>
+    </record>
   
   <record id="view_landed_cost_form_inherit_po_ref" model="ir.ui.view">
     <field name="name">stock.landed.cost.form.inherit.po.ref</field>
