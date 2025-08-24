@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <record id="view_user_group_transfer_wizard" model="ir.ui.view">
     <field name="name">user.group.transfer.wizard.form</field>
@@ -7,22 +8,27 @@
         <sheet>
           <group>
             <field name="mode"/>
+            <field name="scope"/>
           </group>
 
-          <!-- BAGIAN EXPORT -->
-          <!-- was: attrs="{'invisible':[('mode','!=','export')]}" -->
-          <group invisible="mode != 'export'">
+          <!-- EXPORT: scope=user -->
+          <group invisible="not (mode == 'export' and scope == 'user')">
             <field name="user_ids" widget="many2many_tags"/>
             <field name="include_inactive"/>
             <button string="Export" name="action_export" type="object" class="btn-primary oe_highlight"/>
-            <!-- Tampilkan download hanya jika sudah ada file -->
-            <!-- was: attrs="{'invisible':[('export_file','=',False)]}" -->
             <field name="export_filename" readonly="1" invisible="not export_file"/>
             <field name="export_file" filename="export_filename" invisible="not export_file"/>
           </group>
 
-          <!-- BAGIAN IMPORT -->
-          <!-- was: attrs="{'invisible':[('mode','!=','import')]}" -->
+          <!-- EXPORT: scope=group -->
+          <group invisible="not (mode == 'export' and scope == 'group')">
+            <field name="group_ids" widget="many2many_tags" placeholder="Biarkan kosong untuk semua groups"/>
+            <button string="Export" name="action_export" type="object" class="btn-primary oe_highlight"/>
+            <field name="export_filename" readonly="1" invisible="not export_file"/>
+            <field name="export_file" filename="export_filename" invisible="not export_file"/>
+          </group>
+
+          <!-- IMPORT (berlaku untuk keduanya; wizard deteksi dari payload.type atau scope) -->
           <group invisible="mode != 'import'">
             <field name="import_filename"/>
             <field name="import_file" filename="import_filename"/>
@@ -38,7 +44,7 @@
     <field name="res_model">user.group.transfer.wizard</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>
-    <field name="context">{'default_mode': 'export'}</field>
+    <field name="context">{'default_mode': 'export', 'default_scope': 'user'}</field>
   </record>
 
   <menuitem id="menu_user_group_transfer_root"
