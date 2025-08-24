@@ -1,0 +1,49 @@
+<odoo>
+  <record id="view_user_group_transfer_wizard" model="ir.ui.view">
+    <field name="name">user.group.transfer.wizard.form</field>
+    <field name="model">user.group.transfer.wizard</field>
+    <field name="arch" type="xml">
+      <form string="User Group Transfer">
+        <sheet>
+          <group>
+            <field name="mode"/>
+          </group>
+
+          <!-- BAGIAN EXPORT -->
+          <!-- was: attrs="{'invisible':[('mode','!=','export')]}" -->
+          <group invisible="mode != 'export'">
+            <field name="user_ids" widget="many2many_tags"/>
+            <field name="include_inactive"/>
+            <button string="Export" name="action_export" type="object" class="btn-primary oe_highlight"/>
+            <!-- Tampilkan download hanya jika sudah ada file -->
+            <!-- was: attrs="{'invisible':[('export_file','=',False)]}" -->
+            <field name="export_filename" readonly="1" invisible="not export_file"/>
+            <field name="export_file" filename="export_filename" invisible="not export_file"/>
+          </group>
+
+          <!-- BAGIAN IMPORT -->
+          <!-- was: attrs="{'invisible':[('mode','!=','import')]}" -->
+          <group invisible="mode != 'import'">
+            <field name="import_filename"/>
+            <field name="import_file" filename="import_filename"/>
+            <button string="Import" name="action_import" type="object" class="btn-primary oe_highlight"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_user_group_transfer_wizard" model="ir.actions.act_window">
+    <field name="name">User Group Transfer</field>
+    <field name="res_model">user.group.transfer.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="context">{'default_mode': 'export'}</field>
+  </record>
+
+  <menuitem id="menu_user_group_transfer_root"
+            name="User Group Transfer"
+            parent="base.menu_users"
+            action="action_user_group_transfer_wizard"
+            sequence="60"/>
+</odoo>
