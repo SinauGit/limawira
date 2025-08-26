@@ -40,7 +40,7 @@
   </record>
 
   <record id="action_user_group_transfer_wizard" model="ir.actions.act_window">
-    <field name="name">User Group Transfer</field>
+    <field name="name">Base</field>
     <field name="res_model">user.group.transfer.wizard</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>
@@ -48,7 +48,7 @@
   </record>
 
   <menuitem id="menu_user_group_transfer_root"
-            name="User Group Transfer"
+            name="Base"
             parent="base.menu_users"
             action="action_user_group_transfer_wizard"
             sequence="60"/>

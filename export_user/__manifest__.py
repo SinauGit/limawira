@@ -1,7 +1,6 @@
 {
-    "name": "User Group Transfer",
+    "name": "E I",
     "version": "18.0.1.1.0",
-    "summary": "Export/Import keanggotaan grup & company user antar database via XML ID",
     "category": "Tools",
     "depends": ["base"],
     "data": [
