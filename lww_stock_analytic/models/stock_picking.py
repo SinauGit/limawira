@@ -1,3 +1,5 @@
+# --- stock_picking.py ---
+
 from odoo import api, models
 
 class StockPicking(models.Model):
@@ -22,7 +24,6 @@ class StockPicking(models.Model):
 
     def _fill_moves_analytic_from_sol(self):
         for picking in self:
-            # 1) Kumpulkan kandidat SOL: dari sale_id jika ada; jika tidak, dari Project
             sol_domain = [("analytic_distribution", "!=", False)]
             order = getattr(picking, "sale_id", False)
             project = getattr(picking, "project_id", False)
@@ -34,10 +35,11 @@ class StockPicking(models.Model):
             else:
                 continue
 
-            SaleOrderLine = self.env["sale.order.line"]
+            # >>> gunakan sudo untuk baca SOL <<<
+            SaleOrderLine = self.env["sale.order.line"].sudo()
             sol_candidates = SaleOrderLine.search(sol_domain, order="id desc", limit=0)
+
             if not sol_candidates:
-                # fallback: kalau Project punya analitik langsung
                 analytic = self.env["stock.move"]._analytic_from_project(project) if project else False
                 if analytic:
                     for move in picking.move_ids_without_package.filtered(lambda m: not m.analytic_distribution and m.state not in ("done", "cancel")):
@@ -48,17 +50,14 @@ class StockPicking(models.Model):
 
             for move in picking.move_ids_without_package.filtered(lambda m: not m.analytic_distribution and m.state not in ("done", "cancel")):
                 analytic = False
-                # Prioritas 1: SOL dengan product yang sama
                 same_prod = sol_candidates.filtered(lambda l: l.product_id == move.product_id and l.analytic_distribution)
                 if same_prod:
                     analytic = same_prod[0].analytic_distribution
                 else:
-                    # Prioritas 2: SOL pertama yang punya analytic
                     first_with_analytic = sol_candidates.filtered(lambda l: l.analytic_distribution)
                     if first_with_analytic:
                         analytic = first_with_analytic[0].analytic_distribution
                 if not analytic and project:
-                    # Prioritas 3 (fallback): Project -> analytic
                     analytic = self.env["stock.move"]._analytic_from_project(project)
 
                 if analytic:

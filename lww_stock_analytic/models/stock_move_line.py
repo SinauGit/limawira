@@ -9,7 +9,7 @@ class StockMoveLine(models.Model):
             if not vals.get("analytic_distribution"):
                 move_id = vals.get("move_id")
                 if move_id:
-                    move = self.env["stock.move"].browse(move_id)
+                    move = self.env["stock.move"].sudo().browse(move_id)
                     if move and move.analytic_distribution:
                         vals["analytic_distribution"] = move.analytic_distribution
         return super().create(vals_list)
