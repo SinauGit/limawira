@@ -1,0 +1,168 @@
+<t t-name="lww_delivery.bs_do_template">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="o">
+                    <!-- Header Section -->
+                    <div class="row">
+                        <div class="col-6">
+                            <div style="font-size: 12px; line-height: 1.5;">
+                                <p style="font-weight: bold; margin-bottom: 2px; font-size: 30px;"><em><span t-esc="o.company_id.name or ''" style="font-weight: bold;"/></em></p>
+                                <p>
+                                    <span t-esc="o.company_id.street"/> <br/>
+                                    <span t-esc="o.company_id.street2"/> <br/>
+                                    <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.zip"/>, 
+                                    <span t-esc="o.company_id.country_id.name"/><br/>
+                                    Phone: <span t-esc="o.company_id.phone"/><br/>
+                                    Fax: <span t-esc="o.company_id.mobile"/>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-6" style="height: 150px; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="text" style="font-size: 30px; text-align: center; padding-top: 50px;">
+                                <h1 style="font-size: 25px;">
+                                    <strong>SURAT PENGIRIMAN BARANG</strong>
+                                </h1>
+                                <div class="row">
+                                    <div class="col-12" style="font-size: 16px; border: 1px;">
+                                        <p><strong>NO SPB</strong> :
+                                            <span t-esc="(o.name + ' ' + o.no_do) if o.name and o.no_do else (o.name or o.no_do or '')" style="font-size: 15px;"/>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12" style="font-size: 16px; border: 1px;">
+                                        <p><strong>Tgl Kirim</strong> :
+                                            <span t-esc="(o.scheduled_date or o.date_done).strftime('%d-%b-%y') if (o.scheduled_date or o.date_done) else ''" style="font-size: 15px;"/>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Main Section -->
+                    <main>
+                        <div class="page" style="padding: 10px;">
+                            <!-- Address Section -->
+                            <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
+                                <!-- Kepada YTH -->
+                                <div class="col-6 text-left">
+                                    <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
+                                        <thead style="border: 0.5px;">
+                                            <tr>
+                                                <th style="font-size: 16px;">
+                                                  <p style="text-align: left; margin-left: 10px;"><strong>Kepada Yth. : </strong></p>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-left" style="font-size: 15px;">
+                                                    <div class="row">
+                                                        <p style="text-align: left; margin-left: 10px;">
+                                                            <span t-esc="(o.partner_id.parent_id.name or o.partner_id.name) if (o.partner_id.parent_id.name or o.partner_id.name) else ''"/> <br/>
+                                                            <span t-esc="(o.partner_id.parent_id.street or o.partner_id.street) if (o.partner_id.parent_id.street or o.partner_id.street) else ''"/> <br/>
+                                                            <span t-esc="(o.partner_id.parent_id.city or o.partner_id.city) if (o.partner_id.parent_id.city or o.partner_id.city) else ''"/> <br/> 
+                                                            <span t-esc="(o.partner_id.parent_id.state_id.name or o.partner_id.state_id.name) if (o.partner_id.parent_id.state_id.name or o.partner_id.state_id.name) else ''"/> <br/> 
+                                                            <span t-esc="(o.partner_id.parent_id.country_id.name or o.partner_id.country_id.name) if (o.partner_id.parent_id.country_id.name or o.partner_id.country_id.name) else ''"/><br/>
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- REFF PO/SPK CUST -->
+                                <div class="col-6 text-right" style="margin-left: 1rem; ">
+                                    <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
+                                        <thead style="border: 0.5px;">
+                                            <tr>
+                                                <th style="font-size: 16px; text-align: center;">
+                                                  <p style="margin-left: 10px;"><strong>Reff. PO/SPK Customer : </strong></p>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center" style="font-size: 15px;">
+                                                    <p style="margin-left: 10px;">
+                                                        <span t-esc="o.sale_id.origin or ''"/>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- Table Product -->
+                            <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
+                                <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
+                                    <thead style="border: 0.5px;">
+                                        <tr>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">NO</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">NAMA BARANG</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">QTY</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">SATUAN</th>
+                                            <th style="font-size: 16px; text-align: center; font-weight: bold;">KETERANGAN</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="border: none;">
+                                        <t t-set="counter" t-value="0"/>
+                                        <t t-foreach="o.move_ids" t-as="line">
+                                            <t t-set="counter" t-value="counter + 1"/>
+                                            <tr>
+                                            <!-- No -->
+                                                <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
+                                            <!-- Nama Barang -->
+                                                <td class="text-left" style="font-size: 15px; margin-left: 10px;">
+                                                    <!-- <span t-esc="line.product_id.name or ''" style="font-size: 15px;"/> -->
+                                                    <t t-set="lot_names" t-value="', '.join(line.lot_ids.mapped('name')) or ''"/>
+                                                    <t t-set="default_code" t-value="line.product_id.default_code or ''"/>
+                                                    <t t-set="product_name" t-value="line.product_id.name or ''"/>
+                                                    
+                                                    <span t-esc="', '.join(filter(None, [default_code, product_name]))"/><br/>
+                                                    <span t-esc="', '.join(filter(None, [lot_names]))"/>
+                                                </td>
+                                            <!-- QTY -->
+                                                <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.quantity) or ''" style="font-size: 15px;"/></td>
+                                            <!-- Satuan -->
+                                                <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_uom.name or ''" style="font-size: 15px;"/></td>
+                                            <!-- Keterangan -->
+                                                <td class="text-center" style="font-size: 15px;"><span t-esc="line.description_picking or ''" style="font-size: 15px;"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="page-break-after:auto;">
+                                <!-- Note Section -->
+                                <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
+                                    <div class="col-6 text-left">
+                                        <div class="row">
+                                            <p style="font-size: 16px;">Barang telah diterima dalam kondisi BAIK dan BENAR </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Signature Section -->
+                                <div style="page-break-after: auto;">
+                                    <div class="row" style="margin-bottom: 5px; margin-top: 120px;">
+                                        <div class="col-4 text-center">
+                                            <p>Diterima oleh,</p>
+                                            <p style="margin-top: 60px;">( ___________________ )</p>
+                                        </div>
+                                        <div class="col-4 text-center">
+                                            <p>Pengirim,</p>
+                                            <p style="margin-top: 60px;">( ___________________ )</p>
+                                        </div>
+                                        <div class="col-4 text-center" style="margin-bottom: 5px;">
+                                            <p>Dikeluarkan Oleh,</p>
+                                            <p style="margin-top: 60px;">
+                                                ( <span style="display:inline-block; border-bottom:1px solid #000; min-width: 180px; text-align:center;">M. Assegaf</span> )
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </t>
+            </t>
+        </t>

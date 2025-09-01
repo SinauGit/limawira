@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- (sudah ada) tree view inherit -->
+    <record id="view_invoice_tree_inherit_lww_project" model="ir.ui.view">
+        <field name="name">account.move.tree.project.lww</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='name']" position="after">
+                <field name="project_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- NEW: form view inherit -> sisipkan Project setelah company_id -->
+    <record id="view_move_form_inherit_lww_project" model="ir.ui.view">
+        <field name="name">account.move.form.project.lww</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//field[@name='company_id']" position="after">
+                <field name="project_id" options="{'no_create': True}" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
