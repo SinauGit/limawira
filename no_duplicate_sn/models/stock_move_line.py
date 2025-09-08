@@ -30,8 +30,9 @@ class StockMoveLine(models.Model):
                     ('product_id', '=', line.product_id.id),
                     ('id', '!=', line.id),
                     ('state', '=', 'done'),
-                    # Exclude return operations from search
-                    ('location_id.usage', 'in', ['supplier', 'production', 'internal']),
+                    ('picking_id.picking_type_id.code', '=', 'incoming'),      # fokus receipt
+                    ('picking_id.company_id', '=', line.company_id.id),         # per company
+                    ('location_id.usage', 'in', ['supplier', 'production']),    # receipt asli
                 ])
                 
                 if existing_moves:

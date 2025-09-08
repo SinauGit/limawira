@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- Ganti Assigned To tunggal → M2M di wizard Schedule Activity -->
+  <record id="lww_mail_activity_schedule_form_inherit_multi" model="ir.ui.view">
+    <field name="name">mail.activity.schedule.form.multi.assignees.lww</field>
+    <field name="model">mail.activity.schedule</field>
+    <field name="inherit_id" ref="mail.mail_activity_schedule_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='activity_user_id']" position="replace">
+        <field name="multi_user_ids"
+               widget="many2many_tags"
+               string="Assigned to"
+               options="{'no_create': True, 'no_quick_create': True}"
+               help="Pilih satu atau lebih pengguna. Sistem akan membuat satu aktivitas per pengguna."/>
+      </xpath>
+    </field>
+  </record>
+
+  <!-- Popup Edit Activity: tampilkan seluruh assignee pada dokumen -->
+  <record id="mail_activity_view_form_popup_inherit" model="ir.ui.view">
+    <field name="name">mail.activity.form.popup.multi</field>
+    <field name="model">mail.activity</field>
+    <field name="inherit_id" ref="mail.mail_activity_view_form_popup"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='user_id']" position="after">
+        <field name="all_assigned_user_ids"
+               widget="many2many_tags"
+               string="All Assigned Users"
+               readonly="1"
+               invisible="not all_assigned_user_ids"
+               help="Semua user yang memiliki aktivitas pada dokumen ini"/>
+      </xpath>
+    </field>
+  </record>
+
+  <!-- Activities action: default TANPA filter 'My Activities' agar mudah lihat & edit semua -->
+  <record id="mail_activity_action_inherit_show_all" model="ir.actions.act_window">
+    <field name="name">mail.activity.action.inherit.show.all</field>
+    <field name="inherit_id" ref="mail.mail_activity_action"/>
+    <field name="context">{}</field>
+  </record>
+
+</odoo>
