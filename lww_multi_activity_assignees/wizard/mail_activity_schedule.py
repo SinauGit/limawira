@@ -1,65 +1,38 @@
-from odoo import api, fields, models
+from odoo import fields, models
+
 
 class MailActivitySchedule(models.TransientModel):
-    _inherit = "mail.activity.schedule"
+    """
+    Inheriting mail_activity_schedule model to add a feature of activity
+    schedules for multiple users.
+    """
+    _inherit = 'mail.activity.schedule'
 
-    # Field pengganti untuk memilih banyak user
-    multi_user_ids = fields.Many2many(
-        "res.users",
-        "mail_activity_schedule_multi_user_rel",
-        "wizard_id",
-        "user_id",
-        string="Assigned to",
-        help="Pilih lebih dari satu pengguna. Sistem akan membuat satu aktivitas untuk setiap pengguna.",
-    )
+    assign_multiple_user_ids = fields.Many2many('res.users',
+                                                string='Assign Multiple User',
+                                                domain="[('id', '!=',"
+                                                       " activity_user_id)]",
+                                                help='Select the other users '
+                                                     'that you want to '
+                                                     'schedule the activity')
 
-    def _get_target_records(self):
-        """Ambil record target dari wizard (aktif di context atau field res_model/res_id)."""
-        self.ensure_one()
-        model = self.res_model or self.env.context.get("active_model")
-        if not model:
-            return self.env[self.env.context.get("active_model", "res.partner")].browse([])
-        ids = []
-        if self.res_id:
-            ids = [self.res_id]
-        elif self.env.context.get("active_ids"):
-            ids = self.env.context["active_ids"]
-        return self.env[model].browse(ids)
-
-    def _prepare_activity_vals(self, res_model, res_id, user):
-        """Siapkan nilai minimal untuk membuat mail.activity."""
-        self.ensure_one()
-        return {
-            "res_model": res_model,
-            "res_id": res_id,
-            "activity_type_id": self.activity_type_id.id,
-            "user_id": user.id,
-            "summary": self.summary,
-            "note": self.note,
-            "date_deadline": self.date_deadline,
-        }
-
-    def action_schedule(self):
+    def _action_schedule_activities(self):
         """
-        Override: jika multi_user_ids diisi, jadikan satu activity per user.
-        Jika kosong, tetap pakai activity_user_id standar.
+        Override this method to customize the scheduling of activities for
+        multiple users.
         """
-        for wiz in self:
-            records = wiz._get_target_records()
-            users = wiz.multi_user_ids
-            if not users:
-                # fallback ke single assigned (field standar wizard)
-                users = wiz.activity_user_id and wiz.activity_user_id.sudo()
-                users = users and users or self.env.user
-            for rec in records:
-                if isinstance(users, models.BaseModel) and users._name == "res.users":
-                    # single
-                    vals = wiz._prepare_activity_vals(rec._name, rec.id, users)
-                    self.env["mail.activity"].create(vals)
-                else:
-                    # multiple
-                    for user in users:
-                        vals = wiz._prepare_activity_vals(rec._name, rec.id, user)
-                        self.env["mail.activity"].create(vals)
-        # Tutup wizard
-        return {"type": "ir.actions.act_window_close"}
+        user_ids_to_schedule = [user.id for user in
+                                self.assign_multiple_user_ids] + [
+                                   self.activity_user_id.id]
+
+        created_records = {}
+        for user_id in user_ids_to_schedule:
+            record = self._get_applied_on_records().activity_schedule(
+                activity_type_id=self.activity_type_id.id,
+                summary=self.summary,
+                note=self.note,
+                user_id=user_id,
+                date_deadline=self.date_deadline
+            )
+            created_records[user_id] = record
+        return created_records.get(self.activity_user_id.id)

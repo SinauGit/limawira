@@ -24,7 +24,8 @@ class StockPicking(models.Model):
                     existing_serial = self.env['stock.lot'].search([
                         ('name', '=', move_line.lot_id.name),
                         ('product_id', '=', move_line.product_id.id),
-                        ('id', '!=', move_line.lot_id.id)
+                        ('company_id', '=', picking.company_id.id),       # <— batasi per company
+                        ('id', '!=', move_line.lot_id.id),
                     ])
                     
                     if existing_serial:
@@ -39,9 +40,9 @@ class StockPicking(models.Model):
                         ('product_id', '=', move_line.product_id.id),
                         ('state', '=', 'done'),
                         ('id', '!=', move_line.id),
-                        # IMPORTANT: Only check actual receipts, exclude returns
-                        ('picking_id.picking_type_id.code', '=', 'incoming'),
-                        ('location_id.usage', 'in', ['supplier', 'production']),  # Actual incoming sources
+                        ('picking_id.picking_type_id.code', '=', 'incoming'),           # hanya receipt
+                        ('picking_id.company_id', '=', picking.company_id.id),          # company yang sama
+                        ('location_id.usage', 'in', ['supplier', 'production']),        # receipt asli
                     ])
                     
                     if existing_moves:
@@ -50,6 +51,13 @@ class StockPicking(models.Model):
                             'has been previously received. Each serial number can only be received once.'
                         ) % (move_line.lot_id.name, move_line.product_id.name))
 
+    def _is_intercompany_receipt(self, picking):
+        interco_partner_ids = set(self.env['res.company'].sudo().search([]).mapped('partner_id').ids)
+        return (
+            picking.picking_type_id.code == 'incoming'
+            and picking.partner_id.id in interco_partner_ids
+        )
+        
     def _is_return_operation(self, picking):
         """Detect if this is a return operation"""
         
