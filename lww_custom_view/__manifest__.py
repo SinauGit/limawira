@@ -2,11 +2,10 @@
 {
     "name": "LWW Custom View",
     "version": "1.0.0",
-    "depends": ["account", "sale", "project"],  # project is needed for project.project
+    "depends": ["account", "sale", "project","hr_expense"],
     "data": [
         "views/account_move_views.xml",
     ],
-    "application": False,
     "installable": True,
-    "license": "OEEL-1",
+    "application": False,
 }
