@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_analytic_transfer_wizard,access_project_analytic_transfer_wizard,model_project_analytic_transfer_wizard,base.group_user,1,1,1,1
+access_project_analytic_transfer_log,access_project_analytic_transfer_log,model_project_analytic_transfer_log,base.group_user,1,1,1,0

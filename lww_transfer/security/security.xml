@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Security Group for Project Analytic Transfer -->
+        <record id="group_project_analytic_transfer_admin" model="res.groups">
+            <field name="name">Project Analytic Transfer Administrator</field>
+            <field name="category_id" ref="base.module_category_project"/>
+            <field name="comment">Full access to Project Analytic Transfer functionality including bulk operations and system logs</field>
+        </record>
+
+        <!-- Record Rules -->
+        <record id="project_analytic_transfer_log_rule" model="ir.rule">
+            <field name="name">Project Analytic Transfer Log: multi-company</field>
+            <field name="model_id" ref="model_project_analytic_transfer_log"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Access Rights for Admin Group -->
+        <record id="access_project_analytic_transfer_wizard_admin" model="ir.model.access">
+            <field name="name">project.analytic.transfer.wizard.admin</field>
+            <field name="model_id" ref="model_project_analytic_transfer_wizard"/>
+            <field name="group_id" ref="group_project_analytic_transfer_admin"/>
+            <field name="perm_read">1</field>
+            <field name="perm_write">1</field>
+            <field name="perm_create">1</field>
+            <field name="perm_unlink">1</field>
+        </record>
+
+        <record id="access_project_analytic_transfer_log_admin" model="ir.model.access">
+            <field name="name">project.analytic.transfer.log.admin</field>
+            <field name="model_id" ref="model_project_analytic_transfer_log"/>
+            <field name="group_id" ref="group_project_analytic_transfer_admin"/>
+            <field name="perm_read">1</field>
+            <field name="perm_write">1</field>
+            <field name="perm_create">1</field>
+            <field name="perm_unlink">1</field>
+        </record>
+    </data>
+</odoo>

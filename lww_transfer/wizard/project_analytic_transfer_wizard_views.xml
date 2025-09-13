@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="project_analytic_transfer_wizard_form" model="ir.ui.view">
+        <field name="name">project.analytic.transfer.wizard.form</field>
+        <field name="model">project.analytic.transfer.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Transfer Project and Analytic">
+                <sheet>
+                    <group string="Source Filters">
+                        <group>
+                            <field name="source_project_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="source_analytic_account_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Target">
+                        <group>
+                            <field name="target_project_id" options="{'no_create': True}"/>
+                            <field name="update_project"/>
+                        </group>
+                        <group>
+                            <field name="target_analytic_account_id" options="{'no_create': True}"/>
+                            <field name="update_analytic"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Documents to Process">
+                        <group>
+                            <field name="process_sale_orders"/>
+                            <field name="process_purchase_orders"/>
+                            <field name="process_account_moves"/>
+                        </group>
+                        <group>
+                            <field name="process_expenses"/>
+                            <field name="process_stock_moves"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_transfer" type="object" string="Transfer" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="project_analytic_transfer_wizard_action" model="ir.actions.act_window">
+        <field name="name">Transfer Project and Analytic</field>
+        <field name="res_model">project.analytic.transfer.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Log Views -->
+    <record id="project_analytic_transfer_log_tree" model="ir.ui.view">
+        <field name="name">project.analytic.transfer.log.tree</field>
+        <field name="model">project.analytic.transfer.log</field>
+        <field name="arch" type="xml">
+            <list string="Transfer Logs">
+                <field name="create_date"/>
+                <field name="user_id"/>
+                <field name="source_project_id"/>
+                <field name="source_analytic_account_id"/>
+                <field name="target_project_id"/>
+                <field name="target_analytic_account_id"/>
+                <field name="records_updated"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-danger="state == 'error'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="project_analytic_transfer_log_form" model="ir.ui.view">
+        <field name="name">project.analytic.transfer.log.form</field>
+        <field name="model">project.analytic.transfer.log</field>
+        <field name="arch" type="xml">
+            <form string="Transfer Log">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="create_date"/>
+                            <field name="user_id"/>
+                            <field name="state"/>
+                            <field name="records_updated"/>
+                        </group>
+                        <group>
+                            <field name="source_project_id"/>
+                            <field name="source_analytic_account_id"/>
+                            <field name="target_project_id"/>
+                            <field name="target_analytic_account_id"/>
+                        </group>
+                    </group>
+                    <separator string="Details"/>
+                    <field name="details"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="project_analytic_transfer_log_action" model="ir.actions.act_window">
+        <field name="name">Transfer Logs</field>
+        <field name="res_model">project.analytic.transfer.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

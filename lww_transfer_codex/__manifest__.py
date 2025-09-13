@@ -12,6 +12,9 @@
         'account',
         'stock',
         'hr_expense',
+        'sale_project',
+        'sale_purchase_project',
+        'analytic_enterprise',
     ],
     'data': [
         'security/security.xml',
