@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_lww_transfer_codex_root" name="LWW Transfer Codex" parent="project.menu_project_config" sequence="200" groups="lww_transfer_codex.group_lww_transfer_codex_user"/>
+  <menuitem id="menu_lww_transfer_codex_wizard" name="Run Transfer" parent="menu_lww_transfer_codex_root" action="lww_transfer_codex.action_lww_transfer_wizard" sequence="10" groups="lww_transfer_codex.group_lww_transfer_codex_user"/>
+</odoo>
+

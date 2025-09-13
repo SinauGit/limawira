@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wizard Form View -->
+    <record id="project_analytic_transfer_wizard_form" model="ir.ui.view">
+        <field name="name">project.analytic.transfer.wizard.form</field>
+        <field name="model">project.analytic.transfer.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Project &amp; Analytic Transfer">
+                <header>
+                    <button name="action_preview_records" string="Preview Records"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_execute_transfer" string="Execute Transfer"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"
+                            confirm="Are you sure you want to proceed with the transfer? This action cannot be undone."/>
+                    <button name="action_reset" string="Reset"
+                            type="object"
+                            invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,progress,done"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="company_id" options="{'no_create': True, 'no_edit': True}" required="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Source (From)" readonly="state != 'draft'">
+                            <field name="source_project_id" options="{'no_create': True}"/>
+                            <field name="source_analytic_id" options="{'no_create': True}"/>
+                        </group>
+
+                        <group string="Target (To)" readonly="state != 'draft'">
+                            <group>
+                                <field name="update_project"/>
+                                <field name="update_analytic"/>
+                            </group>
+                            <!-- Always show target fields; validation done server-side in action_execute_transfer -->
+                            <field name="target_project_id" options="{'no_create': True}"/>
+                            <field name="target_analytic_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Document Types to Transfer" readonly="state != 'draft'">
+                            <field name="transfer_sales"/>
+                            <field name="transfer_purchase"/>
+                            <field name="transfer_invoices"/>
+                            <field name="transfer_expenses"/>
+                            <field name="transfer_stock"/>
+                        </group>
+                    </group>
+
+                    <notebook invisible="not log_message">
+                        <page string="Transfer Results" invisible="not log_message">
+                            <div class="alert alert-success" role="alert"
+                                 invisible="not log_message or state != 'done'">
+                                <h4 class="alert-heading">Transfer Completed!</h4>
+                                <p class="mb-0">Review the detailed results below. You can start a new transfer by clicking &quot;Start New Transfer&quot;.</p>
+                            </div>
+                            <field name="log_message" readonly="1" nolabel="1"
+                                   widget="html" class="oe_form_field_html"/>
+                        </page>
+                    </notebook>
+
+                    <div class="mt16" invisible="state != 'draft'">
+                        <p class="text-info">
+                            <i class="fa fa-info-circle"/>
+                            <strong>Tips:</strong>
+                        </p>
+                        <ul class="text-muted">
+                            <li>Leave source fields empty to transfer ALL records to the target</li>
+                            <li>Always preview before executing to avoid mistakes</li>
+                            <li>Posted documents will be safely unposted and reposted where required</li>
+                        </ul>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open the wizard -->
+    <record id="action_project_analytic_transfer_wizard" model="ir.actions.act_window">
+        <field name="name">Transfer Project &amp; Analytic</field>
+        <field name="res_model">project.analytic.transfer.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Wizard List View for History -->
+    <record id="project_analytic_transfer_wizard_list" model="ir.ui.view">
+        <field name="name">project.analytic.transfer.wizard.list</field>
+        <field name="model">project.analytic.transfer.wizard</field>
+        <field name="arch" type="xml">
+            <list string="Transfer History" create="false" edit="false" default_order="create_date desc">
+                <field name="create_date" string="Transfer Date"/>
+                <field name="company_id"/>
+                <field name="source_project_id"/>
+                <field name="source_analytic_id"/>
+                <field name="target_project_id"/>
+                <field name="target_analytic_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-info="state == 'progress'"
+                       decoration-muted="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search view for history -->
+    <record id="project_analytic_transfer_wizard_search" model="ir.ui.view">
+        <field name="name">project.analytic.transfer.wizard.search</field>
+        <field name="model">project.analytic.transfer.wizard</field>
+        <field name="arch" type="xml">
+            <search string="Search Transfers">
+                <field name="company_id"/>
+                <field name="source_project_id"/>
+                <field name="source_analytic_id"/>
+                <field name="target_project_id"/>
+                <field name="target_analytic_id"/>
+                <field name="create_date"/>
+
+                <filter name="completed" string="Completed" domain="[('state', '=', 'done')]"/>
+                <filter name="in_progress" string="In Progress" domain="[('state', '=', 'progress')]"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+
+                <group expand="0" string="Group By">
+                    <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Transfer Date" context="{'group_by': 'create_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Transfer History -->
+    <record id="action_project_analytic_transfer_history" model="ir.actions.act_window">
+        <field name="name">Transfer History</field>
+        <field name="res_model">project.analytic.transfer.wizard</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="project_analytic_transfer_wizard_search"/>
+        <field name="domain">[('state', '!=', 'draft')]</field>
+        <field name="context">{'create': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No transfers found!
+            </p>
+            <p>
+                Transfer history will appear here after you execute transfers.<br/>
+                Use the main transfer wizard to start your first transfer.
+            </p>
+        </field>
+    </record>
+
+</odoo>

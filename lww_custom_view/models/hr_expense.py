@@ -54,47 +54,47 @@ class HrExpense(models.Model):
 # =====================
 # hr.expense.sheet
 # =====================
-class HrExpenseSheet(models.Model):
-    _inherit = "hr.expense.sheet"
+# class HrExpenseSheet(models.Model):
+#     _inherit = "hr.expense.sheet"
 
 
-# Replace selection as well; keep compute from base if any (we do not override compute)
-    payment_mode = fields.Selection(
-        selection=[
-            ("own_account", "Employee (to reimburse)"),
-        ],
-        default="own_account",
-        tracking=True,
-        )
+# # Replace selection as well; keep compute from base if any (we do not override compute)
+#     payment_mode = fields.Selection(
+#         selection=[
+#             ("own_account", "Employee (to reimburse)"),
+#         ],
+#         default="own_account",
+#         tracking=True,
+#         )
 
 
-    @api.model
-    def fields_get(self, allfields=None, attributes=None):
-        res = super().fields_get(allfields=allfields, attributes=attributes)
-        fld = res.get("payment_mode")
-        if fld and fld.get("selection"):
-            fld["selection"] = [s for s in fld["selection"] if s[0] != "company_account"]
-        return res
+#     @api.model
+#     def fields_get(self, allfields=None, attributes=None):
+#         res = super().fields_get(allfields=allfields, attributes=attributes)
+#         fld = res.get("payment_mode")
+#         if fld and fld.get("selection"):
+#             fld["selection"] = [s for s in fld["selection"] if s[0] != "company_account"]
+#         return res
 
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            vals["payment_mode"] = "own_account"
-        return super().create(vals_list)
+#     @api.model_create_multi
+#     def create(self, vals_list):
+#         for vals in vals_list:
+#             vals["payment_mode"] = "own_account"
+#         return super().create(vals_list)
 
 
-    def write(self, vals):
-        if "payment_mode" in vals and vals["payment_mode"] != "own_account":
-            vals = dict(vals, payment_mode="own_account")
-        return super().write(vals)
+#     def write(self, vals):
+#         if "payment_mode" in vals and vals["payment_mode"] != "own_account":
+#             vals = dict(vals, payment_mode="own_account")
+#         return super().write(vals)
 
 
-    @api.constrains("payment_mode")
-    def _check_payment_mode(self):
-        for rec in self:
-            if rec.payment_mode and rec.payment_mode != "own_account":
-                raise ValidationError(_("Penggunaan 'Company' pada Metode Pembayaran tidak diperbolehkan."))
+#     @api.constrains("payment_mode")
+#     def _check_payment_mode(self):
+#         for rec in self:
+#             if rec.payment_mode and rec.payment_mode != "own_account":
+#                 raise ValidationError(_("Penggunaan 'Company' pada Metode Pembayaran tidak diperbolehkan."))
 
 
 

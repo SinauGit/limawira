@@ -7,7 +7,7 @@
         "analytic",
         "sale_stock",
         "project_stock",
-        "stock_analytic"
+        "stock_analytic",
     ],
     "installable": True,
     "application": False
