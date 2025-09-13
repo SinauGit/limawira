@@ -11,6 +11,6 @@ def post_init_hook(cr, registry):
     .write({"payment_mode": "own_account"})
 
 
-    env["hr.expense.sheet"].sudo().with_context(tracking_disable=True) \
-    .search([("payment_mode", "=", "company_account")]) \
-    .write({"payment_mode": "own_account"})
+    # env["hr.expense.sheet"].sudo().with_context(tracking_disable=True) \
+    # .search([("payment_mode", "=", "company_account")]) \
+    # .write({"payment_mode": "own_account"})

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Configuration Form View -->
+    <record id="project_analytic_transfer_config_form" model="ir.ui.view">
+        <field name="name">project.analytic.transfer.config.form</field>
+        <field name="model">project.analytic.transfer.config</field>
+        <field name="arch" type="xml">
+            <form string="Project Analytic Transfer Settings" class="oe_form_configuration">
+                <header>
+                    <button name="execute" string="Apply Settings" type="object" class="oe_highlight"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Project &amp; Analytic Transfer Settings</h1>
+                        <p class="text-muted">Configure performance, safety, and notification settings for project and analytic transfers.</p>
+                    </div>
+
+                    <group>
+                        <group string="Performance Settings">
+                            <field name="batch_size" widget="integer"/>
+                            <field name="max_retry_attempts" widget="integer"/>
+                            <field name="retry_delay" widget="integer"/>
+                        </group>
+
+                        <group string="Safety Settings">
+                            <field name="enable_backup_before_transfer"/>
+                            <field name="require_confirmation_above" widget="integer"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Logging Settings">
+                            <field name="enable_detailed_logging"/>
+                            <field name="log_retention_days" widget="integer" readonly="not enable_detailed_logging"/>
+                        </group>
+
+                        <group string="Email Notifications">
+                            <field name="enable_email_notifications"/>
+                            <field name="notification_template_id"
+                                   options="{'no_create': True}"
+                                   readonly="not enable_email_notifications"/>
+                            <field name="notify_user_ids"
+                                   widget="many2many_tags"
+                                   readonly="not enable_email_notifications"/>
+                        </group>
+                    </group>
+
+                    <div class="alert alert-info mt16" role="alert">
+                        <h6 class="alert-heading">Configuration Guidelines:</h6>
+                        <ul class="mb-0">
+                            <li><strong>Batch Size:</strong> Lower values (50-100) for better memory usage, higher values (200-500) for faster processing</li>
+                            <li><strong>Retry Attempts:</strong> 2-3 attempts are usually sufficient for handling temporary issues</li>
+                            <li><strong>Backup:</strong> Enable for critical environments (requires database admin permissions)</li>
+                            <li><strong>Detailed Logging:</strong> Disable in production to improve performance</li>
+                        </ul>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Configuration Action -->
+    <record id="action_project_analytic_transfer_config" model="ir.actions.act_window">
+        <field name="name">Transfer Settings</field>
+        <field name="res_model">project.analytic.transfer.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Add to Settings menu -->
+    <menuitem
+        id="menu_project_analytic_transfer_config"
+        name="Transfer Settings"
+        parent="project.menu_project_config"
+        action="action_project_analytic_transfer_config"
+        sequence="102"/>
+
+</odoo>
+
