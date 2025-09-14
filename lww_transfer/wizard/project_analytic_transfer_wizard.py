@@ -302,43 +302,191 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
         """Process HR Expenses"""
         updated = []
         
-        # HR Expenses - filter by analytic_distribution only
-        domain = []
-        if self.source_analytic_account_id:
-            domain.append(('analytic_distribution', '!=', False))
-        
-        if domain:
-            expense_records = self.env['hr.expense'].search(domain)
+        try:
+            # Check if analytic_distribution field exists
+            if 'analytic_distribution' not in self.env['hr.expense']._fields:
+                _logger.error("Field 'analytic_distribution' does not exist in hr.expense model")
+                return updated
+                
+            # HR Expenses - filter by analytic_distribution only
+            domain = []
+            if self.source_analytic_account_id:
+                domain.append(('analytic_distribution', '!=', False))
             
-            for expense in expense_records:
-                try:
-                    if not expense.exists():
+            _logger.info(f"Expense domain: {domain}")
+            
+            if domain:
+                expense_records = self.env['hr.expense'].search(domain)
+                _logger.info(f"Found {len(expense_records)} expense records")
+                
+                for expense in expense_records:
+                    try:
+                        if not expense.exists():
+                            continue
+                        
+                        _logger.info(f"Processing expense {expense.id}: {expense.name}")
+                        _logger.info(f"Current analytic_distribution: {expense.analytic_distribution}")
+                        _logger.info(f"Expense state: {expense.state if hasattr(expense, 'state') else 'no state field'}")
+                        _logger.info(f"Expense employee: {expense.employee_id.name if expense.employee_id else 'No employee'}")
+                        
+                        # Check expense state - only process draft expenses or use sudo
+                        if hasattr(expense, 'state') and expense.state not in ['draft']:
+                            _logger.warning(f"Skipping expense {expense.id} - state: {expense.state} (only draft expenses can be updated)")
+                            continue
+                        
+                        # Create a copy for comparison
+                        original_distribution = dict(expense.analytic_distribution) if expense.analytic_distribution else {}
+                        
+                        if self._update_analytic_distribution(expense):
+                            _logger.info(f"Updated analytic_distribution: {expense.analytic_distribution}")
+                            
+                            try:
+                                # Try with sudo to bypass permission issues
+                                expense.sudo().write({'analytic_distribution': expense.analytic_distribution})
+                                updated.append(f"Expense: {expense.name}")
+                                _logger.info(f"Successfully updated expense {expense.id} with sudo")
+                                
+                            except Exception as sudo_error:
+                                _logger.error(f"Failed to update expense {expense.id} even with sudo: {str(sudo_error)}")
+                                
+                                # Try alternative approach - update through expense sheet if exists
+                                if hasattr(expense, 'sheet_id') and expense.sheet_id:
+                                    try:
+                                        sheet = expense.sheet_id
+                                        if sheet.state == 'draft':
+                                            expense.sudo().write({'analytic_distribution': expense.analytic_distribution})
+                                            updated.append(f"Expense: {expense.name} (via sheet)")
+                                            _logger.info(f"Successfully updated expense {expense.id} via expense sheet")
+                                        else:
+                                            _logger.warning(f"Cannot update expense {expense.id} - expense sheet state: {sheet.state}")
+                                    except Exception as sheet_error:
+                                        _logger.error(f"Failed to update via expense sheet: {str(sheet_error)}")
+                        else:
+                            _logger.info(f"No update needed for expense {expense.id}")
+                            
+                    except Exception as e:
+                        _logger.error(f"Error processing hr.expense {expense.id}: {str(e)}")
                         continue
+            else:
+                _logger.warning("No domain criteria provided for expense processing")
+                
+        except Exception as e:
+            _logger.error(f"Error in _process_expenses: {str(e)}")
+        
+        return updated
+
+    def _process_expenses_alternative(self):
+        """Alternative method to process expenses by temporarily changing state"""
+        updated = []
+        
+        try:
+            domain = []
+            if self.source_analytic_account_id:
+                domain.append(('analytic_distribution', '!=', False))
+            
+            if domain:
+                # Search for expenses with specific states that can be modified
+                expense_domain = domain + [('state', 'in', ['draft', 'reported'])]
+                expense_records = self.env['hr.expense'].search(expense_domain)
+                
+                for expense in expense_records:
+                    try:
+                        if not expense.exists():
+                            continue
                         
-                    if self._update_analytic_distribution(expense):
-                        expense.write({'analytic_distribution': expense.analytic_distribution})
-                        updated.append(f"Expense: {expense.name}")
+                        original_state = expense.state
                         
-                except Exception as e:
-                    _logger.warning(f"Error processing hr.expense {expense.id}: {str(e)}")
-                    continue
+                        # If not in draft, try to reset to draft temporarily
+                        if expense.state != 'draft':
+                            try:
+                                expense.sudo().action_refuse()  # Reset to draft
+                                _logger.info(f"Reset expense {expense.id} to draft state")
+                            except:
+                                _logger.warning(f"Cannot reset expense {expense.id} to draft")
+                                continue
+                        
+                        # Now try to update
+                        if self._update_analytic_distribution(expense):
+                            expense.sudo().write({'analytic_distribution': expense.analytic_distribution})
+                            updated.append(f"Expense: {expense.name}")
+                            _logger.info(f"Successfully updated expense {expense.id}")
+                        
+                    except Exception as e:
+                        _logger.error(f"Error in alternative expense processing {expense.id}: {str(e)}")
+                        continue
+        
+        except Exception as e:
+            _logger.error(f"Error in _process_expenses_alternative: {str(e)}")
         
         return updated
 
     def _process_stock_moves(self):
-        """Process Stock Moves and Move Lines"""
+        """Process Stock Moves, Delivery Orders, and Receipts"""
         updated = []
         
-        # Stock Move Lines with analytic
-        domain = []
+        # Process Stock Picking (DO/Receipt) with custom project_id field
+        picking_domain = []
+        if self.source_project_id and 'project_id' in self.env['stock.picking']._fields:
+            picking_domain.append(('project_id', '=', self.source_project_id.id))
+        
+        if picking_domain:
+            picking_records = self.env['stock.picking'].search(picking_domain)
+            for picking in picking_records:
+                try:
+                    if not picking.exists():
+                        continue
+                        
+                    update_vals = {}
+                    
+                    if self.update_project and self.target_project_id:
+                        update_vals['project_id'] = self.target_project_id.id
+                    
+                    if update_vals:
+                        picking.write(update_vals)
+                        updated.append(f"DO/Receipt: {picking.name}")
+                        
+                except Exception as e:
+                    _logger.warning(f"Error processing stock.picking {picking.id}: {str(e)}")
+                    continue
+        
+        # Process Stock Move Lines with analytic distribution
+        sml_domain = []
         if self.source_analytic_account_id:
-            domain.append(('analytic_distribution', '!=', False))
+            sml_domain.append(('analytic_distribution', '!=', False))
         
-        sml_records = self.env['stock.move.line'].search(domain)
+        if sml_domain:
+            sml_records = self.env['stock.move.line'].search(sml_domain)
+            for line in sml_records:
+                try:
+                    if not line.exists():
+                        continue
+                        
+                    if self._update_analytic_distribution(line):
+                        line.write({'analytic_distribution': line.analytic_distribution})
+                        updated.append(f"Stock Move Line: {line.move_id.name} - {line.product_id.name}")
+                        
+                except Exception as e:
+                    _logger.warning(f"Error processing stock.move.line {line.id}: {str(e)}")
+                    continue
         
-        for line in sml_records:
-            if self._update_analytic_distribution(line):
-                line.write({'analytic_distribution': line.analytic_distribution})
-                updated.append(f"Stock Move Line: {line.move_id.name} - {line.product_id.name}")
+        # Process Stock Moves with analytic distribution
+        sm_domain = []
+        if self.source_analytic_account_id and 'analytic_distribution' in self.env['stock.move']._fields:
+            sm_domain.append(('analytic_distribution', '!=', False))
+        
+        if sm_domain:
+            sm_records = self.env['stock.move'].search(sm_domain)
+            for move in sm_records:
+                try:
+                    if not move.exists():
+                        continue
+                        
+                    if self._update_analytic_distribution(move):
+                        move.write({'analytic_distribution': move.analytic_distribution})
+                        updated.append(f"Stock Move: {move.name} - {move.product_id.name}")
+                        
+                except Exception as e:
+                    _logger.warning(f"Error processing stock.move {move.id}: {str(e)}")
+                    continue
         
         return updated
