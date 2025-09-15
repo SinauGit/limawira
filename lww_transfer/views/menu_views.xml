@@ -1,19 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Main Menu -->
+    
     <menuitem id="menu_project_analytic_transfer_root"
               name="Project/Analytic Transfer"
               sequence="100"
               groups="base.group_user"/>
     
-    <!-- Transfer Wizard -->
-    <menuitem id="menu_project_analytic_transfer_wizard"
-              name="Transfer Project/Analytic"
-              parent="menu_project_analytic_transfer_root"
-              action="project_analytic_transfer_wizard_action"
-              sequence="10"/>
     
-    <!-- Transfer Logs -->
+    <menuitem 
+        id="menu_project_analytic_transfer"
+        name="Transfer Project &amp; Analytic"
+        parent="project.menu_project_config"
+        action="project_analytic_transfer_wizard_action"
+        sequence="100"
+        groups="project.group_project_manager"/>
+    
+    
     <menuitem id="menu_project_analytic_transfer_log"
               name="Transfer Logs"
               parent="menu_project_analytic_transfer_root"

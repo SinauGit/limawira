@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="project_analytic_transfer_wizard_form" model="ir.ui.view">
         <field name="name">project.analytic.transfer.wizard.form</field>
@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <form string="Transfer Project and Analytic">
                 <sheet>
-                    <group string="Source Filters">
+                    <group string="Source">
                         <group>
                             <field name="source_project_id" options="{'no_create': True}"/>
                         </group>
@@ -18,15 +18,15 @@
                     <group string="Target">
                         <group>
                             <field name="target_project_id" options="{'no_create': True}"/>
-                            <field name="update_project"/>
+                            <field name="update_project" invisible="1"/>
                         </group>
                         <group>
                             <field name="target_analytic_account_id" options="{'no_create': True}"/>
-                            <field name="update_analytic"/>
+                            <field name="update_analytic" invisible="1"/>
                         </group>
                     </group>
                     
-                    <group string="Documents to Process">
+                    <group string="Documents to Process" invisible="1">
                         <group>
                             <field name="process_sale_orders"/>
                             <field name="process_purchase_orders"/>
@@ -53,7 +53,7 @@
         <field name="target">new</field>
     </record>
 
-    <!-- Log Views -->
+    
     <record id="project_analytic_transfer_log_tree" model="ir.ui.view">
         <field name="name">project.analytic.transfer.log.tree</field>
         <field name="model">project.analytic.transfer.log</field>
@@ -104,3 +104,4 @@
         <field name="view_mode">tree,form</field>
     </record>
 </odoo>
+
