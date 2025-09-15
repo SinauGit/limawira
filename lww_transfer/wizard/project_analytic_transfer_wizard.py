@@ -70,7 +70,12 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
                 updated_records.extend(self._process_account_moves())
             
             if self.process_expenses:
-                updated_records.extend(self._process_expenses())
+                # Try sheet-based approach first
+                expense_results = self._process_expenses_via_sheets()
+                if not expense_results:
+                    _logger.info("Sheet-based expense processing yielded no results, trying direct method")
+                    expense_results = self._process_expenses()
+                updated_records.extend(expense_results)
             
             if self.process_stock_moves:
                 updated_records.extend(self._process_stock_moves())
@@ -319,6 +324,10 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
                 expense_records = self.env['hr.expense'].search(domain)
                 _logger.info(f"Found {len(expense_records)} expense records")
                 
+                # Group expenses by sheet to handle sheet-level operations
+                sheets_to_reset = set()
+                expenses_to_update = []
+                
                 for expense in expense_records:
                     try:
                         if not expense.exists():
@@ -327,51 +336,125 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
                         _logger.info(f"Processing expense {expense.id}: {expense.name}")
                         _logger.info(f"Current analytic_distribution: {expense.analytic_distribution}")
                         _logger.info(f"Expense state: {expense.state if hasattr(expense, 'state') else 'no state field'}")
-                        _logger.info(f"Expense employee: {expense.employee_id.name if expense.employee_id else 'No employee'}")
                         
-                        # Check expense state - only process draft expenses or use sudo
-                        if hasattr(expense, 'state') and expense.state not in ['draft']:
-                            _logger.warning(f"Skipping expense {expense.id} - state: {expense.state} (only draft expenses can be updated)")
+                        # Check if expense needs update
+                        if self._should_update_expense_analytic(expense):
+                            expenses_to_update.append(expense)
+                            
+                            # If expense has sheet and sheet is not in draft, collect for reset
+                            if hasattr(expense, 'sheet_id') and expense.sheet_id:
+                                sheet = expense.sheet_id
+                                _logger.info(f"Expense sheet {sheet.id} state: {sheet.state}")
+                                if sheet.state != 'draft':
+                                    sheets_to_reset.add(sheet)
+                            elif expense.state != 'draft':
+                                _logger.warning(f"Expense {expense.id} is not in draft and has no sheet")
+                                
+                    except Exception as e:
+                        _logger.error(f"Error checking expense {expense.id}: {str(e)}")
+                        continue
+                
+                # Reset expense sheets first
+                for sheet in sheets_to_reset:
+                    try:
+                        _logger.info(f"Resetting expense sheet {sheet.id} to draft")
+                        sheet.sudo().action_reset_expense_sheets()
+                        _logger.info(f"Successfully reset sheet {sheet.id}")
+                    except Exception as e:
+                        _logger.error(f"Failed to reset expense sheet {sheet.id}: {str(e)}")
+                
+                # Now update expenses
+                for expense in expenses_to_update:
+                    try:
+                        if not expense.exists():
                             continue
-                        
-                        # Create a copy for comparison
-                        original_distribution = dict(expense.analytic_distribution) if expense.analytic_distribution else {}
+                            
+                        # Double-check state after sheet reset
+                        expense.invalidate_recordset()  # Refresh cache
+                        current_state = expense.state if hasattr(expense, 'state') else 'unknown'
+                        _logger.info(f"Expense {expense.id} state after sheet reset: {current_state}")
                         
                         if self._update_analytic_distribution(expense):
                             _logger.info(f"Updated analytic_distribution: {expense.analytic_distribution}")
                             
-                            try:
-                                # Try with sudo to bypass permission issues
-                                expense.sudo().write({'analytic_distribution': expense.analytic_distribution})
-                                updated.append(f"Expense: {expense.name}")
-                                _logger.info(f"Successfully updated expense {expense.id} with sudo")
-                                
-                            except Exception as sudo_error:
-                                _logger.error(f"Failed to update expense {expense.id} even with sudo: {str(sudo_error)}")
-                                
-                                # Try alternative approach - update through expense sheet if exists
-                                if hasattr(expense, 'sheet_id') and expense.sheet_id:
-                                    try:
-                                        sheet = expense.sheet_id
-                                        if sheet.state == 'draft':
-                                            expense.sudo().write({'analytic_distribution': expense.analytic_distribution})
-                                            updated.append(f"Expense: {expense.name} (via sheet)")
-                                            _logger.info(f"Successfully updated expense {expense.id} via expense sheet")
-                                        else:
-                                            _logger.warning(f"Cannot update expense {expense.id} - expense sheet state: {sheet.state}")
-                                    except Exception as sheet_error:
-                                        _logger.error(f"Failed to update via expense sheet: {str(sheet_error)}")
-                        else:
-                            _logger.info(f"No update needed for expense {expense.id}")
+                            # Try to update
+                            expense.sudo().write({'analytic_distribution': expense.analytic_distribution})
+                            updated.append(f"Expense: {expense.name}")
+                            _logger.info(f"Successfully updated expense {expense.id}")
                             
                     except Exception as e:
-                        _logger.error(f"Error processing hr.expense {expense.id}: {str(e)}")
+                        _logger.error(f"Error updating expense {expense.id}: {str(e)}")
                         continue
             else:
                 _logger.warning("No domain criteria provided for expense processing")
                 
         except Exception as e:
             _logger.error(f"Error in _process_expenses: {str(e)}")
+        
+        return updated
+
+    def _should_update_expense_analytic(self, expense):
+        """Check if expense analytic distribution should be updated"""
+        if not self.update_analytic or not self.target_analytic_account_id:
+            return False
+            
+        current_distribution = expense.analytic_distribution or {}
+        
+        if self.source_analytic_account_id:
+            # Check if source analytic exists in current distribution
+            source_id_str = str(self.source_analytic_account_id.id)
+            return source_id_str in current_distribution
+        else:
+            # Update all distributions
+            return bool(current_distribution)
+
+    def _process_expenses_via_sheets(self):
+        """Process expenses by handling expense sheets directly"""
+        updated = []
+        
+        try:
+            # Find expense sheets that contain expenses with our target analytics
+            domain = []
+            if self.source_analytic_account_id:
+                domain = [
+                    ('expense_line_ids.analytic_distribution', '!=', False)
+                ]
+            
+            expense_sheets = self.env['hr.expense.sheet'].search(domain)
+            _logger.info(f"Found {len(expense_sheets)} expense sheets to process")
+            
+            for sheet in expense_sheets:
+                try:
+                    _logger.info(f"Processing expense sheet {sheet.id}: {sheet.name}")
+                    _logger.info(f"Sheet state: {sheet.state}")
+                    
+                    # Reset sheet to draft if needed
+                    if sheet.state != 'draft':
+                        sheet.sudo().action_reset_expense_sheets()
+                        _logger.info(f"Reset sheet {sheet.id} to draft")
+                    
+                    # Process expenses in this sheet
+                    relevant_expenses = sheet.expense_line_ids.filtered(
+                        lambda exp: exp.analytic_distribution and 
+                        (not self.source_analytic_account_id or 
+                        str(self.source_analytic_account_id.id) in exp.analytic_distribution)
+                    )
+                    
+                    for expense in relevant_expenses:
+                        try:
+                            if self._update_analytic_distribution(expense):
+                                expense.sudo().write({'analytic_distribution': expense.analytic_distribution})
+                                updated.append(f"Expense: {expense.name} (via sheet {sheet.name})")
+                                _logger.info(f"Updated expense {expense.id} via sheet")
+                        except Exception as exp_error:
+                            _logger.error(f"Error updating expense {expense.id} in sheet: {str(exp_error)}")
+                            
+                except Exception as sheet_error:
+                    _logger.error(f"Error processing sheet {sheet.id}: {str(sheet_error)}")
+                    continue
+                    
+        except Exception as e:
+            _logger.error(f"Error in _process_expenses_via_sheets: {str(e)}")
         
         return updated
 
@@ -399,7 +482,7 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
                         # If not in draft, try to reset to draft temporarily
                         if expense.state != 'draft':
                             try:
-                                expense.sudo().action_refuse()  # Reset to draft
+                                expense.sudo().action_reset_expense_sheets()  # Reset to draft
                                 _logger.info(f"Reset expense {expense.id} to draft state")
                             except:
                                 _logger.warning(f"Cannot reset expense {expense.id} to draft")
