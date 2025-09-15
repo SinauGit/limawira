@@ -1,17 +1,8 @@
 {
-    'name': 'Project Analytic Transfer',
+    'name': 'Project Transfer',
     'version': '18.0.1.0.0',
     'category': 'Project',
-    'summary': 'Transfer project and analytic distribution across documents',
-    'description': """
-        Transfer project and analytic distribution across multiple documents:
-        - Sales Orders
-        - Purchase Orders
-        - Invoices/Bills/Journal Entries
-        - Expenses
-        - Stock Moves
-    """,
-    'author': 'Your Company',
+    'author': 'Rizky Abdi S.H',
     'depends': [
         'project',
         'sale_management',
