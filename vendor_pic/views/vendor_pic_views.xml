@@ -98,5 +98,6 @@
               name="Vendor PICs"
               parent="purchase.menu_purchase_root"
               action="action_vendor_pic"
-              sequence="5"/>
+              sequence="5"
+              groups="purchase.group_purchase_user"/>/>
 </odoo>

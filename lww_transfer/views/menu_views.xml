@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     
-    <menuitem id="menu_project_analytic_transfer_root"
+    <!-- <menuitem id="menu_project_analytic_transfer_root"
               name="Project/Analytic Transfer"
               sequence="100"
-              groups="base.group_user"/>
+              groups="base.group_user"/> -->
     
     
     <menuitem 
@@ -16,9 +16,9 @@
         groups="project.group_project_manager"/>
     
     
-    <menuitem id="menu_project_analytic_transfer_log"
+    <!-- <menuitem id="menu_project_analytic_transfer_log"
               name="Transfer Logs"
               parent="menu_project_analytic_transfer_root"
               action="project_analytic_transfer_log_action"
-              sequence="20"/>
+              sequence="20"/> -->
 </odoo>
