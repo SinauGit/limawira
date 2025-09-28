@@ -1,12 +1,13 @@
 <odoo>
     <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
         <xpath expr="//table[@name='invoice_line_table']/tbody" position="before">
+            <!-- URUTAN BARU: 1. Sales Order Details DULU -->
             <t t-if="o.should_show_downpayment_template()">
                 <tr class="fw-bold o_line_section">
                     <td t-att-colspan="display_discount and 5 or 4">Sales Order Details</td>
                 </tr>
                         
-                <!-- Show sale order lines excluding display_type lines and ensuring product exists -->
+                <!-- 2. Show sale order lines (produk SO) -->
                 <t t-foreach="[l for l in o.get_related_sale_order_lines() if not l.display_type and l.product_id]" t-as="so_line">
                     <tr>
                         <td>
@@ -24,6 +25,11 @@
                         </td>
                     </tr>
                 </t>
+                
+                <!-- 3. Down Payment / Termin section SETELAH sales order details -->
+                <tr class="fw-bold o_line_section">
+                    <td t-att-colspan="display_discount and 5 or 4">Down Payment / Termin</td>
+                </tr>
             </t>
         </xpath>
     </template>
