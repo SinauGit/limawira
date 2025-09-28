@@ -162,6 +162,25 @@
                                 <tbody style="border: none;">
                                     <t t-set="counter" t-value="0"/>
                                     <t t-foreach="o.order_line" t-as="line">
+                                                    
+                                        <!-- Section Header -->
+                                        <t t-if="line.display_type == 'line_section'">
+                                            <tr>
+                                                <td colspan="9" style="font-weight: bold; font-size: 16px; background-color: #efefef; text-align: left; padding-left: 15px;">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <!-- Note -->
+                                        <t t-elif="line.display_type == 'line_note'">
+                                            <tr>
+                                                <td colspan="9" style="font-style: italic; font-size: 14px; text-align: left; padding-left: 15px;">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <!-- Product Line -->
+                                        <t t-else="">
                                         <t t-set="counter" t-value="counter + 1"/>
                                         <tr>
                                         <!-- No -->
@@ -191,6 +210,7 @@
                                                 <span t-esc="line.product_id.description_sale or ''" style="font-size: 15px;"/> 
                                             </td> -->
                                         </tr>
+                                    </t>
                                     </t>
                                 </tbody>
                             </table>

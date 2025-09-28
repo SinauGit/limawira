@@ -137,10 +137,11 @@
                                             <tbody style="border: none;">
                                                 <t t-set="counter" t-value="0"/>
                                                 <t t-foreach="o.order_line" t-as="line">
+                                                    
                                                     <!-- Section Header -->
                                                     <t t-if="line.display_type == 'line_section'">
                                                         <tr>
-                                                            <td colspan="8" style="font-weight: bold; font-size: 16px; background-color: #efefef; text-align: left; padding-left: 15px;">
+                                                            <td colspan="9" style="font-weight: bold; font-size: 16px; background-color: #efefef; text-align: left; padding-left: 15px;">
                                                                 <span t-field="line.name"/>
                                                             </td>
                                                         </tr>
@@ -148,36 +149,36 @@
                                                     <!-- Note -->
                                                     <t t-elif="line.display_type == 'line_note'">
                                                         <tr>
-                                                            <td colspan="8" style="font-style: italic; font-size: 14px; text-align: left; padding-left: 15px;">
+                                                            <td colspan="9" style="font-style: italic; font-size: 14px; text-align: left; padding-left: 15px;">
                                                                 <span t-field="line.name"/>
                                                             </td>
                                                         </tr>
                                                     </t>
                                                     <!-- Product Line -->
                                                     <t t-else="">
-                                                        <t t-set="counter" t-value="counter + 1"/>
-                                                        <tr>
-                                                        <!-- No -->
-                                                            <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
-                                                        <!-- Part Number -->
-                                                            <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or ''" style="font-size: 15px;"/></td>
-                                                        <!-- Product Name -->
-                                                            <td class="text-center" style="font-size: 15px; max-width: 300px; word-wrap: break-word; white-space: normal; overflow: hidden;">
-                                                                <span t-esc="line.product_id.name or ''" style="font-size: 15px;"/></td>
-                                                        <!-- QTY -->
-                                                            <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.product_qty) or ''" style="font-size: 15px;"/></td>
-                                                        <!-- Unit Price -->
-                                                            <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit) or ''" style="font-size: 15px; text-align: right;"/></td>
-                                                        <!-- Unit -->
-                                                            <!-- <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_uom.name or ''" style="font-size: 15px;"/></td> -->
-                                                        <!-- Disc -->
-                                                            <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.discount) or '0'" style="font-size: 15px;"/>%</td>
-                                                        <!-- Currency -->
-                                                            <td class="text-center" style="font-size: 15px;"><span t-esc="o.currency_id.name or ''" style="font-size: 15px;"/></td>
-                                                        <!-- Total -->
-                                                            <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_subtotal) or ''" style="font-size: 15px; text-align: right;"/></td>
-                                                        </tr>
-                                                    </t>
+                                                    <t t-set="counter" t-value="counter + 1"/>
+                                                    <tr>
+                                                    <!-- No -->
+                                                        <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
+                                                    <!-- Part Number -->
+                                                        <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or ''" style="font-size: 15px;"/></td>
+                                                    <!-- Product Name -->
+                                                        <td class="text-center" style="font-size: 15px; max-width: 300px; word-wrap: break-word; white-space: normal; overflow: hidden;">
+                                                            <span t-esc="line.product_id.name or ''" style="font-size: 15px;"/></td>
+                                                    <!-- QTY -->
+                                                        <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.product_qty) or ''" style="font-size: 15px;"/></td>
+                                                    <!-- Unit Price -->
+                                                        <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit) or ''" style="font-size: 15px; text-align: right;"/></td>
+                                                    <!-- Unit -->
+                                                        <!-- <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_uom.name or ''" style="font-size: 15px;"/></td> -->
+                                                    <!-- Disc -->
+                                                        <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.discount) or '0'" style="font-size: 15px;"/>%</td>
+                                                    <!-- Currency -->
+                                                        <td class="text-center" style="font-size: 15px;"><span t-esc="o.currency_id.name or ''" style="font-size: 15px;"/></td>
+                                                    <!-- Total -->
+                                                        <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_subtotal) or ''" style="font-size: 15px; text-align: right;"/></td>
+                                                    </tr>
+                                                </t>
                                                 </t>
                                             </tbody>
                                         </table>

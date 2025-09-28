@@ -87,17 +87,19 @@
                             <strong>Delivery Date</strong>
                             <div t-field="o.delivery_date" t-options="{&quot;widget&quot;: &quot;date&quot;, &quot;format&quot;: &quot;dd MMMM yyyy&quot;}">2023-09-25</div>
                         </div>
-                        <div class="col" t-if="o.invoice_origin" name="origin">
+                        <!-- <div class="col" t-if="o.invoice_origin" name="origin">
                             <strong>Source</strong>
                             <div t-field="o.invoice_origin">SO123</div>
-                        </div>
+                        </div> -->
                         <div class="col" t-if="o.partner_id.ref" name="customer_code">
                             <strong>Customer Code</strong>
                             <div t-field="o.partner_id.ref"/>
                         </div>
-                        <div class="col" t-if="o.ref" name="reference">
+                        <t t-set="sale_order" t-value="o.invoice_line_ids.sale_line_ids.order_id[:1] if o.invoice_line_ids.sale_line_ids else False"/>
+                        <div class="col" t-if="o.ref or (sale_order and sale_order.no_so)" name="reference">
                             <strong>Reference</strong>
-                            <div t-field="o.ref">INV/2023/00001</div>
+                            <div t-if="o.ref" t-field="o.ref">INV/2023/00001</div>
+                            <div t-if="not o.ref and sale_order and sale_order.no_so" t-field="sale_order.no_so"></div>
                         </div>
                         <div class="col" t-if="o.invoice_incoterm_id" name="incoterm_id">
                             <strong>Incoterm</strong>
@@ -359,7 +361,7 @@
                     </tbody>
                 </table>
             <div style="margin-top: 20px; text-align: center;">
-                <div><t t-esc="o.company_id.location_ttd or ''"/>,<t t-esc="o.invoice_date.strftime('%d %B %Y') if o.invoice_date else ''"/></div>
+                <div><t t-esc="o.company_id.location_ttd or ''"/> , <t t-esc="o.invoice_date.strftime('%d %B %Y') if o.invoice_date else ''"/></div>
                 <div style="margin-top: 100px; font-weight: bold; text-decoration: underline; cursor: pointer;">
                    <t t-esc="o.company_id.director or ''"/>
                 </div>
