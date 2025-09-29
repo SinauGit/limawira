@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Extend tree view untuk menampilkan department -->
+        <record id="view_department_vendor_bill_tree" model="ir.ui.view">
+            <field name="name">Department Vendor Bills Tree</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="department_id" string="Department"/>
+                    <field name="create_uid" string="Created By"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Extend form view untuk menampilkan department -->
+        <record id="view_department_vendor_bill_form" model="ir.ui.view">
+            <field name="name">Department Vendor Bills Form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="department_id" readonly="1" invisible="move_type != 'in_invoice'"/>
+                </xpath>
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="create_uid" readonly="1" string="Created By" invisible="move_type != 'in_invoice'"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Search view dengan filter department -->
+        <record id="view_department_vendor_bill_search" model="ir.ui.view">
+            <field name="name">Department Vendor Bills Search</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='late']" position="after">
+                    <separator/>
+                    <filter string="My Bills" name="my_bills" domain="[('create_uid', '=', uid)]"/>
+                </xpath>
+                <xpath expr="//group" position="inside">
+                    <filter string="Department" name="group_department" context="{'group_by': 'department_id'}"/>
+                    <filter string="Created By" name="group_created_by" context="{'group_by': 'create_uid'}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
