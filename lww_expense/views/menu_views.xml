@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Main Menu -->
+        <menuitem id="menu_department_bill_root" 
+                  name="Department Vendor Bills" 
+                  sequence="60"
+                  groups="group_department_bill_user,group_department_bill_manager,group_department_bill_admin"/>
+        
+        <!-- User Menu - hanya bill sendiri -->
+        <menuitem id="menu_my_vendor_bills" 
+                  name="My Vendor Bills"
+                  parent="menu_department_bill_root"
+                  action="action_my_vendor_bills"
+                  sequence="10"
+                  groups="group_department_bill_user"/>
+        
+        <!-- Manager Menu - semua bill departemen -->
+        <menuitem id="menu_department_vendor_bills" 
+                  name="Department Bills"
+                  parent="menu_department_bill_root"
+                  action="action_department_vendor_bills"
+                  sequence="20"
+                  groups="group_department_bill_manager"/>
+
+        <!-- Admin Menu - semua bill dari semua departemen -->
+        <menuitem id="menu_all_department_bills" 
+                  name="All Department Bills"
+                  parent="menu_department_bill_root"
+                  action="action_department_vendor_bills"
+                  sequence="30"
+                  groups="group_department_bill_admin"/>
+        
+        <!-- Separator -->
+        <menuitem id="menu_separator" 
+                  name="---" 
+                  parent="menu_department_bill_root"
+                  sequence="35"
+                  groups="group_department_bill_admin"/>
+        
+    </data>
+</odoo>
