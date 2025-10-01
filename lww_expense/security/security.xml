@@ -26,8 +26,7 @@
         <field name="name">Vendor Bills: User Own Bills Only</field>    
         <field name="model_id" ref="account.model_account_move"/>
         <field name="domain_force">[
-            ('move_type', '=', 'in_invoice'),
-            ('create_uid', '=', uid)
+            ('move_type', '=', 'in_invoice')
         ]</field>
         <field name="groups" eval="[(4, ref('group_department_bill_user'))]"/>
         <field name="perm_read" eval="True"/>
