@@ -81,7 +81,7 @@
                 <attribute name="groups">account.group_account_user</attribute>
             </xpath> -->
             
-        </field>
+        <!-- </field> -->
     </record>
 
 </odoo>

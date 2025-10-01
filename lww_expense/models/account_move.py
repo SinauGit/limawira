@@ -16,26 +16,43 @@ class AccountMove(models.Model):
         readonly=True,
         help='Department of the user who created this vendor bill'
     )
-
-    @api.depends('create_uid')
+    
+    @api.depends('create_uid', 'journal_id')
     def _compute_department_id(self):
-        """Compute department based on create_uid"""
+        """Compute department based on create_uid only for journal with code 'EXP'"""
         for record in self:
-            if record.create_uid and record.create_uid.employee_id and record.create_uid.employee_id.department_id:
+            # Check if journal code is "EXP"
+            if (record.journal_id and 
+                record.journal_id.code == 'EXP' and
+                record.create_uid and 
+                record.create_uid.employee_id and 
+                record.create_uid.employee_id.department_id):
                 record.department_id = record.create_uid.employee_id.department_id
             else:
                 record.department_id = False
 
     @api.model
     def create(self, vals):
-        """Auto-assign department when creating vendor bill"""
+        """Auto-assign department when creating vendor bill with EXP journal"""
         move = super().create(vals)
         
-        # Force compute department for vendor bills
-        if move.move_type == 'in_invoice':
+        # Force compute department for vendor bills with EXP journal
+        if (move.move_type == 'in_invoice' and 
+            move.journal_id and 
+            move.journal_id.code == 'EXP'):
             move._compute_department_id()
             
         return move
+    
+    def write(self, vals):
+        """Recompute department if journal changed to/from EXP"""
+        res = super().write(vals)
+        
+        # Recompute if journal_id changed
+        if 'journal_id' in vals:
+            self._compute_department_id()
+            
+        return res
 
     @api.model 
     def _get_user_bills_domain(self):
