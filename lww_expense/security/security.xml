@@ -40,7 +40,6 @@
             <field name="name">Vendor Bills: Manager Department Access</field>
             <field name="model_id" ref="account.model_account_move"/>
             <field name="domain_force">[
-                ('move_type', '=', 'in_invoice'),
                 ('department_id', '=', user.employee_id.department_id.id)
             ]</field>
             <field name="groups" eval="[(4, ref('group_department_bill_manager'))]"/>
