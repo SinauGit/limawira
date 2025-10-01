@@ -59,27 +59,27 @@
         </xpath>
         </field>
     </record> -->
-
+<!-- 
     <record id="view_move_form_vendor_bill_inherit" model="ir.ui.view">
         <field name="name">account.move.form.vendor.bill.inherit</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
-        <field name="arch" type="xml">
+        <field name="arch" type="xml"> -->
             
             <!-- Restrict invoice_date field -->
-            <xpath expr="//field[@name='invoice_date']" position="attributes">
+            <!-- <xpath expr="//field[@name='invoice_date']" position="attributes">
                 <attribute name="groups">account.group_account_user</attribute>
-            </xpath>
+            </xpath> -->
             
             <!-- Restrict date field -->
-            <xpath expr="//field[@name='date']" position="attributes">
+            <!-- <xpath expr="//field[@name='date']" position="attributes">
                 <attribute name="groups">account.group_account_user</attribute>
-            </xpath>
+            </xpath> -->
             
             <!-- Restrict invoice_date_due field -->
-            <xpath expr="//field[@name='invoice_date_due']" position="attributes">
+            <!-- <xpath expr="//field[@name='invoice_date_due']" position="attributes">
                 <attribute name="groups">account.group_account_user</attribute>
-            </xpath>
+            </xpath> -->
             
         </field>
     </record>
