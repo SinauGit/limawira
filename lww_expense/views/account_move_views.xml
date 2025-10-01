@@ -6,11 +6,11 @@
         <record id="view_department_vendor_bill_tree" model="ir.ui.view">
             <field name="name">Department Vendor Bills Tree</field>
             <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="department_id" string="Department" optional="show"/>
-                    <field name="create_uid" string="Created By" optional="show"/>
+                    <field name="department_id" string="Department" optional="hide"/>
+                    <field name="create_uid" string="Created By" optional="hide"/>
                 </xpath>
             </field>
         </record>
@@ -25,7 +25,7 @@
                     <field name="department_id" readonly="1" invisible="move_type != 'in_invoice'"/>
                 </xpath>
                 <xpath expr="//field[@name='ref']" position="after">
-                    <field name="create_uid" readonly="1" string="Created By" invisible="move_type != 'in_invoice'"/>
+                    <field name="create_uid" readonly="1" string="Created By" invisible="1"/>
                 </xpath>
             </field>
         </record>
