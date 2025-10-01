@@ -2,7 +2,6 @@
 <odoo>
     <data>
         
-        <!-- Action untuk User - hanya bill sendiri yang posted -->
         <record id="action_my_vendor_bills" model="ir.actions.act_window">
             <field name="name">My Vendor Bills</field>
             <field name="res_model">account.move</field>
@@ -24,7 +23,6 @@
             </field>
         </record>
 
-        <!-- Action untuk Manager - semua bill departemen yang posted -->
         <record id="action_department_vendor_bills_manager" model="ir.actions.act_window">
             <field name="name">Department Vendor Bills</field>
             <field name="res_model">account.move</field>
@@ -46,7 +44,6 @@
             </field>
         </record>
 
-        <!-- Action untuk Admin - semua bill yang posted -->
         <record id="action_all_department_bills_admin" model="ir.actions.act_window">
             <field name="name">All Department Bills</field>
             <field name="res_model">account.move</field>

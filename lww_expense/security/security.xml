@@ -21,9 +21,9 @@
             <field name="comment">Admin can access all department vendor bills</field>
         </record>
 
-        <!-- Record Rules untuk User - hanya bisa lihat bill sendiri yang posted -->
+
         <record id="rule_vendor_bill_user_own" model="ir.rule">
-        <field name="name">Vendor Bills: User Own Bills Only</field>
+        <field name="name">Vendor Bills: User Own Bills Only</field>    
         <field name="model_id" ref="account.model_account_move"/>
         <field name="domain_force">[
             ('move_type', '=', 'in_invoice'),
@@ -37,7 +37,6 @@
         </record>
 
 
-        <!-- Record Rules untuk Manager - bisa lihat semua bill departemennya yang posted -->
         <record id="rule_vendor_bill_manager_department" model="ir.rule">
             <field name="name">Vendor Bills: Manager Department Access</field>
             <field name="model_id" ref="account.model_account_move"/>
@@ -52,9 +51,8 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
-        <!-- Record Rules untuk Admin - bisa lihat semua bill dari semua department yang posted -->
         <record id="rule_vendor_bill_admin_all" model="ir.rule">
-        <field name="name">Vendor Bills: Admin All Departments (Posted)</field>
+        <field name="name">Vendor Bills: Admin All Departments</field>
         <field name="model_id" ref="account.model_account_move"/>
         <field name="domain_force">[
             ('move_type', '=', 'in_invoice'),
