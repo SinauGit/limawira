@@ -24,21 +24,20 @@
         </field>
     </record>
 
-    <record id="hr_expense_form_no_company_payment_mode" model="ir.ui.view">
+    <!-- <record id="hr_expense_form_no_company_payment_mode" model="ir.ui.view">
         <field name="name">hr.expense.form.no.company.payment_mode</field>
         <field name="model">hr.expense</field>
-        <!-- Pastikan XML ID berikut sesuai versi Odoo Anda -->
         <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='payment_mode']" position="attributes">
                 <attribute name="widget">radio</attribute>
             </xpath>
         </field>
-    </record>
+    </record> -->
 
 
     <!-- Expense Form -->
-    <record id="view_hr_expense_form_filter_employee" model="ir.ui.view">
+    <!-- <record id="view_hr_expense_form_filter_employee" model="ir.ui.view">
         <field name="name">hr.expense.form.filter.employee</field>
         <field name="model">hr.expense</field>
         <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
@@ -47,10 +46,10 @@
             <attribute name="domain">[('filter_for_expense','=',True)]</attribute>
         </xpath>
         </field>
-    </record>
+    </record> -->
 
     <!-- Expense Sheet Form -->
-    <record id="view_hr_expense_sheet_form_filter_employee" model="ir.ui.view">
+    <!-- <record id="view_hr_expense_sheet_form_filter_employee" model="ir.ui.view">
         <field name="name">hr.expense.sheet.form.filter.employee</field>
         <field name="model">hr.expense.sheet</field>
         <field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form"/>
@@ -59,7 +58,7 @@
             <attribute name="domain">[('filter_for_expense','=',True)]</attribute>
         </xpath>
         </field>
-    </record>
+    </record> -->
 
     <record id="view_move_form_vendor_bill_inherit" model="ir.ui.view">
         <field name="name">account.move.form.vendor.bill.inherit</field>

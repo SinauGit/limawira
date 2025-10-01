@@ -22,7 +22,7 @@ class AccountMove(models.Model):
         """Compute department based on create_uid"""
         for record in self:
             if record.create_uid and record.create_uid.employee_id and record.create_uid.employee_id.department_id:
-                record.department_id = record.create_uid.employee_id.department_id.id
+                record.department_id = record.create_uid.employee_id.department_id
             else:
                 record.department_id = False
 
@@ -37,67 +37,25 @@ class AccountMove(models.Model):
             
         return move
 
-    def write(self, vals):
-        """Ensure user can only modify vendor bills according to their access level"""
-        for record in self:
-            if record.move_type == 'in_invoice':
-                # Check user access level
-                is_admin = self.env.user.has_group('department_vendor_bill_management.group_department_bill_admin')
-                is_manager = self.env.user.has_group('department_vendor_bill_management.group_department_bill_manager')
-                
-                if is_admin:
-                    # Admin can modify all bills
-                    continue
-                elif is_manager:
-                    # Manager can modify bills from their department only
-                    user_dept = self.env.user.employee_id.department_id if self.env.user.employee_id else False
-                    if user_dept and record.department_id and record.department_id != user_dept:
-                        raise AccessError(_('You can only modify vendor bills from your department.'))
-                else:
-                    # Regular user can only modify their own bills
-                    if record.create_uid != self.env.user:
-                        raise AccessError(_('You can only modify your own vendor bills.'))
-        
-        return super().write(vals)
-
-    def unlink(self):
-        """Ensure proper deletion permissions"""
-        for record in self:
-            if record.move_type == 'in_invoice':
-                # Check user access level
-                is_admin = self.env.user.has_group('department_vendor_bill_management.group_department_bill_admin')
-                is_manager = self.env.user.has_group('department_vendor_bill_management.group_department_bill_manager')
-                
-                if is_admin:
-                    # Admin can delete all bills
-                    continue
-                elif is_manager:
-                    # Manager can delete bills from their department only
-                    user_dept = self.env.user.employee_id.department_id if self.env.user.employee_id else False
-                    if user_dept and record.department_id and record.department_id != user_dept:
-                        raise AccessError(_('You can only delete vendor bills from your department.'))
-                else:
-                    # Regular user cannot delete bills
-                    raise AccessError(_('You are not allowed to delete vendor bills.'))
-        
-        return super().unlink()
-
     @api.model 
     def _get_user_bills_domain(self):
         """Helper method untuk mendapatkan domain user bills"""
         is_admin = self.env.user.has_group('department_vendor_bill_management.group_department_bill_admin')
         is_manager = self.env.user.has_group('department_vendor_bill_management.group_department_bill_manager')
-        
+
+        base = [('move_type', '=', 'in_invoice')]
+
         if is_admin:
-            # Admin: semua bill dari semua department
-            return []
+            # Admin: tidak dibatasi di helper (state dibatasi via action/rule)
+            return base
         elif is_manager:
-            # Manager: semua bill dari departemen
             user_dept = self.env.user.employee_id.department_id if self.env.user.employee_id else False
             if user_dept:
-                return [('department_id', '=', user_dept.id)]
+                return base + [('department_id', '=', user_dept.id)]
+            # ✔ Fallback aman: Manager tanpa department → hanya bill miliknya
+            return base + [('create_uid', '=', self.env.user.id)]
         else:
             # User biasa: hanya bill sendiri
-            return [('create_uid', '=', self.env.user.id)]
+            return base + [('create_uid', '=', self.env.user.id)]
         
         return []

@@ -189,7 +189,7 @@
                                             <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or '-'" style="font-size: 15px;"/></td>
                                         <!-- Product Name -->
                                             <td class="text-center" style="font-size: 15px; max-width: 300px; word-wrap: break-word; white-space: normal; overflow: hidden;">
-                                            <span t-esc="line.product_id.name or '-'" style="font-size: 15px;"/></td>
+                                            <span t-esc="line.name or '-'" style="font-size: 15px;"/></td>
                                         <!-- Price -->
                                             <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit) or ''" style="font-size: 15px; text-align: right;"/></td>
                                         <!-- QTY -->

@@ -164,7 +164,7 @@
                                                         <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or ''" style="font-size: 15px;"/></td>
                                                     <!-- Product Name -->
                                                         <td class="text-center" style="font-size: 15px; max-width: 300px; word-wrap: break-word; white-space: normal; overflow: hidden;">
-                                                            <span t-esc="line.product_id.name or ''" style="font-size: 15px;"/></td>
+                                                            <span t-esc="line.name or ''" style="font-size: 15px;"/></td>
                                                     <!-- QTY -->
                                                         <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.product_qty) or ''" style="font-size: 15px;"/></td>
                                                     <!-- Unit Price -->

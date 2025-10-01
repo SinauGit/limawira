@@ -20,7 +20,7 @@
         <menuitem id="menu_department_vendor_bills" 
                   name="Department Bills"
                   parent="menu_department_bill_root"
-                  action="action_department_vendor_bills"
+                  action="action_department_vendor_bills_manager"
                   sequence="20"
                   groups="group_department_bill_manager"/>
 
@@ -28,7 +28,7 @@
         <menuitem id="menu_all_department_bills" 
                   name="All Department Bills"
                   parent="menu_department_bill_root"
-                  action="action_department_vendor_bills"
+                  action="action_all_department_bills_admin"
                   sequence="30"
                   groups="group_department_bill_admin"/>
         
