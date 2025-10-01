@@ -9,8 +9,8 @@
             <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='ref']" position="after">
-                    <field name="department_id" string="Department"/>
-                    <field name="create_uid" string="Created By"/>
+                    <field name="department_id" string="Department" optional="show"/>
+                    <field name="create_uid" string="Created By" optional="show"/>
                 </xpath>
             </field>
         </record>
