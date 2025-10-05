@@ -1,24 +1,6 @@
 {
     'name': 'Department Expense Bill Management',
     'version': '18.0.1.0.0',
-    'category': 'Accounting',
-    'summary': 'Manage expense bills by department with user-level access control',
-    'description': """
-        Department Expense Bill Management
-        ===================================
-        
-        This module adds expense bill management with department-based access control.
-        
-        Features:
-        - Custom expense bill type using is_expense_bill field
-        - Automatic journal assignment (EXP code)
-        - Three-level access control:
-          * User: Can only see their own expense bills
-          * Manager: Can see all expense bills from their department
-          * Admin: Can see all expense bills from all departments
-        - Automatic department assignment based on creator
-    """,
-    'author': 'Your Company',
     'license': 'LGPL-3',
     'depends': [
         'base',
