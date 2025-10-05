@@ -130,12 +130,12 @@ class AccountMove(models.Model):
                     ))
         
         # Check write permissions for posted bills
-        if any(rec.state == 'posted' and rec.is_expense_bill for rec in self):
-            if not self._check_expense_bill_edit_rights():
-                raise AccessError(_(
-                    'You cannot modify posted expense bills. '
-                    'Only managers and admins can edit posted expense bills.'
-                ))
+        # if any(rec.state == 'posted' and rec.is_expense_bill for rec in self):
+        #     if not self._check_expense_bill_edit_rights():
+        #         raise AccessError(_(
+        #             'You cannot modify posted expense bills. '
+        #             'Only managers and admins can edit posted expense bills.'
+        #         ))
         
         res = super(AccountMove, self).write(vals)
         
@@ -149,23 +149,23 @@ class AccountMove(models.Model):
         """Prevent deletion of posted expense bills by regular users"""
         for move in self:
             if move.is_expense_bill and move.state == 'posted':
-                if not self.env.user.has_group('department_vendor_bill_management.group_department_bill_manager'):
+                if not self.env.user.has_group('department_vendor_bill_management.group_department_bill_admin'):
                     raise UserError(_(
                         'You cannot delete posted expense bills. '
                         'Please contact your manager or administrator.'
                     ))
         return super(AccountMove, self).unlink()
 
-    def button_draft(self):
-        """Override reset to draft with permission check"""
-        for move in self:
-            if move.is_expense_bill and move.state == 'posted':
-                if not self._check_expense_bill_edit_rights():
-                    raise AccessError(_(
-                        'You cannot reset posted expense bills to draft. '
-                        'Only managers and admins have this permission.'
-                    ))
-        return super(AccountMove, self).button_draft()
+    # def button_draft(self):
+    #     """Override reset to draft with permission check"""
+    #     for move in self:
+    #         if move.is_expense_bill and move.state == 'posted':
+    #             if not self._check_expense_bill_edit_rights():
+    #                 raise AccessError(_(
+    #                     'You cannot reset posted expense bills to draft. '
+    #                     'Only managers and admins have this permission.'
+    #                 ))
+    #     return super(AccountMove, self).button_draft()
 
     # def _check_expense_bill_edit_rights(self):
     #     """
