@@ -2,47 +2,55 @@
 <odoo>
     <data>
         
-        <!-- Extend tree view untuk menampilkan department -->
+        <!-- Extend tree view untuk menampilkan department dan expense indicator -->
         <record id="view_department_vendor_bill_tree" model="ir.ui.view">
-            <field name="name">Department Vendor Bills Tree</field>
+            <field name="name">Department Expense Bills Tree</field>
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='name']" position="after">
+                <xpath expr="//field[@name='invoice_partner_display_name']" position="after">
                     <field name="department_id" string="Department" optional="hide"/>
                     <field name="create_uid" string="Created By" optional="hide"/>
+                    <field name="is_expense_bill" string="Expense Bill" widget="boolean_toggle" optional="hide"/>
                 </xpath>
             </field>
         </record>
 
-        <!-- Extend form view untuk menampilkan department -->
+        <!-- Extend form view untuk menampilkan department dan expense indicator -->
         <record id="view_department_vendor_bill_form" model="ir.ui.view">
-            <field name="name">Department Vendor Bills Form</field>
+            <field name="name">Department Expense Bills Form</field>
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='ref']" position="after">
-                    <field name="department_id" readonly="1" invisible="move_type != 'in_invoice'"/>
+                    <field name="department_id" readonly="1" invisible="not is_expense_bill or move_type != 'in_invoice'"/>
+                    <field name="is_expense_bill" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='ref']" position="after">
                     <field name="create_uid" readonly="1" string="Created By" invisible="1"/>
                 </xpath>
+                <!-- Add expense badge in header if this is expense bill -->
+                <xpath expr="//div[hasclass('oe_title')]//h1" position="after">
+                    <span class="badge badge-warning" invisible="not is_expense_bill">Expense Bill</span>
+                </xpath>
             </field>
         </record>
 
-        <!-- Search view dengan filter department -->
+        <!-- Search view dengan filter department dan expense bills -->
         <record id="view_department_vendor_bill_search" model="ir.ui.view">
-            <field name="name">Department Vendor Bills Search</field>
+            <field name="name">Department Expense Bills Search</field>
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_account_invoice_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//filter[@name='late']" position="after">
                     <separator/>
                     <filter string="My Bills" name="my_bills" domain="[('create_uid', '=', uid)]"/>
+                    <filter string="Expense Bills" name="expense_bills" domain="[('is_expense_bill', '=', True)]"/>
                 </xpath>
                 <xpath expr="//group" position="inside">
                     <filter string="Department" name="group_department" context="{'group_by': 'department_id'}"/>
                     <filter string="Created By" name="group_created_by" context="{'group_by': 'create_uid'}"/>
+                    <filter string="Is Expense" name="group_is_expense" context="{'group_by': 'is_expense_bill'}"/>
                 </xpath>
             </field>
         </record>

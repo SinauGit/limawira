@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_account_move_bill_user,account.move bill user,account.model_account_move,department_vendor_bill_management.group_department_bill_user,1,1,1,0
-access_account_move_bill_manager,account.move bill manager,account.model_account_move,department_vendor_bill_management.group_department_bill_manager,1,1,1,1
-access_account_move_bill_admin,account.move bill admin,account.model_account_move,department_vendor_bill_management.group_department_bill_admin,1,1,1,1
+access_account_move_expense_user,account.move.expense.user,account.model_account_move,group_department_bill_user,1,1,1,0
+access_account_move_expense_manager,account.move.expense.manager,account.model_account_move,group_department_bill_manager,1,1,1,1
+access_account_move_expense_admin,account.move.expense.admin,account.model_account_move,group_department_bill_admin,1,1,1,1
