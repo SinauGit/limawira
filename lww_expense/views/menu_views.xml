@@ -4,31 +4,31 @@
         
         <!-- Main Menu -->
         <menuitem id="menu_department_bill_root" 
-                  name="Department Vendor Bills" 
+                  name="Department Expense Bills" 
                   sequence="60"
                   groups="group_department_bill_user,group_department_bill_manager,group_department_bill_admin"/>
         
-        <!-- User Menu - hanya bill sendiri -->
+        <!-- User Menu - My Bills (Server Action) -->
         <menuitem id="menu_my_vendor_bills" 
-                  name="My Vendor Bills"
+                  name="My Expense Bills"
                   parent="menu_department_bill_root"
-                  action="action_my_vendor_bills"
+                  action="action_server_my_bills"
                   sequence="10"
                   groups="group_department_bill_user"/>
         
-        <!-- Manager Menu - semua bill departemen -->
+        <!-- Manager Menu - Department Bills (Server Action) -->
         <menuitem id="menu_department_vendor_bills" 
-                  name="Department Bills"
+                  name="Department Expense Bills"
                   parent="menu_department_bill_root"
-                  action="action_department_vendor_bills_manager"
+                  action="action_server_department_bills"
                   sequence="20"
                   groups="group_department_bill_manager"/>
 
-        <!-- Admin Menu - semua bill dari semua departemen -->
+        <!-- Admin Menu - All Bills (Server Action) -->
         <menuitem id="menu_all_department_bills" 
-                  name="All Department Bills"
+                  name="All Expense Bills"
                   parent="menu_department_bill_root"
-                  action="action_all_department_bills_admin"
+                  action="action_server_all_bills"
                   sequence="30"
                   groups="group_department_bill_admin"/>
         
@@ -37,7 +37,15 @@
                   name="---" 
                   parent="menu_department_bill_root"
                   sequence="35"
-                  groups="group_department_bill_admin"/>
+                  groups="group_department_bill_manager,group_department_bill_admin"/>
+        
+        <!-- Dashboard Menu (Optional) -->
+        <!-- <menuitem id="menu_expense_dashboard" 
+                  name="Dashboard"
+                  parent="menu_department_bill_root"
+                  action="action_server_expense_dashboard"
+                  sequence="40"
+                  groups="group_department_bill_manager,group_department_bill_admin"/> -->
         
     </data>
 </odoo>

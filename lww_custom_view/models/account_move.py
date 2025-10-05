@@ -34,26 +34,26 @@ class AccountMove(models.Model):
 
 
 
-    move_type = fields.Selection(
-        selection_add=[
-            ('expense', 'Expense'),
-        ],
-        ondelete={'expense': 'cascade'}
-    )
+    # move_type = fields.Selection(
+    #     selection_add=[
+    #         ('expense', 'Expense'),
+    #     ],
+    #     ondelete={'expense': 'cascade'}
+    # )
 
-    @api.depends('move_type')
-    def _compute_move_type_display(self):
-        """Override untuk menambahkan display name untuk expense"""
-        super()._compute_move_type_display()
-        for move in self:
-            if move.move_type == 'expense':
-                move.move_type_display = 'Expense'
+    # @api.depends('move_type')
+    # def _compute_move_type_display(self):
+    #     """Override untuk menambahkan display name untuk expense"""
+    #     super()._compute_move_type_display()
+    #     for move in self:
+    #         if move.move_type == 'expense':
+    #             move.move_type_display = 'Expense'
 
-    def _get_default_journal(self):
-        """Override untuk menentukan journal default untuk expense"""
-        if self.move_type == 'expense':
-            return self.env['account.journal'].search([
-                ('type', '=', 'purchase'),
-                ('company_id', '=', self.company_id.id)
-            ], limit=1)
-        return super()._get_default_journal()
+    # def _get_default_journal(self):
+    #     """Override untuk menentukan journal default untuk expense"""
+    #     if self.move_type == 'expense':
+    #         return self.env['account.journal'].search([
+    #             ('type', '=', 'purchase'),
+    #             ('company_id', '=', self.company_id.id)
+    #         ], limit=1)
+    #     return super()._get_default_journal()
