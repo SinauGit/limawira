@@ -9,6 +9,7 @@
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='invoice_partner_display_name']" position="after">
+                    <field name="employee_id" string="Department" optional="hide"/>
                     <field name="is_expense_bill" string="Expense Bill" widget="boolean_toggle" optional="hide"/>
                     <field name="department_id" string="Department" optional="hide"/>
                     <field name="create_uid" string="Created By"/>
@@ -16,7 +17,7 @@
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="invoice_no" optional="show"/>
                 </xpath>
-                <xpath expr="//field[@name='no_po']" position="after">
+                <xpath expr="//field[@name='invoice_no']" position="after">
                                 <field name="employee_id"/>
                             </xpath>
             </field>
