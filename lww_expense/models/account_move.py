@@ -7,6 +7,8 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    employee_id = fields.Many2one('hr.employee', string='Employee')
+
     is_expense_bill = fields.Boolean(
         string='Is Expense Bill',
         default=False,
