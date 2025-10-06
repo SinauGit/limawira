@@ -13,9 +13,9 @@
                     <field name="department_id" string="Department" optional="hide"/>
                     <field name="create_uid" string="Created By"/>
                 </xpath>
-                <!-- <xpath expr="//field[@name='name']" position="after">
+                <xpath expr="//field[@name='name']" position="after">
                     <field name="invoice_no" optional="show"/>
-                </xpath> -->
+                </xpath>
             </field>
         </record>
 
@@ -30,7 +30,7 @@
                     <field name="department_id" readonly="1" invisible="not is_expense_bill"/>
                 </xpath>
                 <xpath expr="//field[@name='ref']" position="after">
-                    <field name="create_uid" readonly="1" string="Created By" invisible="1"/>
+                    <field name="create_uid" readonly="1" string="Created By" invisible="not is_expense_bill"/>
                 </xpath>
                 <!-- Add expense badge in header if this is expense bill -->
                 <!-- <xpath expr="//div[hasclass('oe_title')]//h1" position="after">
