@@ -16,6 +16,9 @@
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="invoice_no" optional="show"/>
                 </xpath>
+                <xpath expr="//field[@name='no_po']" position="after">
+                                <field name="employee_id"/>
+                            </xpath>
             </field>
         </record>
 
