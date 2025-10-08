@@ -12,13 +12,13 @@
                     <field name="employee_id" string="Department" optional="hide"/>
                     <field name="is_expense_bill" string="Expense Bill" widget="boolean_toggle" optional="hide"/>
                     <field name="department_id" string="Department" optional="hide"/>
-                    <field name="create_uid" string="Created By"/>
+                    <field name="create_uid" string="Created By" optional="hide"/>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="invoice_no" optional="show"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_no']" position="after">
-                                <field name="employee_id"/>
+                                <field name="employee_id" optional="hide"/>
                             </xpath>
             </field>
         </record>
@@ -34,8 +34,11 @@
                     <field name="department_id" readonly="1" invisible="not is_expense_bill"/>
                 </xpath>
                 <xpath expr="//field[@name='ref']" position="after">
-                    <field name="create_uid" readonly="1" string="Created By" invisible="not is_expense_bill"/>
+                    <field name="create_uid" string="Created By" invisible="1"/>
                 </xpath>
+                <xpath expr="//field[@name='invoice_no']" position="after">
+                                <field name="employee_id" invisible="not is_expense_bill"/>
+                            </xpath>
                 <!-- Add expense badge in header if this is expense bill -->
                 <!-- <xpath expr="//div[hasclass('oe_title')]//h1" position="after">
                     <span class="badge badge-warning" invisible="not is_expense_bill">Expense Bill</span>

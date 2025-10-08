@@ -1,5 +1,4 @@
-<odoo>
-    <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
+<data inherit_id="account.report_invoice_document">
         <xpath expr="//table[@name='invoice_line_table']/tbody" position="before">
             <!-- URUTAN BARU: 1. Sales Order Details DULU -->
             <t t-if="o.should_show_downpayment_template()">
@@ -28,9 +27,15 @@
                 
                 <!-- 3. Down Payment / Termin section SETELAH sales order details -->
                 <tr class="fw-bold o_line_section">
+                    <td t-att-colspan="display_discount and 5 or 4">
+                        <hr style="border: 0; border-top: 2px solid black; margin: 0;"/>
+                    </td>
+                </tr>
+                <div class="row" style="margin-bottom: 5px; margin-top: 10px; border-bottom: 2px solid #35bdaf">
+                <tr class="fw-bold o_line_section">
                     <td t-att-colspan="display_discount and 5 or 4">Down Payment / Termin</td>
                 </tr>
+                </div>
             </t>
         </xpath>
-    </template>
-</odoo>
+    </data>
