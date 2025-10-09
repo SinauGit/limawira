@@ -222,7 +222,7 @@
                                         <!-- Part Number -->
                                             <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_template_id.default_code or ''" style="font-size: 15px;"/></td>
                                         <!-- Product Name -->
-                                            <td class="text-center" style="font-size: 15px;"><span t-esc="line.name or ''" style="font-size: 15px;"/></td>
+                                            <td class="text-center" style="font-size: 15px;"><span t-esc="line.custom_description or ''" style="font-size: 15px;"/></td>
                                         <!-- QTY -->
                                             <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.product_uom_qty) or ''" style="font-size: 15px;"/></td>
                                         <!-- Unit -->

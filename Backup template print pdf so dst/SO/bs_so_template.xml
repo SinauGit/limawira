@@ -153,7 +153,7 @@
                                     <tr t-att-class="'fw-bold o_line_section' if (                                                         line.display_type == 'line_section'                                                         or line.product_type == 'combo'                                                     )                                                     else 'fst-italic o_line_note' if line.display_type == 'line_note'                                                     else ''">
                                         <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
                                         <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_template_id.default_code or ''" style="font-size: 15px;"/></td>
-                                        <td class="text-center" style="font-size: 15px;"><span t-esc="line.name or ''" style="font-size: 15px;"/></td>
+                                        <td class="text-center" style="font-size: 15px;"><span t-esc="line.custom_description or ''" style="font-size: 15px;"/></td>
                                         <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.product_uom_qty) or ''" style="font-size: 15px;"/></td>
                                         <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit) or ''" style="font-size: 15px; text-align: right;"/></td>
                                         <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.discount) or '0'" style="font-size: 15px;"/>%</td>
