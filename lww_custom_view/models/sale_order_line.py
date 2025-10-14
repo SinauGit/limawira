@@ -9,6 +9,29 @@ class SaleOrderLine(models.Model):
         store=True,
         readonly=False
     )
+
+    @api.onchange('product_template_id', 'custom_description')
+    def _onchange_custom_description(self):
+        """Auto-fill custom_description with product name if empty"""
+        if self.product_template_id and not self.custom_description:
+            self.custom_description = self.product_template_id.name
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Set custom_description from product name on create if not provided"""
+        for vals in vals_list:
+            if vals.get('product_template_id') and not vals.get('custom_description'):
+                product = self.env['product.template'].browse(vals['product_template_id'])
+                vals['custom_description'] = product.name
+        return super().create(vals_list)
+
+    def write(self, vals):
+        """Set custom_description from product name on write if empty"""
+        res = super().write(vals)
+        for record in self:
+            if record.product_template_id and not record.custom_description:
+                record.custom_description = record.product_template_id.name
+        return res
     
     # @api.depends('custom_description')
     # def _compute_name(self):
@@ -33,6 +56,7 @@ class SaleOrderLine(models.Model):
 
     #             if line.is_downpayment:
     #                 line.name = line._get_downpayment_description()
+    
 
 
 class AccountMoveLine(models.Model):
