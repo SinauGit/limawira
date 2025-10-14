@@ -1,14 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
         <xpath expr="//table[@name='invoice_line_table']/tbody" position="before">
-            <!-- URUTAN BARU: 1. Sales Order Details DULU -->
+            <!-- URUTAN: 1. Sales Order Details DULU (jika ada) -->
             <t t-if="o.should_show_downpayment_template()">
+                <!-- Sales Order Details Header -->
                 <tr class="fw-bold o_line_section">
                     <td t-att-colspan="display_discount and 5 or 4">Sales Order Details</td>
                 </tr>
                         
-                <!-- 2. Show sale order lines (produk SO) -->
-                <t t-foreach="[l for l in o.get_related_sale_order_lines() if not l.display_type and l.product_id]" t-as="so_line">
+                <!-- Show sale order lines (produk SO asli) -->
+                <t t-foreach="o.get_related_sale_order_lines()" t-as="so_line">
                     <tr>
                         <td>
                             <span t-field="so_line.custom_description"/>
@@ -26,17 +28,36 @@
                     </tr>
                 </t>
                 
-                <!-- 3. Down Payment / Termin section SETELAH sales order details -->
+                <!-- Horizontal Separator Line -->
                 <tr class="fw-bold o_line_section">
                     <td t-att-colspan="display_discount and 5 or 4">
                         <hr style="border: 0; border-top: 2px solid black; margin: 0;"/>
                     </td>
                 </tr>
-                <div class="row" style="margin-bottom: 5px; margin-top: 10px; border-bottom: 2px solid #35bdaf">
-                <tr class="fw-bold o_line_section">
+                
+                <!-- Down Payment / Termin Section Header -->
+                <tr class="fw-bold o_line_section" style="border-bottom: 2px solid #35bdaf;">
                     <td t-att-colspan="display_discount and 5 or 4">Down Payment / Termin</td>
                 </tr>
-                </div>
+                
+                <!-- Down Payment Line with Installment Number -->
+                <t t-set="dp_info" t-value="o.get_downpayment_line_with_installment_number()"/>
+                <t t-if="dp_info">
+                    <tr>
+                        <td>
+                            <span t-out="dp_info['display_name']"/>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <span t-out="dp_info['quantity']"/>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <span t-out="dp_info['price_unit']"/>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <span t-out="dp_info['price_subtotal']"/>
+                        </td>
+                    </tr>
+                </t>
             </t>
         </xpath>
     </template>
