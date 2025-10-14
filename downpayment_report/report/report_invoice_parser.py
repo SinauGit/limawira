@@ -215,6 +215,30 @@ class AccountMove(models.Model):
         
         return False
 
+    def get_invoice_lines_for_report(self):
+        """
+        Get invoice lines excluding down payment lines with proper sorting
+        Used in report template to avoid showing down payment lines in standard table
+        
+        Returns: List of account.move.line (excluding down payment lines)
+        Sorted by: -sequence, date, move_name, -id (reversed)
+        """
+        # Filter out down payment lines
+        filtered_lines = []
+        for line in self.invoice_line_ids:
+            if not self._is_downpayment_line(line):
+                filtered_lines.append(line)
+        
+        # Sort using the same logic as Odoo standard
+        # sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)
+        sorted_lines = sorted(
+            filtered_lines,
+            key=lambda l: (-l.sequence, l.date or '', l.move_name or '', -l.id),
+            reverse=True
+        )
+        
+        return sorted_lines
+
     def get_downpayment_debug_info(self):
         """
         DEBUG METHOD: Debug method to help troubleshoot down payment detection

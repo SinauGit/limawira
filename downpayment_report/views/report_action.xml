@@ -2,9 +2,9 @@
 <odoo>
     <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
         
-        <!-- FILTER invoice lines to exclude down payment lines -->
+        <!-- FILTER invoice lines to exclude down payment lines using method -->
         <xpath expr="//t[@t-set='lines']" position="attributes">
-            <attribute name="t-value">o.invoice_line_ids.filtered(lambda l: not any(kw in (l.name or '').lower() for kw in ['down payment', 'termin'])).sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)</attribute>
+            <attribute name="t-value">o.get_invoice_lines_for_report()</attribute>
         </xpath>
         
         <!-- INSERT custom Down Payment section BEFORE the invoice_line_table -->
