@@ -19,7 +19,7 @@ class SaleOrder(models.Model):
                 if not dp_invoices:
                     raise ValidationError(
                         "Down payment is required for this customer. "
-                        "Please create and pay the down payment invoice before proceeding."
+                        "Please create down payment invoice before proceeding."
                     )
 
     class SaleOrder(models.Model):
@@ -28,5 +28,5 @@ class SaleOrder(models.Model):
         project_id = fields.Many2one(
             'project.project',
             string='Project',
-            tracking=True  # <--- INI YANG DITAMBAHKAN
+            tracking=True 
         )
