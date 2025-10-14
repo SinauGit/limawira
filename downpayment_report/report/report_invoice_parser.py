@@ -96,33 +96,97 @@ class AccountMove(models.Model):
                 downpayment_lines.append(line)
         return downpayment_lines
 
-    def get_downpayment_invoice_number(self):
+    def get_all_downpayment_invoices_for_so(self):
         """
-        Determine which down payment installment this invoice is
-        Counts previous down payment invoices from same sales order
+        Get ALL down payment invoices from same Sales Order (sorted by date)
         
-        Returns: Integer (1 for first, 2 for second, etc.)
+        Includes CURRENT invoice + all previous down payment invoices
+        from same SO (invoice_origin)
+        
+        Returns: List of account.move records (sorted by invoice date)
         """
         self.ensure_one()
         if not self.invoice_origin:
-            return 1
+            return []
         
-        # Search for all posted invoices from same sales order (invoice_origin)
-        previous_invoices = self.env['account.move'].search([
+        # Search for all invoices from same SO
+        all_invoices = self.env['account.move'].search([
             ('invoice_origin', '=', self.invoice_origin),
             ('move_type', 'in', ['out_invoice', 'out_refund']),
-            ('state', 'in', ['posted', 'draft']),
-            ('id', '!=', self.id)  # Exclude current invoice
-        ])
+            ('state', 'in', ['posted', 'draft'])
+        ], order='invoice_date asc, create_date asc')
         
-        # Count how many of these previous invoices are down payment invoices
-        downpayment_count = 0
-        for invoice in previous_invoices:
+        # Filter only down payment invoices
+        downpayment_invoices = []
+        for invoice in all_invoices:
             if invoice.get_down_payment_or_termin_count() > 0:
-                downpayment_count += 1
+                downpayment_invoices.append(invoice)
         
-        # Current invoice is downpayment number: previous count + 1
-        return downpayment_count + 1
+        return downpayment_invoices
+
+    def get_total_downpayment_count_for_so(self):
+        """
+        Get total count of down payment invoices for this Sales Order
+        
+        Returns: Integer (total number of DP invoices including current)
+        """
+        self.ensure_one()
+        return len(self.get_all_downpayment_invoices_for_so())
+
+    def get_downpayment_lines_with_installment_numbers(self):
+        """
+        Get ALL down payment lines from ALL down payment invoices for this SO
+        with installment numbers
+        
+        LOGIC:
+        - If total DP invoices = 1 → no numbering
+        - If total DP invoices > 1 → show numbering (1, 2, 3, etc)
+        
+        Returns: List of dictionaries
+        [
+            {
+                'line': <account.move.line>,
+                'display_name': 'Down Payment / Termin' or 'Down Payment / Termin 1',
+                'quantity': 1,
+                'price_unit': 500,
+                'price_subtotal': 500
+            },
+            ...
+        ]
+        """
+        self.ensure_one()
+        
+        # Get all DP invoices for this SO
+        dp_invoices = self.get_all_downpayment_invoices_for_so()
+        total_dp_count = len(dp_invoices)
+        
+        if total_dp_count == 0:
+            return []
+        
+        # Collect all DP lines with numbering
+        dp_lines_with_numbers = []
+        
+        for index, invoice in enumerate(dp_invoices, start=1):
+            dp_lines = invoice.get_downpayment_lines()
+            
+            for line in dp_lines:
+                # Determine display name based on total count
+                if total_dp_count == 1:
+                    # Only 1 DP invoice → no numbering
+                    display_name = 'Down Payment / Termin'
+                else:
+                    # Multiple DP invoices → show numbering
+                    display_name = f'Down Payment / Termin {index}'
+                
+                dp_lines_with_numbers.append({
+                    'line': line,
+                    'display_name': display_name,
+                    'quantity': line.quantity,
+                    'price_unit': line.price_unit,
+                    'price_subtotal': line.price_subtotal
+                })
+        
+        return dp_lines_with_numbers
 
     def should_show_downpayment_template(self):
         """
@@ -151,44 +215,6 @@ class AccountMove(models.Model):
         
         return False
 
-    def get_downpayment_line_with_installment_number(self):
-        """
-        Get down payment line with installment number label
-        
-        Returns: Dictionary with line data and installment number
-        Example:
-        {
-            'line': <account.move.line>,
-            'installment_number': 1,
-            'display_name': 'Down Payment / Termin 1'
-        }
-        
-        Returns empty dict if no down payment line found
-        """
-        downpayment_lines = self.get_downpayment_lines()
-        
-        if not downpayment_lines:
-            return {}
-        
-        # Get the first down payment line (should be only 1 based on validation)
-        line = downpayment_lines[0]
-        installment_num = self.get_downpayment_invoice_number()
-        
-        # Create display name
-        if installment_num == 1:
-            display_name = 'Down Payment / Termin'
-        else:
-            display_name = f'Down Payment / Termin {installment_num}'
-        
-        return {
-            'line': line,
-            'installment_number': installment_num,
-            'display_name': display_name,
-            'quantity': line.quantity,
-            'price_unit': line.price_unit,
-            'price_subtotal': line.price_subtotal
-        }
-
     def get_downpayment_debug_info(self):
         """
         DEBUG METHOD: Debug method to help troubleshoot down payment detection
@@ -196,18 +222,20 @@ class AccountMove(models.Model):
         """
         debug_info = {
             'total_lines': len(self.invoice_line_ids),
-            'downpayment_lines': [],
+            'downpayment_lines_current_invoice': [],
             'downpayment_sections': [],
             'line_count': 0,
             'section_count': 0,
-            'installment_number': 0,
-            'related_so_lines_count': 0
+            'total_dp_invoices_for_so': 0,
+            'related_so_lines_count': 0,
+            'all_dp_invoices': [],
+            'downpayment_lines_with_numbers': []
         }
         
-        # Check regular lines
+        # Check regular lines in current invoice
         for line in self.invoice_line_ids:
             if self._is_downpayment_line(line):
-                debug_info['downpayment_lines'].append({
+                debug_info['downpayment_lines_current_invoice'].append({
                     'line_name': line.name,
                     'product_name': line.product_id.name if line.product_id else None,
                     'line_id': line.id,
@@ -230,11 +258,34 @@ class AccountMove(models.Model):
                     })
                     debug_info['section_count'] += 1
         
+        # Get all DP invoices for SO
+        all_dp_invoices = self.get_all_downpayment_invoices_for_so()
+        debug_info['total_dp_invoices_for_so'] = len(all_dp_invoices)
+        debug_info['all_dp_invoices'] = [
+            {
+                'invoice_id': inv.id,
+                'invoice_name': inv.name,
+                'invoice_date': str(inv.invoice_date),
+                'dp_line_count': inv.get_down_payment_or_termin_count()
+            }
+            for inv in all_dp_invoices
+        ]
+        
+        # Get DP lines with numbers
+        dp_with_numbers = self.get_downpayment_lines_with_installment_numbers()
+        debug_info['downpayment_lines_with_numbers'] = [
+            {
+                'display_name': item['display_name'],
+                'quantity': item['quantity'],
+                'price_unit': item['price_unit'],
+                'price_subtotal': item['price_subtotal']
+            }
+            for item in dp_with_numbers
+        ]
+        
         debug_info['has_exactly_one_line'] = self.has_exactly_one_down_payment_or_termin()
         debug_info['has_line_section'] = self.has_downpayment_line_section()
         debug_info['should_show_template'] = self.should_show_downpayment_template()
         debug_info['related_so_lines_count'] = len(self.get_related_sale_order_lines())
-        debug_info['installment_number'] = self.get_downpayment_invoice_number()
-        debug_info['downpayment_line_info'] = self.get_downpayment_line_with_installment_number()
         
         return debug_info

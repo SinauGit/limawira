@@ -36,25 +36,24 @@
                 </tr>
                 
                 <!-- Down Payment / Termin Section Header -->
-                <tr class="fw-bold o_line_section" style="border-bottom: 2px solid #35bdaf;">
+                <tr class="fw-bold o_line_section" style="border-top: 2px solid #35bdaf;">
                     <td t-att-colspan="display_discount and 5 or 4">Down Payment / Termin</td>
                 </tr>
                 
-                <!-- Down Payment Line with Installment Number -->
-                <t t-set="dp_info" t-value="o.get_downpayment_line_with_installment_number()"/>
-                <t t-if="dp_info">
+                <!-- Down Payment Lines with Installment Numbers -->
+                <t t-foreach="o.get_downpayment_lines_with_installment_numbers()" t-as="dp_item">
                     <tr>
                         <td>
-                            <span t-out="dp_info['display_name']"/>
+                            <span t-out="dp_item['display_name']"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="dp_info['quantity']"/>
+                            <span t-out="dp_item['quantity']"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="dp_info['price_unit']"/>
+                            <span t-out="dp_item['price_unit']"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="dp_info['price_subtotal']"/>
+                            <span t-out="dp_item['price_subtotal']"/>
                         </td>
                     </tr>
                 </t>
