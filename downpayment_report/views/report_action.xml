@@ -7,67 +7,62 @@
             <attribute name="t-value">o.get_invoice_lines_for_report()</attribute>
         </xpath>
         
-        <!-- INSERT custom Down Payment section BEFORE the invoice_line_table -->
-        <xpath expr="//table[@name='invoice_line_table']" position="before">
-            <!-- URUTAN: 1. Sales Order Details DULU (jika ada) -->
+        <!-- INSERT Sales Order Details and Down Payment sections INSIDE tbody after the standard lines -->
+        <xpath expr="//table[@name='invoice_line_table']/tbody" position="inside">
             <t t-if="o.should_show_downpayment_template()">
-                <table class="table table-borderless" style="margin-bottom: 20px;">
-                    <tbody>
-                        <!-- Sales Order Details Header -->
-                        <tr class="fw-bold o_line_section">
-                            <td colspan="4">Sales Order Details</td>
-                        </tr>
-                        
-                        <!-- Show sale order lines (produk SO asli) -->
-                        <t t-foreach="o.get_related_sale_order_lines()" t-as="so_line">
-                            <tr>
-                                <td>
-                                    <span t-field="so_line.custom_description"/>
-                                </td>
-                                <td class="text-end text-nowrap">
-                                    <span t-field="so_line.product_uom_qty"/>
-                                    <span t-field="so_line.product_uom"/>
-                                </td>
-                                <td class="text-end text-nowrap">
-                                    <span t-field="so_line.price_unit"/>
-                                </td>
-                                <td class="text-end text-nowrap">
-                                    <span t-field="so_line.price_subtotal"/>
-                                </td>
-                            </tr>
-                        </t>
-                        
-                        <!-- Horizontal Separator Line -->
-                        <tr class="fw-bold o_line_section">
-                            <td colspan="4">
-                                <hr style="border: 0; border-top: 2px solid black; margin: 0;"/>
-                            </td>
-                        </tr>
-                        
-                        <!-- Down Payment / Termin Section Header -->
-                        <tr class="fw-bold o_line_section" style="border-bottom: 2px solid #35bdaf;">
-                            <td colspan="4">Down Payment / Termin</td>
-                        </tr>
-                        
-                        <!-- Down Payment Lines with Installment Numbers -->
-                        <t t-foreach="o.get_downpayment_lines_with_installment_numbers()" t-as="dp_item">
-                            <tr>
-                                <td>
-                                    <span t-out="dp_item['display_name']"/>
-                                </td>
-                                <td class="text-end text-nowrap">
-                                    <span t-out="'{:.2f}'.format(dp_item['quantity'])"/>
-                                </td>
-                                <td class="text-end text-nowrap">
-                                    <span t-out="'{:.2f}'.format(dp_item['price_unit'])"/>
-                                </td>
-                                <td class="text-end text-nowrap">
-                                    <span t-out="'{:.2f}'.format(dp_item['price_subtotal'])"/>
-                                </td>
-                            </tr>
-                        </t>
-                    </tbody>
-                </table>
+                <!-- Sales Order Details Header -->
+                <tr class="fw-bold o_line_section">
+                    <td colspan="4">Sales Order Details</td>
+                </tr>
+                
+                <!-- Show sale order lines (produk SO asli) -->
+                <t t-foreach="o.get_related_sale_order_lines()" t-as="so_line">
+                    <tr>
+                        <td>
+                            <span t-field="so_line.custom_description"/>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <span t-field="so_line.product_uom_qty"/>
+                            <span t-field="so_line.product_uom"/>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <span t-field="so_line.price_unit"/>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <span t-field="so_line.price_subtotal"/>
+                        </td>
+                    </tr>
+                </t>
+                
+                <!-- Horizontal Separator Line -->
+                <tr class="fw-bold o_line_section">
+                    <td colspan="4">
+                        <hr style="border: 0; border-top: 2px solid black; margin: 0;"/>
+                    </td>
+                </tr>
+                
+                <!-- Down Payment / Termin Section Header -->
+                <tr class="fw-bold o_line_section" style="border-bottom: 2px solid #35bdaf;">
+                    <td colspan="4">Down Payment / Termin</td>
+                </tr>
+                
+                <!-- Down Payment Lines with Installment Numbers -->
+                <t t-foreach="o.get_downpayment_lines_with_installment_numbers()" t-as="dp_item">
+                    <tr>
+                        <td>
+                            <span t-out="dp_item['display_name']"/>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <span t-out="'{:.2f}'.format(dp_item['quantity'])"/>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <span t-out="'{:.2f}'.format(dp_item['price_unit'])"/>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <span t-out="'{:.2f}'.format(dp_item['price_subtotal'])"/>
+                        </td>
+                    </tr>
+                </t>
             </t>
         </xpath>
         
