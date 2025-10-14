@@ -1,4 +1,5 @@
-from odoo import models
+from odoo import models, fields
+from datetime import datetime
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
@@ -17,21 +18,18 @@ class AccountMove(models.Model):
         """
         keywords = self._get_downpayment_keywords()
         
-        # Search in line name
         if line.name:
             line_name_lower = line.name.lower()
             for keyword in keywords:
                 if keyword in line_name_lower:
                     return True
         
-        # Search in product name
         if line.product_id and line.product_id.name:
             product_name_lower = line.product_id.name.lower()
             for keyword in keywords:
                 if keyword in product_name_lower:
                     return True
         
-        # Search in description (if exists)
         if hasattr(line, 'description') and line.description:
             description_lower = line.description.lower()
             for keyword in keywords:
@@ -42,18 +40,11 @@ class AccountMove(models.Model):
 
     def has_downpayment_line_section(self):
         """
-        NEW METHOD: Check if there's a line section with EXACT text 'Down Payment / Termin'
-        
-        This method specifically looks for lines with display_type = 'line_section'
-        and checks if the section name is exactly 'Down Payment / Termin'
-        
-        Returns:
-            bool: True if there's at least one line section with exact text 'Down Payment / Termin'
+        Check if there's a line section with EXACT text 'Down Payment / Termin'
         """
         target_section_name = 'Down Payment / Termin'
         
         for line in self.invoice_line_ids:
-            # Check if this is a line section with exact match
             if line.display_type == 'line_section' and line.name:
                 if line.name.strip() == target_section_name:
                     return True
@@ -63,7 +54,6 @@ class AccountMove(models.Model):
     def get_down_payment_or_termin_count(self):
         """
         Get the exact count of lines containing down payment or termin keywords
-        Counts any line that contains either 'down payment' OR 'termin'
         """
         count = 0
         for line in self.invoice_line_ids:
@@ -74,18 +64,13 @@ class AccountMove(models.Model):
     def has_exactly_one_down_payment_or_termin(self):
         """
         Check if invoice has exactly one line with down payment or termin keywords
-        Returns True only if there's exactly 1 such line
-        
-        Requirements:
-        - If 1 line with 'Down Payment' OR 'termin' → True
-        - If more than 1 line with 'Down Payment' OR 'termin' → False  
-        - If 0 lines with keywords → False
         """
         return self.get_down_payment_or_termin_count() == 1
-    
+
     def get_related_sale_order_lines(self):
         """
         Get related sale order lines based on invoice origin
+        Returns only product lines (excludes sections and notes)
         """
         self.ensure_one()
         if not self.invoice_origin:
@@ -93,11 +78,55 @@ class AccountMove(models.Model):
         
         SaleOrder = self.env['sale.order']
         sale_order = SaleOrder.search([('name', '=', self.invoice_origin)], limit=1)
-        return sale_order.order_line if sale_order else []
+        
+        if sale_order:
+            # Return only product lines, exclude sections and notes
+            return sale_order.order_line.filtered(lambda l: not l.display_type and l.product_id)
+        
+        return []
+
+    def get_downpayment_lines(self):
+        """
+        Get down payment lines from current invoice
+        Returns lines that contain 'down payment' or 'termin' keywords
+        """
+        downpayment_lines = []
+        for line in self.invoice_line_ids:
+            if self._is_downpayment_line(line):
+                downpayment_lines.append(line)
+        return downpayment_lines
+
+    def get_downpayment_invoice_number(self):
+        """
+        Determine which down payment installment this invoice is
+        Counts previous down payment invoices from same sales order
+        
+        Returns: Integer (1 for first, 2 for second, etc.)
+        """
+        self.ensure_one()
+        if not self.invoice_origin:
+            return 1
+        
+        # Search for all posted invoices from same sales order (invoice_origin)
+        previous_invoices = self.env['account.move'].search([
+            ('invoice_origin', '=', self.invoice_origin),
+            ('move_type', 'in', ['out_invoice', 'out_refund']),
+            ('state', 'in', ['posted', 'draft']),
+            ('id', '!=', self.id)  # Exclude current invoice
+        ])
+        
+        # Count how many of these previous invoices are down payment invoices
+        downpayment_count = 0
+        for invoice in previous_invoices:
+            if invoice.get_down_payment_or_termin_count() > 0:
+                downpayment_count += 1
+        
+        # Current invoice is downpayment number: previous count + 1
+        return downpayment_count + 1
 
     def should_show_downpayment_template(self):
         """
-        UPDATED METHOD: Main method to determine if downpayment template should be shown
+        Main method to determine if downpayment template should be shown
         
         Conditions (must meet ALL):
         1. Has exactly 1 line containing 'Down Payment' OR 'termin' keywords, AND
@@ -117,23 +146,62 @@ class AccountMove(models.Model):
             return False
         
         # Additional check: must have related sale order lines
-        if hasattr(self, 'get_related_sale_order_lines'):
-            return bool(self.get_related_sale_order_lines())
+        if self.get_related_sale_order_lines():
+            return True
         
-        # If no sale order method, just return based on down payment checks
-        return True
+        return False
+
+    def get_downpayment_line_with_installment_number(self):
+        """
+        Get down payment line with installment number label
+        
+        Returns: Dictionary with line data and installment number
+        Example:
+        {
+            'line': <account.move.line>,
+            'installment_number': 1,
+            'display_name': 'Down Payment / Termin 1'
+        }
+        
+        Returns empty dict if no down payment line found
+        """
+        downpayment_lines = self.get_downpayment_lines()
+        
+        if not downpayment_lines:
+            return {}
+        
+        # Get the first down payment line (should be only 1 based on validation)
+        line = downpayment_lines[0]
+        installment_num = self.get_downpayment_invoice_number()
+        
+        # Create display name
+        if installment_num == 1:
+            display_name = 'Down Payment / Termin'
+        else:
+            display_name = f'Down Payment / Termin {installment_num}'
+        
+        return {
+            'line': line,
+            'installment_number': installment_num,
+            'display_name': display_name,
+            'quantity': line.quantity,
+            'price_unit': line.price_unit,
+            'price_subtotal': line.price_subtotal
+        }
 
     def get_downpayment_debug_info(self):
         """
-        UPDATED DEBUG METHOD: Debug method to help troubleshoot down payment detection
-        Returns dictionary with detailed information including line section info
+        DEBUG METHOD: Debug method to help troubleshoot down payment detection
+        Returns dictionary with detailed information
         """
         debug_info = {
             'total_lines': len(self.invoice_line_ids),
             'downpayment_lines': [],
             'downpayment_sections': [],
             'line_count': 0,
-            'section_count': 0
+            'section_count': 0,
+            'installment_number': 0,
+            'related_so_lines_count': 0
         }
         
         # Check regular lines
@@ -143,7 +211,10 @@ class AccountMove(models.Model):
                     'line_name': line.name,
                     'product_name': line.product_id.name if line.product_id else None,
                     'line_id': line.id,
-                    'display_type': line.display_type
+                    'display_type': line.display_type,
+                    'quantity': line.quantity,
+                    'price_unit': line.price_unit,
+                    'price_subtotal': line.price_subtotal
                 })
                 debug_info['line_count'] += 1
         
@@ -162,6 +233,8 @@ class AccountMove(models.Model):
         debug_info['has_exactly_one_line'] = self.has_exactly_one_down_payment_or_termin()
         debug_info['has_line_section'] = self.has_downpayment_line_section()
         debug_info['should_show_template'] = self.should_show_downpayment_template()
-        debug_info['has_related_so_lines'] = bool(self.get_related_sale_order_lines())
+        debug_info['related_so_lines_count'] = len(self.get_related_sale_order_lines())
+        debug_info['installment_number'] = self.get_downpayment_invoice_number()
+        debug_info['downpayment_line_info'] = self.get_downpayment_line_with_installment_number()
         
         return debug_info
