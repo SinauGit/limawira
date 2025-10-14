@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
+        <!-- HIDE DOWN PAYMENT LINES from standard invoice table -->
+        <xpath expr="//table[@name='invoice_line_table']/tbody/tr" position="attributes">
+            <attribute name="t-if">not (line.display_type == 'product' and any(keyword in (line.name or '').lower() for keyword in ['down payment', 'termin']))</attribute>
+        </xpath>
+        
         <xpath expr="//table[@name='invoice_line_table']/tbody" position="before">
             <!-- URUTAN: 1. Sales Order Details DULU (jika ada) -->
             <t t-if="o.should_show_downpayment_template()">
@@ -29,11 +34,11 @@
                 </t>
                 
                 <!-- Horizontal Separator Line -->
-                <tr class="fw-bold o_line_section">
+                <!-- <tr class="fw-bold o_line_section">
                     <td t-att-colspan="display_discount and 5 or 4">
                         <hr style="border: 0; border-top: 2px solid black; margin: 0;"/>
                     </td>
-                </tr>
+                </tr> -->
                 
                 <!-- Down Payment / Termin Section Header -->
                 <tr class="fw-bold o_line_section" style="border-top: 2px solid #35bdaf;">
@@ -47,13 +52,13 @@
                             <span t-out="dp_item['display_name']"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="dp_item['quantity']"/>
+                            <span t-out="'{:.2f}'.format(dp_item['quantity'])"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="dp_item['price_unit']"/>
+                            <span t-out="'{:.2f}'.format(dp_item['price_unit'])"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="dp_item['price_subtotal']"/>
+                            <span t-out="'{:.2f}'.format(dp_item['price_subtotal'])"/>
                         </td>
                     </tr>
                 </t>
