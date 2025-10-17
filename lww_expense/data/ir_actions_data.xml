@@ -17,7 +17,7 @@ user = env.user
 exp_journal = env['account.journal'].search([
     ('code', '=', 'EXP'),
     ('type', '=', 'purchase'),
-    ('company_id', '=', user.company_id.id)
+    ('company_id', '=', user.company_ids.id)
 ], limit=1)
 
 if not exp_journal:
@@ -75,7 +75,7 @@ department_id = False
 exp_journal = env['account.journal'].search([
     ('code', '=', 'EXP'),
     ('type', '=', 'purchase'),
-    ('company_id', '=', user.company_id.id)
+    ('company_id', '=', user.company_ids.id)
 ], limit=1)
 
 if not exp_journal:
@@ -142,7 +142,7 @@ user = env.user
 exp_journal = env['account.journal'].search([
     ('code', '=', 'EXP'),
     ('type', '=', 'purchase'),
-    ('company_id', '=', user.company_id.id)
+    ('company_id', '=', user.company_ids.id)
 ], limit=1)
 
 if not exp_journal:
