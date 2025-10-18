@@ -9,6 +9,7 @@
     ],
     'data': [
         'security/security.xml',
+        'security/ir_model_access.xml',
         'security/ir.model.access.csv',
         # 'data/journal_data.xml',
         'data/ir_actions_data.xml',

@@ -39,6 +39,12 @@
                 <xpath expr="//field[@name='invoice_no']" position="after">
                                 <field name="employee_id" invisible="not is_expense_bill"/>
                             </xpath>
+                <xpath expr="//field[@name='department_id']" position="after">
+                    <field name="company_id" 
+                        groups="base.group_multi_company"
+                        options="{'no_create': True}"/>
+                </xpath>
+
                 <!-- Add expense badge in header if this is expense bill -->
                 <!-- <xpath expr="//div[hasclass('oe_title')]//h1" position="after">
                     <span class="badge badge-warning" invisible="not is_expense_bill">Expense Bill</span>
