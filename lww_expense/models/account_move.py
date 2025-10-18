@@ -31,96 +31,72 @@ class AccountMove(models.Model):
         help='Department of the user who created this expense bill'
     )
     
-    @api.depends('create_uid', 'is_expense_bill')
+    @api.depends('create_uid', 'is_expense_bill', 'company_id')
     def _compute_department_id(self):
-        """
-        Compute department based on creator's employee record.
-        Only applies to expense bills.
-        Department is locked at creation time.
-        
-        MULTI-COMPANY NOTE:
-        - Department validation terhadap company dilakukan di constraint
-        - Compute hanya assign department, tidak validate company
-        - Ini memungkinkan shared department (department tanpa company_id)
-        """
         for record in self:
             if record.is_expense_bill and record.move_type == 'in_invoice':
                 if record.create_uid:
-                    # Get employee dari create_uid
-                    # PENTING: Gunakan sudo() untuk akses employee cross-company
                     employee = record.create_uid.sudo().employee_id
                     
                     if employee and employee.department_id:
-                        record.department_id = employee.department_id.id
-                        continue
+                        dept = employee.department_id
+                        
+                        # ✅ VALIDATE: Department must match company
+                        if dept.company_id:
+                            # Department has company → must match move company
+                            if dept.company_id == record.company_id:
+                                record.department_id = dept.id
+                                continue
+                        else:
+                            # Shared department (no company) → OK
+                            record.department_id = dept.id
+                            continue
                 
-                # Fallback: no department found
                 record.department_id = False
             else:
                 record.department_id = False
 
     @api.model
     def create(self, vals):
-        """
-        Auto-handle expense bill creation:
-        1. Detect journal with code 'EXP'
-        2. Set is_expense_bill flag
-        3. Validate user has employee record with department
-        
-        MULTI-COMPANY NOTE:
-        - company_id sudah di-handle oleh Odoo standard (required field)
-        - Kita hanya perlu validate journal EXP untuk company yang benar
-        - Odoo standard akan auto-set company_id jika tidak ada di vals
-        """
-        
-        # Check if journal EXP is being used
+        # Check journal EXP
         journal_id = vals.get('journal_id')
         if journal_id:
             journal = self.env['account.journal'].browse(journal_id)
-            # TIDAK PERLU validasi company di sini, Odoo standard sudah handle
-            # via _check_company_id constraint
-            
             if journal.code == 'EXP':
                 vals['is_expense_bill'] = True
         
-        # Handle expense bill from context
         if self._context.get('default_is_expense_bill'):
             vals['is_expense_bill'] = True
             
-            # Auto-set journal EXP if not provided
             if not vals.get('journal_id'):
-                # Get company_id - biarkan Odoo standard handle default company
-                # Gunakan self.env.company (current company in context)
-                company = self.env.company
+                # ✅ FIX: Get company from vals or context
+                company_id = vals.get('company_id') or self.env.company.id
                 
-                # Search journal EXP untuk current company
                 exp_journal = self.env['account.journal'].search([
                     ('code', '=', 'EXP'),
                     ('type', '=', 'purchase'),
-                    ('company_id', '=', company.id)
+                    ('company_id', '=', company_id)
                 ], limit=1)
                 
                 if exp_journal:
                     vals['journal_id'] = exp_journal.id
-                # else:
-                #     raise UserError(_(
-                #         'Expense Journal (EXP) not found for company "%s". '
-                #         'Please create a Purchase Journal with code "EXP" for this company.'
-                #     ) % company.name)
+                else:
+                    company_name = self.env['res.company'].browse(company_id).name
+                    raise UserError(_(
+                        'Expense Journal (EXP) not found for company "%s".'
+                    ) % company_name)
         
         move = super(AccountMove, self).create(vals)
         
-        # Force recompute department for new expense bills
         if move.is_expense_bill and move.move_type == 'in_invoice':
             move._compute_department_id()
             
-            # Validate department was assigned
             if not move.department_id:
                 raise UserError(_(
-                    'Cannot create expense bill: You must be assigned to a department. '
-                    'Please contact your HR administrator.'
-                ))
-            
+                    'Cannot create expense bill: You must be assigned to a department '
+                    'in company "%s". Please contact your HR administrator.'
+                ) % move.company_id.name)  # ✅ Tambahkan company name
+        
         return move
     
     def write(self, vals):
@@ -181,21 +157,14 @@ class AccountMove(models.Model):
 
     @api.model 
     def _get_user_bills_domain(self):
-        """
-        Helper method to get appropriate domain based on user role.
-        Returns domain list for filtering expense bills.
-        
-        MULTI-COMPANY NOTE:
-        - TIDAK perlu manual add company_id ke domain
-        - Odoo standard akan auto-inject company filter based on allowed_company_ids
-        - Kita hanya define business logic filter (role-based)
-        """
         user = self.env.user
+        company_id = self.env.company.id
         
-        # Base domain - TANPA company filter (Odoo handle otomatis)
+        # ✅ Always include company filter
         base_domain = [
             ('move_type', '=', 'in_invoice'),
-            ('is_expense_bill', '=', True)
+            ('is_expense_bill', '=', True),
+            ('company_id', '=', company_id)  # ← TAMBAHKAN INI
         ]
 
         if user.has_group('department_vendor_bill_management.group_department_bill_admin'):

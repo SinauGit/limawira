@@ -1,0 +1,21 @@
+<!-- security/record_rules.xml -->
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Rule: User hanya bisa akses expense bills di company mereka -->
+        <record id="expense_bill_multi_company_rule" model="ir.rule">
+            <field name="name">Expense Bill: Multi-Company</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="domain_force">
+                ['|',
+                    ('is_expense_bill', '=', False),
+                    '&amp;',
+                        ('is_expense_bill', '=', True),
+                        ('company_id', 'in', company_ids)
+                ]
+            </field>
+            <field name="global" eval="True"/>
+        </record>
+        
+    </data>
+</odoo>
