@@ -2,199 +2,217 @@
 <odoo>
     <data>
         
+        <!-- ============================================ -->
+        <!-- SERVER ACTION: My Bills (User) -->
+        <!-- ============================================ -->
+        <record id="action_server_my_bills" model="ir.actions.server">
+            <field name="name">My Expense Bills</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[# Get active company from context
+allowed_company_ids = context.get('allowed_company_ids', [])
+if allowed_company_ids:
+    company_id = allowed_company_ids[0]
+    company = env['res.company'].browse(company_id)
+else:
+    company = env.user.company_id
+    company_id = company.id
 
-    <!-- MY BILLS ACTION -->
-    <record id="action_server_my_bills" model="ir.actions.server">
-        <field name="name">My Expense Bills</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="state">code</field>
-        <field name="code"><![CDATA[
-    # ✅ FIX: Get active company dari context, bukan default company
-    allowed_company_ids = context.get('allowed_company_ids', [])
-    if allowed_company_ids:
-        # User sedang aktif di company tertentu
-        company_id = allowed_company_ids[0]
-        company = env['res.company'].browse(company_id)
-    else:
-        # Fallback ke default company
-        company = env.user.company_id
-        company_id = company.id
+# Get EXP journal for active company
+exp_journal = env['account.journal'].search([
+    ('code', '=', 'EXP'),
+    ('type', '=', 'purchase'),
+    ('company_id', '=', company_id)
+], limit=1)
 
-    # Get EXP journal for ACTIVE company
-    exp_journal = env['account.journal'].search([
-        ('code', '=', 'EXP'),
-        ('type', '=', 'purchase'),
-        ('company_id', '=', company_id)
-    ], limit=1)
+if not exp_journal:
+    raise UserError('Expense Journal (EXP) not found for company %s. Please contact your administrator.' % company.name)
 
-    if not exp_journal:
-        raise UserError('Expense Journal (EXP) not found for company %s. Please contact your administrator.' % company.name)
+# Build domain with active company
+domain = [
+    ('move_type', '=', 'in_invoice'),
+    ('is_expense_bill', '=', True),
+    ('create_uid', '=', env.user.id),
+    ('company_id', '=', company_id)
+]
 
-    # Build domain with ACTIVE company
-    domain = [
-        ('move_type', '=', 'in_invoice'),
-        ('is_expense_bill', '=', True),
-        ('create_uid', '=', env.user.id),
-        ('company_id', '=', company_id)  # ✅ Use active company
-    ]
+# Return action
+action = {
+    'name': 'My Expense Bills - %s' % company.name,
+    'type': 'ir.actions.act_window',
+    'res_model': 'account.move',
+    'view_mode': 'list,form',
+    'domain': domain,
+    'context': {
+        'default_move_type': 'in_invoice',
+        'default_is_expense_bill': True,
+        'default_journal_id': exp_journal.id,
+        'default_company_id': company_id,
+        'move_type': 'in_invoice',
+        'journal_type': 'purchase',
+        'force_expense_journal': True,
+        'allowed_company_ids': [company_id],
+    },
+    'help': '''
+        <p class="o_view_nocontent_smiling_face">
+            No expense bills found in %s.
+        </p>
+        <p>
+            Create your first expense bill by clicking the "Create" button.
+        </p>
+    ''' % company.name,
+}
+]]></field>
+        </record>
 
-    # Return action
-    action = {
-        'name': 'My Expense Bills',
-        'type': 'ir.actions.act_window',
-        'res_model': 'account.move',
-        'view_mode': 'list,form',
-        'domain': domain,
-        'context': {
-            'default_move_type': 'in_invoice',
-            'default_is_expense_bill': True,
-            'default_journal_id': exp_journal.id,
-            'default_company_id': company_id,  # ✅ Force active company
-            'move_type': 'in_invoice',
-            'journal_type': 'purchase',
-            'force_expense_journal': True,
-            'allowed_company_ids': [company_id],  # ✅ Lock to active company
-        },
-        'help': '''
-            <p class="o_view_nocontent_smiling_face">
-                No expense bills found in %s.
-            </p>
-            <p>
-                Create your first expense bill by clicking the "Create" button.
-            </p>
-        ''' % company.name,
-    }
-    ]]></field>
-    </record>
 
-    <!-- DEPARTMENT BILLS ACTION -->
-    <record id="action_server_department_bills" model="ir.actions.server">
-        <field name="name">Department Expense Bills</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="state">code</field>
-        <field name="code"><![CDATA[
-    # ✅ FIX: Get active company dari context
-    allowed_company_ids = context.get('allowed_company_ids', [])
-    if allowed_company_ids:
-        company_id = allowed_company_ids[0]
-        company = env['res.company'].browse(company_id)
-    else:
-        company = env.user.company_id
-        company_id = company.id
+        <!-- ============================================ -->
+        <!-- SERVER ACTION: Department Bills (Manager) -->
+        <!-- ============================================ -->
+        <record id="action_server_department_bills" model="ir.actions.server">
+            <field name="name">Department Expense Bills</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[# Get active company from context
+allowed_company_ids = context.get('allowed_company_ids', [])
+if allowed_company_ids:
+    company_id = allowed_company_ids[0]
+    company = env['res.company'].browse(company_id)
+else:
+    company = env.user.company_id
+    company_id = company.id
 
-    user = env.user
-    department_id = False
+user = env.user
+department_id = False
 
-    # Get EXP journal for ACTIVE company
-    exp_journal = env['account.journal'].search([
-        ('code', '=', 'EXP'),
-        ('type', '=', 'purchase'),
-        ('company_id', '=', company_id)
-    ], limit=1)
+# Get EXP journal for active company
+exp_journal = env['account.journal'].search([
+    ('code', '=', 'EXP'),
+    ('type', '=', 'purchase'),
+    ('company_id', '=', company_id)
+], limit=1)
 
-    if not exp_journal:
-        raise UserError('Expense Journal (EXP) not found for company %s.' % company.name)
+if not exp_journal:
+    raise UserError('Expense Journal (EXP) not found for company %s.' % company.name)
 
-    # ✅ Get user's employee di ACTIVE company
-    employee = env['hr.employee'].sudo().search([
-        ('user_id', '=', user.id),
-        ('company_id', '=', company_id)
-    ], limit=1)
+# Get user's employee in active company
+employee = env['hr.employee'].sudo().search([
+    ('user_id', '=', user.id),
+    ('company_id', '=', company_id)
+], limit=1)
 
-    if employee and employee.department_id:
-        dept = employee.department_id
-        # Validate department company
-        if dept.company_id:
-            if dept.company_id.id == company_id:
-                department_id = dept.id
-        else:
-            # Shared department
+if employee and employee.department_id:
+    dept = employee.department_id
+    # Validate department company
+    if dept.company_id:
+        if dept.company_id.id == company_id:
             department_id = dept.id
-
-    # Build domain
-    domain = [
-        ('move_type', '=', 'in_invoice'),
-        ('is_expense_bill', '=', True),
-        ('company_id', '=', company_id)
-    ]
-
-    if department_id:
-        domain.append(('department_id', '=', department_id))
     else:
-        domain.append(('create_uid', '=', user.id))
+        # Shared department
+        department_id = dept.id
 
-    action = {
-        'name': 'Department Expense Bills - %s' % company.name,
-        'type': 'ir.actions.act_window',
-        'res_model': 'account.move',
-        'view_mode': 'list,form',
-        'domain': domain,
-        'context': {
-            'default_move_type': 'in_invoice',
-            'default_is_expense_bill': True,
-            'default_journal_id': exp_journal.id,
-            'default_company_id': company_id,
-            'move_type': 'in_invoice',
-            'journal_type': 'purchase',
-            'force_expense_journal': True,
-            'allowed_company_ids': [company_id],
-        },
-    }
-    ]]></field>
-    </record>
+# Build domain
+domain = [
+    ('move_type', '=', 'in_invoice'),
+    ('is_expense_bill', '=', True),
+    ('company_id', '=', company_id)
+]
 
-    <!-- ALL BILLS ACTION -->
-    <record id="action_server_all_bills" model="ir.actions.server">
-        <field name="name">All Department Expense Bills</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="state">code</field>
-        <field name="code"><![CDATA[
-    # ✅ FIX: Get active company dari context
-    allowed_company_ids = context.get('allowed_company_ids', [])
-    if allowed_company_ids:
-        company_id = allowed_company_ids[0]
-        company = env['res.company'].browse(company_id)
-    else:
-        company = env.user.company_id
-        company_id = company.id
+if department_id:
+    domain.append(('department_id', '=', department_id))
+else:
+    domain.append(('create_uid', '=', user.id))
 
-    # Get EXP journal for ACTIVE company
-    exp_journal = env['account.journal'].search([
-        ('code', '=', 'EXP'),
-        ('type', '=', 'purchase'),
-        ('company_id', '=', company_id)
-    ], limit=1)
+action = {
+    'name': 'Department Expense Bills - %s' % company.name,
+    'type': 'ir.actions.act_window',
+    'res_model': 'account.move',
+    'view_mode': 'list,form',
+    'domain': domain,
+    'context': {
+        'default_move_type': 'in_invoice',
+        'default_is_expense_bill': True,
+        'default_journal_id': exp_journal.id,
+        'default_company_id': company_id,
+        'move_type': 'in_invoice',
+        'journal_type': 'purchase',
+        'force_expense_journal': True,
+        'allowed_company_ids': [company_id],
+    },
+    'help': '''
+        <p class="o_view_nocontent_smiling_face">
+            No expense bills found for your department in %s.
+        </p>
+        <p>
+            Create expense bills for your department by clicking the "Create" button.
+        </p>
+    ''' % company.name,
+}
+]]></field>
+        </record>
 
-    if not exp_journal:
-        raise UserError('Expense Journal (EXP) not found for company %s.' % company.name)
 
-    domain = [
-        ('move_type', '=', 'in_invoice'),
-        ('is_expense_bill', '=', True),
-        ('company_id', '=', company_id)
-    ]
+        <!-- ============================================ -->
+        <!-- SERVER ACTION: All Bills (Admin) -->
+        <!-- ============================================ -->
+        <record id="action_server_all_bills" model="ir.actions.server">
+            <field name="name">All Department Expense Bills</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[# Get active company from context
+allowed_company_ids = context.get('allowed_company_ids', [])
+if allowed_company_ids:
+    company_id = allowed_company_ids[0]
+    company = env['res.company'].browse(company_id)
+else:
+    company = env.user.company_id
+    company_id = company.id
 
-    action = {
-        'name': 'All Expense Bills - %s' % company.name,
-        'type': 'ir.actions.act_window',
-        'res_model': 'account.move',
-        'view_mode': 'list,form',
-        'domain': domain,
-        'context': {
-            'default_move_type': 'in_invoice',
-            'default_is_expense_bill': True,
-            'default_journal_id': exp_journal.id,
-            'default_company_id': company_id,
-            'move_type': 'in_invoice',
-            'journal_type': 'purchase',
-            'search_default_expense_bills': 1,
-            'search_default_group_department': 1,
-            'force_expense_journal': True,
-            'allowed_company_ids': [company_id],
-        },
-    }
-    ]]></field>
-    </record>
+# Get EXP journal for active company
+exp_journal = env['account.journal'].search([
+    ('code', '=', 'EXP'),
+    ('type', '=', 'purchase'),
+    ('company_id', '=', company_id)
+], limit=1)
+
+if not exp_journal:
+    raise UserError('Expense Journal (EXP) not found for company %s.' % company.name)
+
+domain = [
+    ('move_type', '=', 'in_invoice'),
+    ('is_expense_bill', '=', True),
+    ('company_id', '=', company_id)
+]
+
+action = {
+    'name': 'All Expense Bills - %s' % company.name,
+    'type': 'ir.actions.act_window',
+    'res_model': 'account.move',
+    'view_mode': 'list,form',
+    'domain': domain,
+    'context': {
+        'default_move_type': 'in_invoice',
+        'default_is_expense_bill': True,
+        'default_journal_id': exp_journal.id,
+        'default_company_id': company_id,
+        'move_type': 'in_invoice',
+        'journal_type': 'purchase',
+        'search_default_expense_bills': 1,
+        'search_default_group_department': 1,
+        'force_expense_journal': True,
+        'allowed_company_ids': [company_id],
+    },
+    'help': '''
+        <p class="o_view_nocontent_smiling_face">
+            No expense bills found in %s.
+        </p>
+        <p>
+            Create expense bills by clicking the "Create" button.
+        </p>
+    ''' % company.name,
+}
+]]></field>
+        </record>
 
 
         <!-- ============================================ -->
@@ -204,49 +222,61 @@
             <field name="name">Expense Bills Dashboard</field>
             <field name="model_id" ref="account.model_account_move"/>
             <field name="state">code</field>
-            <field name="code"><![CDATA[
-# Get current user and company
+            <field name="code"><![CDATA[# Get active company from context
+allowed_company_ids = context.get('allowed_company_ids', [])
+if allowed_company_ids:
+    company_id = allowed_company_ids[0]
+    company = env['res.company'].browse(company_id)
+else:
+    company = env.user.company_id
+    company_id = company.id
+
 user = env.user
-company = user.company_id
 is_admin = user.has_group('department_vendor_bill_management.group_department_bill_admin')
 is_manager = user.has_group('department_vendor_bill_management.group_department_bill_manager')
 
-# Build domain based on role (with company filter)
+# Build domain based on role
 domain = [
     ('move_type', '=', 'in_invoice'),
     ('is_expense_bill', '=', True),
-    ('company_id', '=', company.id)  # ADDED: Company filter
+    ('company_id', '=', company_id)
 ]
 
 if not is_admin:
-    if is_manager and user.employee_id and user.employee_id.department_id:
-        employee_dept = user.employee_id.department_id
-        # Verify department belongs to current company
-        if employee_dept.company_id and employee_dept.company_id.id == company.id:
-            domain.append(('department_id', '=', employee_dept.id))
-        elif not employee_dept.company_id:  # Department without company (shared)
-            domain.append(('department_id', '=', employee_dept.id))
+    if is_manager:
+        employee = env['hr.employee'].sudo().search([
+            ('user_id', '=', user.id),
+            ('company_id', '=', company_id)
+        ], limit=1)
+        
+        if employee and employee.department_id:
+            dept = employee.department_id
+            if dept.company_id:
+                if dept.company_id.id == company_id:
+                    domain.append(('department_id', '=', dept.id))
+                else:
+                    domain.append(('create_uid', '=', user.id))
+            else:
+                domain.append(('department_id', '=', dept.id))
         else:
-            # Department from different company, show only user's own bills
             domain.append(('create_uid', '=', user.id))
     else:
         domain.append(('create_uid', '=', user.id))
 
-# Return dashboard view
 action = {
-    'name': 'Expense Bills Dashboard',
+    'name': 'Expense Bills Dashboard - %s' % company.name,
     'type': 'ir.actions.act_window',
     'res_model': 'account.move',
     'view_mode': 'graph,pivot,list,form',
     'domain': domain,
     'context': {
-        'default_company_id': company.id,  # ADDED: Default company
+        'default_company_id': company_id,
         'search_default_group_department': 1,
         'search_default_group_state': 1,
         'graph_measure': 'amount_total',
         'graph_mode': 'bar',
         'graph_groupbys': ['department_id'],
-        'allowed_company_ids': [company.id],  # ADDED: Restrict to current company
+        'allowed_company_ids': [company_id],
     },
 }
 ]]></field>
