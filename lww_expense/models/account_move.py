@@ -2,6 +2,8 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class AccountMove(models.Model):
@@ -56,22 +58,43 @@ class AccountMove(models.Model):
             else:
                 record.department_id = False
 
+    def create(self, vals):
+        _logger.info("="*50)
+        _logger.info("CREATE EXPENSE BILL DEBUG")
+        _logger.info("Context: %s", self._context)
+        _logger.info("Vals: %s", vals)
+        _logger.info("allowed_company_ids: %s", self._context.get('allowed_company_ids'))
+        _logger.info("default_company_id: %s", self._context.get('default_company_id'))
+        _logger.info("env.company: %s", self.env.company.name)
+        _logger.info("="*50)
+
+
     @api.model
     def create(self, vals):
-        # Check journal EXP
+        """
+        Auto-handle expense bill creation with PROPER multi-company context
+        """
+        
+        # Check if journal EXP is being used
         journal_id = vals.get('journal_id')
         if journal_id:
             journal = self.env['account.journal'].browse(journal_id)
             if journal.code == 'EXP':
                 vals['is_expense_bill'] = True
         
+        # Handle expense bill from context
         if self._context.get('default_is_expense_bill'):
             vals['is_expense_bill'] = True
             
             if not vals.get('journal_id'):
-                # ✅ FIX: Get company from vals or context
-                company_id = vals.get('company_id') or self.env.company.id
+                # ✅ FIX: Get company dari context (active company di UI)
+                # Priority: vals > context > default
+                company_id = vals.get('company_id') or \
+                            self._context.get('default_company_id') or \
+                            self._context.get('allowed_company_ids', [False])[0] or \
+                            self.env.company.id
                 
+                # Search journal EXP untuk active company
                 exp_journal = self.env['account.journal'].search([
                     ('code', '=', 'EXP'),
                     ('type', '=', 'purchase'),
@@ -80,22 +103,28 @@ class AccountMove(models.Model):
                 
                 if exp_journal:
                     vals['journal_id'] = exp_journal.id
+                    # ✅ PENTING: Force set company_id di vals
+                    if 'company_id' not in vals:
+                        vals['company_id'] = company_id
                 else:
                     company_name = self.env['res.company'].browse(company_id).name
                     raise UserError(_(
-                        'Expense Journal (EXP) not found for company "%s".'
+                        'Expense Journal (EXP) not found for company "%s". '
+                        'Please create a Purchase Journal with code "EXP" for this company.'
                     ) % company_name)
         
         move = super(AccountMove, self).create(vals)
         
+        # Force recompute department for new expense bills
         if move.is_expense_bill and move.move_type == 'in_invoice':
             move._compute_department_id()
             
             if not move.department_id:
                 raise UserError(_(
-                    'Cannot create expense bill: You must be assigned to a department '
-                    'in company "%s". Please contact your HR administrator.'
-                ) % move.company_id.name)  # ✅ Tambahkan company name
+                    'Cannot create expense bill in company "%s": '
+                    'You must be assigned to a department in this company. '
+                    'Please contact your HR administrator.'
+                ) % move.company_id.name)
         
         return move
     
