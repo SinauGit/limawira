@@ -102,11 +102,11 @@ class AccountMove(models.Model):
                 
                 if exp_journal:
                     vals['journal_id'] = exp_journal.id
-                else:
-                    raise UserError(_(
-                        'Expense Journal (EXP) not found for company "%s". '
-                        'Please create a Purchase Journal with code "EXP" for this company.'
-                    ) % company.name)
+                # else:
+                #     raise UserError(_(
+                #         'Expense Journal (EXP) not found for company "%s". '
+                #         'Please create a Purchase Journal with code "EXP" for this company.'
+                #     ) % company.name)
         
         move = super(AccountMove, self).create(vals)
         

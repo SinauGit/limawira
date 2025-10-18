@@ -21,8 +21,7 @@ exp_journal = env['account.journal'].search([
     ('company_id', '=', company.id)
 ], limit=1)
 
-if not exp_journal:
-    raise UserError('Expense Journal (EXP) not found for company %s. Please contact your administrator.' % company.name)
+
 
 # Build domain for user's own bills (with company filter)
 domain = [
@@ -83,8 +82,7 @@ exp_journal = env['account.journal'].search([
     ('company_id', '=', company.id)
 ], limit=1)
 
-if not exp_journal:
-    raise UserError('Expense Journal (EXP) not found for company %s. Please contact your administrator.' % company.name)
+
 
 # Get user's department (ensure it belongs to current company)
 if user.employee_id and user.employee_id.department_id:
@@ -159,8 +157,7 @@ exp_journal = env['account.journal'].search([
     ('company_id', '=', company.id)
 ], limit=1)
 
-if not exp_journal:
-    raise UserError('Expense Journal (EXP) not found for company %s. Please contact your administrator.' % company.name)
+
 
 # Build domain for all expense bills (with company filter)
 domain = [
