@@ -248,18 +248,18 @@ class AccountMove(models.Model):
                 # Department bisa:
                 # 1. Tanpa company (shared) -> OK
                 # 2. Dengan company -> harus sama dengan move.company_id
-                if move.department_id and move.department_id.company_id:
-                    if move.department_id.company_id != move.company_id:
-                        raise ValidationError(_(
-                            'Department "%(dept)s" belongs to company "%(dept_co)s" '
-                            'but this expense bill is for company "%(bill_co)s".\n\n'
-                            'Please ensure your employee is assigned to a department '
-                            'in the correct company.'
-                        ) % {
-                            'dept': move.department_id.name,
-                            'dept_co': move.department_id.company_id.name,
-                            'bill_co': move.company_id.name
-                        })
+                # if move.department_id and move.department_id.company_id:
+                #     if move.department_id.company_id != move.company_id:
+                #         raise ValidationError(_(
+                #             'Department "%(dept)s" belongs to company "%(dept_co)s" '
+                #             'but this expense bill is for company "%(bill_co)s".\n\n'
+                #             'Please ensure your employee is assigned to a department '
+                #             'in the correct company.'
+                #         ) % {
+                #             'dept': move.department_id.name,
+                #             'dept_co': move.department_id.company_id.name,
+                #             'bill_co': move.company_id.name
+                #         })
     
     @api.model
     def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
