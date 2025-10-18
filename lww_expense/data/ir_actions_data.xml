@@ -10,7 +10,7 @@
             <field name="model_id" ref="account.model_account_move"/>
             <field name="state">code</field>
             <field name="code"><![CDATA[# Get active company from context
-allowed_company_ids = context.get('allowed_company_ids', [])
+allowed_company_ids = env.context.get('allowed_company_ids', [])
 if allowed_company_ids:
     company_id = allowed_company_ids[0]
     company = env['res.company'].browse(company_id)
@@ -74,7 +74,7 @@ action = {
             <field name="model_id" ref="account.model_account_move"/>
             <field name="state">code</field>
             <field name="code"><![CDATA[# Get active company from context
-allowed_company_ids = context.get('allowed_company_ids', [])
+allowed_company_ids = env.context.get('allowed_company_ids', [])
 if allowed_company_ids:
     company_id = allowed_company_ids[0]
     company = env['res.company'].browse(company_id)
@@ -160,7 +160,7 @@ action = {
             <field name="model_id" ref="account.model_account_move"/>
             <field name="state">code</field>
             <field name="code"><![CDATA[# Get active company from context
-allowed_company_ids = context.get('allowed_company_ids', [])
+allowed_company_ids = env.context.get('allowed_company_ids', [])
 if allowed_company_ids:
     company_id = allowed_company_ids[0]
     company = env['res.company'].browse(company_id)
@@ -223,7 +223,7 @@ action = {
             <field name="model_id" ref="account.model_account_move"/>
             <field name="state">code</field>
             <field name="code"><![CDATA[# Get active company from context
-allowed_company_ids = context.get('allowed_company_ids', [])
+allowed_company_ids = env.context.get('allowed_company_ids', [])
 if allowed_company_ids:
     company_id = allowed_company_ids[0]
     company = env['res.company'].browse(company_id)
