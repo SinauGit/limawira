@@ -143,8 +143,6 @@
     <field name="arch" type="xml">
       <data>
         <xpath expr="//button[@name='action_open_discount_wizard']" position="replace"/>
-        <xpath expr="//form[1]/header[1]/button[@name='579'][2]" position="replace"/>
-        <xpath expr="//form[1]/header[1]/button[@name='579']" position="replace"/>
         <xpath expr="//form[1]/header[1]/button[@name='action_confirm'][2]" position="attributes">
           <attribute name="groups">sales_team.group_sale_manager,account.group_account_invoice,account.group_account_basic,account.group_account_readonly,project.group_project_manager</attribute>
         </xpath>
