@@ -124,9 +124,6 @@
         <xpath expr="//form[1]/header[1]/button[@name='button_validate'][2]" position="attributes">
           <attribute name="groups">stock.group_stock_user,hak_akses.group_user_lww</attribute>
         </xpath>
-        <xpath expr="//button[@name='515']" position="attributes">
-          <attribute name="groups">stock.group_stock_user,hak_akses.group_user_lww</attribute>
-        </xpath>
         <xpath expr="//button[@name='action_cancel']" position="attributes">
           <attribute name="groups">stock.group_stock_user,hak_akses.group_user_lww</attribute>
         </xpath>
