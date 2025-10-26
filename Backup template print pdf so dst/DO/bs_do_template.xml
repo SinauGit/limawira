@@ -1,4 +1,8 @@
-<t t-name="lww_delivery.bs_do_template">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Template for Kwitansi -->
+        <template id="lww_delivery.bs_do_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="o">
                     <!-- Header Section -->
@@ -164,5 +168,6 @@
                         </div>
                     </main>
                 </t>
-            </t>
-        </t>
+        </template>
+    </data>
+</odoo>

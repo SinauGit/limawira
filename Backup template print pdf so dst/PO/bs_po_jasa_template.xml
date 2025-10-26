@@ -23,17 +23,23 @@
                                         </h1>
                                     </div>
                                 </div>
-                                <div class="col-6" style="text-align: right;">
-                                    <!-- Logo static di kanan atas -->
-                                    <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-height: 60px; margin-bottom: 5px;"/>
-                                    <div style="font-size: 12px; line-height: 1.3; text-align: right;">
-                                        <p style="margin: 0;">
-                                            <span t-esc="o.company_id.street"/> <br/>
-                                            <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.zip"/>, 
-                                            <span t-esc="o.company_id.country_id.name"/><br/>
-                                            Telepon: <span t-esc="o.company_id.phone"/><br/>
-                                            Fax: <span t-esc="o.company_id.mobile"/>
-                                        </p>
+                                <div class="col-3">
+                                    <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 150px; height: auto;"/>
+                                    <div class="row" style="padding-top: 5px;">
+                                        <div class="col-3">
+                                            <p style="text-align: left; font-size: 14px;">NO</p>
+                                        </div>
+                                        <div class="col-9" style="font-size: 14px; border: 1px;">
+                                            : <span t-esc="o.no_po or ''"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <p style="text-align: left; font-size: 14px;">Date</p>
+                                        </div>
+                                        <div class="col-9" style="font-size: 14px; border: 1px;">
+                                            : <span t-esc="(o.date_order or o.date_approve).strftime('%d-%b-%y') if (o.date_order or o.date_approve) else ''" style="font-size: 15px;"/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
