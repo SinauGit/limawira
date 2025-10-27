@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <odoo>
-  <record id="odoo_studio_res_comp_544f753f-34dd-4c31-a66d-08ecd86e773e" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_res_comp_544f753f-34dd-4c31-a66d-08ecd86e773e" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//list[1]/field[@name='name']" position="after">
@@ -15,15 +15,15 @@
     <field name="priority">99</field>
     <field name="type">list</field>
   </record>
-  <record id="odoo_studio_account__96fdb59e-2f30-4b20-b62a-68c5074eea79" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_account__96fdb59e-2f30-4b20-b62a-68c5074eea79" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//button[@name='action_invoice_approve']" position="attributes">
           <attribute name="groups">invoice_multi_approval.group_approve_manager</attribute>
+          <attribute name="invisible">move_type not in ["out_invoice", "out_refund", "in_invoice", "in_refund"] or check_approve_ability != True or document_fully_approved == True or is_approved == True or not department_id</attribute>
         </xpath>
         <xpath expr="//form[1]/header[1]/button[@name='action_post'][2]" position="attributes">
-          <attribute name="groups">account.group_account_invoice,lww_expense.group_department_bill_manager</attribute>
-          <attribute name="invisible">state == "posted"</attribute>
+          <attribute name="invisible">hide_post_button or move_type == 'entry' or display_inactive_currency_warning</attribute>
         </xpath>
         <xpath expr="//form[1]/header[1]/button[@name='action_register_payment']" position="attributes">
           <attribute name="groups">account.group_account_user</attribute>
@@ -62,6 +62,9 @@
         <xpath expr="//page[@name='aml_tab']" position="attributes">
           <attribute name="groups"/>
         </xpath>
+        <xpath expr="//page[@name='approval_tab']" position="attributes">
+          <attribute name="invisible">not department_id</attribute>
+        </xpath>
       </data>
     </field>
     <field name="inherit_id" ref="account.view_move_form"/>
@@ -71,7 +74,7 @@
     <field name="priority">160</field>
     <field name="type">form</field>
   </record>
-  <record id="odoo_studio_res_comp_f828cbb3-4df4-4bb7-8869-ef8f6f9ac274" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_res_comp_f828cbb3-4df4-4bb7-8869-ef8f6f9ac274" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='general_info']/group[1]/group[1]/div[1]" position="after">
@@ -87,7 +90,7 @@
     <field name="priority">160</field>
     <field name="type">form</field>
   </record>
-  <record id="odoo_studio_purchase_96d7b5c0-b598-4834-9e6a-f286fd9b6248" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_purchase_96d7b5c0-b598-4834-9e6a-f286fd9b6248" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//form[1]/header[1]/button[@name='action_rfq_send']" position="attributes">
@@ -112,7 +115,7 @@
     <field name="priority">160</field>
     <field name="type">form</field>
   </record>
-  <record id="odoo_studio_stock_pi_63cd364d-7882-4e89-b87b-5a94a98a75d1" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_stock_pi_63cd364d-7882-4e89-b87b-5a94a98a75d1" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//button[@name='action_assign']" position="attributes">
@@ -139,7 +142,7 @@
     <field name="priority">160</field>
     <field name="type">form</field>
   </record>
-  <record id="odoo_studio_sale_ord_20c5c360-4c6c-4287-926a-3ff0a197b567" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_sale_ord_20c5c360-4c6c-4287-926a-3ff0a197b567" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//button[@name='action_open_discount_wizard']" position="replace"/>
@@ -177,7 +180,7 @@
     <field name="priority">160</field>
     <field name="type">form</field>
   </record>
-  <record id="odoo_studio_ir_actio_cbcdded7-1105-4c5e-9e81-33ff789dc875" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_ir_actio_cbcdded7-1105-4c5e-9e81-33ff789dc875" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//list[1]/field[@name='name']" position="before">
@@ -194,7 +197,7 @@
     <field name="priority">99</field>
     <field name="type">list</field>
   </record>
-  <record id="odoo_studio_ir_actio_aecd0cd7-7b41-4996-8994-28cbd458d62a" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_ir_actio_aecd0cd7-7b41-4996-8994-28cbd458d62a" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//list[1]/field[@name='name']" position="before">
@@ -209,7 +212,7 @@
     <field name="priority">99</field>
     <field name="type">list</field>
   </record>
-  <record id="odoo_studio_sale_ord_6bc10a8f-5951-4ad4-a894-e9808c6316bd" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_sale_ord_6bc10a8f-5951-4ad4-a894-e9808c6316bd" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//field[@name='employee_id']" position="attributes">
@@ -227,7 +230,7 @@
     <field name="priority">99</field>
     <field name="type">list</field>
   </record>
-  <record id="odoo_studio_project__4afe9942-4bac-40ae-a75c-de313948c9be" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_project__4afe9942-4bac-40ae-a75c-de313948c9be" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//button[@name='action_view_tasks']" position="after">
@@ -242,7 +245,7 @@
     <field name="priority">99</field>
     <field name="type">list</field>
   </record>
-  <record id="odoo_studio_account__aa17d372-66e1-42e4-94be-f44762839b54" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_account__aa17d372-66e1-42e4-94be-f44762839b54" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='advanced_options']/group[1]/group[1]/field[@name='company_id']" position="attributes">
@@ -258,7 +261,7 @@
     <field name="priority">99</field>
     <field name="type">form</field>
   </record>
-  <record id="odoo_studio_product__fd52cff5-840b-46ed-9b36-583ffdec7e51" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_product__fd52cff5-840b-46ed-9b36-583ffdec7e51" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//field[@name='default_code']" position="attributes">
@@ -276,7 +279,7 @@
     <field name="priority">160</field>
     <field name="type">form</field>
   </record>
-  <record id="odoo_studio_sale_ord_7a83b18c-03be-4bef-9a79-b18b24379148" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_sale_ord_7a83b18c-03be-4bef-9a79-b18b24379148" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//field[@name='employee_id']" position="attributes">
@@ -291,7 +294,7 @@
     <field name="priority">160</field>
     <field name="type">list</field>
   </record>
-  <record id="odoo_studio_sale_ord_d3840442-7532-45ec-b027-6cc57498dd90" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_sale_ord_d3840442-7532-45ec-b027-6cc57498dd90" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//field[@name='employee_id']" position="attributes">
@@ -304,6 +307,21 @@
     <field name="model">sale.order</field>
     <field name="name">Odoo Studio: sale.order.list (orders) customization</field>
     <field name="priority">320</field>
+    <field name="type">list</field>
+  </record>
+  <record id="odoo_studio_account__08830cca-518d-4be7-acbf-6fe440d3c431" model="ir.ui.view" context="{'studio': True}">
+    <field name="arch" type="xml">
+      <data>
+        <xpath expr="//field[@name='document_fully_approved']" position="attributes">
+          <attribute name="invisible">is_expense_bill != True</attribute>
+        </xpath>
+      </data>
+    </field>
+    <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+    <field name="mode">extension</field>
+    <field name="model">account.move</field>
+    <field name="name">Odoo Studio: account.out.invoice.list customization</field>
+    <field name="priority">99</field>
     <field name="type">list</field>
   </record>
 </odoo>
