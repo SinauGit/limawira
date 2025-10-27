@@ -54,7 +54,7 @@ class AccountMoveLine(models.Model):
         return lines
     
     def _update_downpayment_name(self):
-        """Update name field untuk down payment lines"""
+        """Update name dan custom_description field untuk down payment lines"""
         self.ensure_one()
         if not self.is_downpayment:
             return
@@ -62,13 +62,17 @@ class AccountMoveLine(models.Model):
         if self.payment_type == 'installment':
             if self.payment_sequence > 1:
                 self.name = _("Termin %s", self.payment_sequence)
+                self.custom_description = _("Termin %s", self.payment_sequence)
             else:
                 self.name = _("Termin")
+                self.custom_description = _("Termin")
         else:
             if self.payment_sequence > 1:
                 self.name = _("Down Payment %s", self.payment_sequence)
+                self.custom_description = _("Down Payment %s", self.payment_sequence)
             else:
                 self.name = _("Down Payment")
+                self.custom_description = _("Down Payment")
     
     def write(self, vals):
         """Override write untuk handle perubahan payment_type"""
