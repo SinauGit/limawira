@@ -20,7 +20,7 @@
                                 <field name="employee_id" optional="hide"/>
                             </xpath>
                 <xpath expr="//field[@name='status_in_payment']" position="before">
-                                <field name="document_fully_approved" string="Is Approved ?" column_invisible="not is_expense_bill" optional="show"/>
+                                <field name="document_fully_approved" string="Is Approved ?" column_invisible="not department_id" optional="show"/>
                             </xpath>
             </field>
         </record>
