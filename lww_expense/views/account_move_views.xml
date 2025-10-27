@@ -11,7 +11,6 @@
                 <xpath expr="//field[@name='invoice_partner_display_name']" position="after">
                     <field name="department_id" string="Department" optional="hide"/>
                     <field name="is_expense_bill" string="Expense Bill" widget="boolean_toggle" optional="hide"/>
-                    <field name="department_id" string="Department" optional="hide"/>
                     <field name="create_uid" string="Created By" optional="hide"/>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="after">
@@ -19,6 +18,9 @@
                 </xpath>
                 <xpath expr="//field[@name='invoice_no']" position="after">
                                 <field name="employee_id" optional="hide"/>
+                            </xpath>
+                <xpath expr="//field[@name='status_in_payment']" position="before">
+                                <field name="document_fully_approved" string="Is Approved ?" optional="show"/>
                             </xpath>
             </field>
         </record>
