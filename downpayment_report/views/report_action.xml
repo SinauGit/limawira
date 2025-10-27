@@ -32,17 +32,9 @@
                             <span t-field="so_line.price_subtotal"/>
                         </td>
                     </tr>
-                </t>
-                
-                <!-- Horizontal Separator Line -->
-                <tr class="fw-bold o_line_section">
-                    <td colspan="4">
-                        <hr style="border: 0; border-top: 2px solid black; margin: 0;"/>
-                    </td>
-                </tr>
-                
+                </t>     
                 <!-- Down Payment / Termin Section Header -->
-                <tr class="fw-bold o_line_section" style="border-bottom: 2px solid #35bdaf;">
+                <tr class="fw-bold o_line_section" style="border-bottom: 2px solid #35bdaf; border-top: 2px solid #35bdaf;">
                     <td colspan="4">Down Payment / Termin</td>
                 </tr>
                 
@@ -64,6 +56,11 @@
                     </tr>
                 </t>
             </t>
+        </xpath>
+        
+        <!-- ADD border style to Down Payment section in STANDARD template (when condition is False) -->
+        <xpath expr="//t[@t-foreach='lines']/tr" position="attributes">
+            <attribute name="t-attf-style">{{ 'border-bottom: 2px solid #35bdaf; border-top: 2px solid #35bdaf;' if line.display_type == 'line_section' and line.name and ('Down Payment' in line.name or 'Termin' in line.name) else '' }}</attribute>
         </xpath>
         
     </template>
