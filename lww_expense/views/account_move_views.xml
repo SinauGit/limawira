@@ -10,7 +10,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='invoice_partner_display_name']" position="after">
                     <field name="is_expense_bill" string="Expense Bill" widget="boolean_toggle" optional="hide"/>
-                    <field name="department_id" string="Department" column_invisible="not is_expense_bill" optional="show"/>
+                    <field name="department_id" string="Department" optional="hide"/>
                     <field name="create_uid" string="Created By" optional="hide"/>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="after">

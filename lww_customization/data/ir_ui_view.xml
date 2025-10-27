@@ -34,7 +34,7 @@
         <xpath expr="//button[@name='button_draft']" position="attributes">
           <attribute name="groups">account.group_account_user</attribute>
         </xpath>
-        <xpath expr="//button[@name='action_reload_ai_data']" position="after">
+        <xpath expr="//button[@name='button_draft']" position="after">
           <button string="Print Invoice" name="account.account_invoices_without_payment" type="action" class="oe_highlight" invisible="move_type not in [&quot;out_invoice&quot;, &quot;out_refund&quot;]"/>
         </xpath>
         <xpath expr="//field[@name='invoice_no']" position="attributes">
