@@ -15,7 +15,6 @@
                     <td colspan="4">Sales Order Details</td>
                 </tr>
                 
-                <!-- Show sale order lines (produk SO asli) -->
                 <t t-foreach="o.get_related_sale_order_lines()" t-as="so_line">
                     <tr>
                         <td>
@@ -26,10 +25,10 @@
                             <span t-field="so_line.product_uom"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-field="so_line.price_unit"/>
+                            <span t-field="so_line.price_unit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-field="so_line.price_subtotal"/>
+                            <span t-field="so_line.price_subtotal" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                         </td>
                     </tr>
                 </t>     
@@ -48,10 +47,10 @@
                             <span t-out="'{:.2f}'.format(dp_item['quantity'])"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="'{:.2f}'.format(dp_item['price_unit'])"/>
+                            <span t-out="dp_item['price_unit']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="'{:.2f}'.format(dp_item['price_subtotal'])"/>
+                            <span t-out="dp_item['price_subtotal']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                         </td>
                     </tr>
                 </t>
