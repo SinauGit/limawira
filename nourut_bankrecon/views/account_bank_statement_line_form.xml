@@ -12,7 +12,7 @@
         </field>
     </record>
 
-    <record id="account.bank.statement.line.kanban.bank_rec_widget_inherite" model="ir.ui.view">
+    <!-- <record id="account.bank.statement.line.kanban.bank_rec_widget_inherite" model="ir.ui.view">
         <field name="name">account.bank.statement.line.kanban.bank_rec_widget.inherit</field>
         <field name="model">account.bank.statement.line</field>
         <field name="inherit_id" ref="account_accountant.account.bank.statement.line.kanban.bank_rec_widget"/>
@@ -21,6 +21,6 @@
                 <field name="no_journal" display="full"/>
             </xpath>
         </field>
-    </record>
+    </record> -->
 
 </odoo>
