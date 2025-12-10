@@ -3,6 +3,7 @@
     'name': "mencadangkan",
     'author': "Van Ginneken di revisi dan migrasi dari odoo 17 ke 18 oleh Rizky Abdi",
     'category': 'Administration',
+    'website': "www.lui.co.id",
     'version': '18.0.0.1',
     'installable': True,
     'license': 'LGPL-3',
