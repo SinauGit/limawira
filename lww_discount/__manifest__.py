@@ -1,5 +1,7 @@
 {
     'name': 'Sale Discount on Total Amount',
+    'author': "Rizky Abdi S.H",
+    'website': "www.lui.co.id",
     'version': '18.0.1.1.0',
     'depends': ['sale_management', 'account', 'purchase',],
     'data': [

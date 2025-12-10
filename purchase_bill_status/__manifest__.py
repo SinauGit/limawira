@@ -1,6 +1,8 @@
                        
 {
     'name': 'Purchase Bill Status',
+    'author': "Rizky Abdi S.H",
+    'website': "www.lui.co.id",
     'version': '1.0',
     'depends': [
         'base',
