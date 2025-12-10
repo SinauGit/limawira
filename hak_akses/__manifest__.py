@@ -1,8 +1,8 @@
 {
     'name': 'Hak Akses LWW',
     'version': '1.0',
-    'author': "Rizky Abdi S.H",
-    'website': "www.lui.co.id",
+    'author': 'Rizky Abdi S.H',
+    'website': 'www.lui.co.id',
     'depends': ['stock', 'stock_landed_costs', 'account', 'uom'],
     'data': [
         'security/res_groups.xml',
