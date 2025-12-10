@@ -1,8 +1,8 @@
 {
     'name': 'Bank Reconciliation Notes',
     'version': '18.0.1.0.0',
-    'author': "Rizky Abdi S.H",
-    'website': "www.lui.co.id",
+    'author': 'Rizky Abdi S.H',
+    'website': 'www.lui.co.id',
     'depends': ['account_accountant','account',],
     'data': [
                                                          

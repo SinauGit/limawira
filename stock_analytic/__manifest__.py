@@ -2,7 +2,7 @@
     "name": "Stock Analytic",
     "summary": "Adds analytic distribution in stock move",
     "version": "18.0.1.1.0",
-    "author": "Julius Network Di Revisi dan disesuaikan ulang oleh Rizky Abdi s.H, "
+    "author": "Julius Network Di Revisi dan disesuaikan ulang oleh Rizky Abdi s.H, ",
     "category": "Warehouse Management",
     "license": "AGPL-3",
     "depends": ["stock_account", "analytic"],

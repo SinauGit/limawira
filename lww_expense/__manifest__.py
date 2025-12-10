@@ -1,7 +1,7 @@
 {
     'name': 'Department Expense Bill Management',
-    'author': "Rizky Abdi S.H",
-    'website': "www.lui.co.id",
+    'author': 'Rizky Abdi S.H',
+    'website': 'www.lui.co.id',
     'version': '18.0.1.0.0',
     'license': 'LGPL-3',
     'depends': [
