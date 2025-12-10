@@ -1,4 +1,4 @@
-# --- stock_picking.py ---
+                          
 
 from odoo import api, models
 
@@ -35,7 +35,7 @@ class StockPicking(models.Model):
             else:
                 continue
 
-            # >>> gunakan sudo untuk baca SOL <<<
+                                                 
             SaleOrderLine = self.env["sale.order.line"].sudo()
             sol_candidates = SaleOrderLine.search(sol_domain, order="id desc", limit=0)
 

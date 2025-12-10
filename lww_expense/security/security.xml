@@ -2,7 +2,7 @@
 <odoo>
     <data noupdate="1">
         
-        <!-- Security Groups -->
+        
         <record id="group_department_bill_user" model="res.groups">
             <field name="name">Department Expense Bill User</field>
             <field name="category_id" ref="base.module_category_accounting"/>
@@ -22,7 +22,7 @@
         </record>
 
 
-        <!-- USER RULES: Own expense bills only (draft + posted) -->
+        
         <record id="rule_vendor_bill_user_own" model="ir.rule">
             <field name="name">Expense Bills: User Own Bills</field>    
             <field name="model_id" ref="account.model_account_move"/>
@@ -38,25 +38,11 @@
             <field name="perm_unlink" eval="False"/>
         </record>
 
-        <!-- USER RULES: Restrict write to draft only -->
-        <!-- <record id="rule_vendor_bill_user_write_draft_only" model="ir.rule">
-            <field name="name">Expense Bills: User Write Draft Only</field>    
-            <field name="model_id" ref="account.model_account_move"/>
-            <field name="domain_force">[
-                ('is_expense_bill', '=', True),
-                ('move_type', '=', 'in_invoice'),
-                ('create_uid', '=', user.id),
-                ('state', '=', 'draft')
-            ]</field>
-            <field name="groups" eval="[(4, ref('group_department_bill_user'))]"/>
-            <field name="perm_read" eval="False"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
-        </record> -->
+        
+        
 
 
-        <!-- MANAGER RULES: Department expense bills only -->
+        
         <record id="rule_vendor_bill_manager_department" model="ir.rule">
             <field name="name">Expense Bills: Manager Department Access</field>
             <field name="model_id" ref="account.model_account_move"/>
@@ -73,7 +59,7 @@
         </record>
 
 
-        <!-- ADMIN RULES: All expense bills -->
+        
         <record id="rule_vendor_bill_admin_all" model="ir.rule">
             <field name="name">Expense Bills: Admin All Access</field>
             <field name="model_id" ref="account.model_account_move"/>
@@ -89,28 +75,8 @@
         </record>
 
 
-        <!-- BLOCK NON-EXPENSE BILLS ACCESS -->
-        <!-- <record id="rule_block_regular_bills_user" model="ir.rule">
-            <field name="name">Block Regular Bills: User</field>
-            <field name="model_id" ref="account.model_account_move"/>
-            <field name="domain_force">[('is_expense_bill', '=', True)]</field>
-            <field name="groups" eval="[(4, ref('group_department_bill_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
-        </record>
-
-        <record id="rule_block_regular_bills_manager" model="ir.rule">
-            <field name="name">Block Regular Bills: Manager</field>
-            <field name="model_id" ref="account.model_account_move"/>
-            <field name="domain_force">[('is_expense_bill', '=', True)]</field>
-            <field name="groups" eval="[(4, ref('group_department_bill_manager'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
-        </record> -->
+        
+        
 
     </data>
 </odoo>

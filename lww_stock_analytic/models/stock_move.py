@@ -7,14 +7,14 @@ class StockMove(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             if not vals.get("analytic_distribution"):
-                # 1) Ambil dari SOL (pakai sudo untuk baca)
+                                                           
                 sl_id = vals.get("sale_line_id")
                 if sl_id:
                     sol = self.env["sale.order.line"].sudo().browse(sl_id)
                     if sol and sol.analytic_distribution:
                         vals["analytic_distribution"] = sol.analytic_distribution
                         continue
-                # 2) Return: copy dari move asal (pakai sudo untuk baca)
+                                                                        
                 origin_id = vals.get("origin_returned_move_id")
                 if origin_id:
                     origin = self.env["stock.move"].sudo().browse(origin_id)
@@ -25,7 +25,7 @@ class StockMove(models.Model):
 
     @api.model
     def _analytic_from_project(self, project):
-        # Pastikan baca project dengan sudo supaya tidak gagal di user non-analitik
+                                                                                   
         if not project:
             return False
         project = project.sudo()

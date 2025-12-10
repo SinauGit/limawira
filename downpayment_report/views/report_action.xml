@@ -2,15 +2,15 @@
 <odoo>
     <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
         
-        <!-- FILTER invoice lines to exclude down payment lines using method -->
+        
         <xpath expr="//t[@t-set='lines']" position="attributes">
             <attribute name="t-value">o.get_invoice_lines_for_report()</attribute>
         </xpath>
         
-        <!-- INSERT Sales Order Details and Down Payment sections INSIDE tbody after the standard lines -->
+        
         <xpath expr="//table[@name='invoice_line_table']/tbody" position="inside">
             <t t-if="o.should_show_downpayment_template()">
-                <!-- Sales Order Details Header -->
+                
                 <tr class="fw-bold o_line_section">
                     <td colspan="4">Sales Order Details</td>
                 </tr>
@@ -32,12 +32,12 @@
                         </td>
                     </tr>
                 </t>     
-                <!-- Down Payment / Termin Section Header -->
+                
                 <tr class="fw-bold o_line_section" style="border-bottom: 2px solid #35bdaf; border-top: 2px solid #35bdaf;">
                     <td colspan="4">Down Payment / Termin</td>
                 </tr>
                 
-                <!-- Down Payment Lines with Installment Numbers -->
+                
                 <t t-foreach="o.get_downpayment_lines_with_installment_numbers()" t-as="dp_item">
                     <tr>
                         <td>
@@ -57,7 +57,7 @@
             </t>
         </xpath>
         
-        <!-- ADD border style to Down Payment section in STANDARD template (when condition is False) -->
+        
         <xpath expr="//t[@t-foreach='lines']/tr" position="attributes">
             <attribute name="t-attf-style">{{ 'border-bottom: 2px solid #35bdaf; border-top: 2px solid #35bdaf;' if line.display_type == 'line_section' and line.name and ('Down Payment' in line.name or 'Termin' in line.name) else '' }}</attribute>
         </xpath>

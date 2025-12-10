@@ -155,13 +155,8 @@
         <xpath expr="//field[@name='product_template_id']" position="after">
           <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='order_lines']/field[@name='order_line']/list[1]/field[@name='name']" position="move"/>
         </xpath>
-        <!-- <xpath expr="//field[@name='note']" position="before">
-          <field name="discount_type"/>
-          <field name="discount_rate"/>
-        </xpath> -->
-        <!-- <xpath expr="//field[@name='tax_totals']" position="before">
-          <field name="amount_discount"/>
-        </xpath> -->
+        
+        
         <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='order_lines']/field[@name='order_line']/list[1]/field[@name='name']" position="attributes">
           <attribute name="widget">text</attribute>
         </xpath>
@@ -191,21 +186,7 @@
     <field name="priority">99</field>
     <field name="type">list</field>
   </record>
-  <!-- <record id="lww_customization.odoo_studio_ir_actio_aecd0cd7-7b41-4996-8994-28cbd458d62a" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
-    <field name="arch" type="xml">
-      <data>
-        <xpath expr="//list[1]/field[@name='name']" position="before">
-          <field name="id" optional="show"/>
-        </xpath>
-      </data>
-    </field>
-    <field name="inherit_id" ref="base.action_view_tree"/>
-    <field name="mode">extension</field>
-    <field name="model">ir.actions.actions</field>
-    <field name="name">Odoo Studio: ir.actions.actions.list customization</field>
-    <field name="priority">99</field>
-    <field name="type">list</field>
-  </record> -->
+  
   <record id="lww_customization.odoo_studio_sale_ord_6bc10a8f-5951-4ad4-a894-e9808c6316bd" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>

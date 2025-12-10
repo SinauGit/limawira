@@ -23,10 +23,10 @@
                             </h2>
                         </div>
 
-                    <!-- Main Section -->
+                    
                     <main>
                         <div class="page" style="padding: 10px;">
-                            <!-- Address Section -->
+                            
                             <div class="row">
                                 <div class="col-6 text-left">
                                     <div class="row">
@@ -67,7 +67,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Table Product -->
+                            
                             <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
                                 <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
                                     <thead style="border: 0.5px;">
@@ -83,9 +83,9 @@
                                         <t t-foreach="o.move_ids" t-as="line">
                                             <t t-set="counter" t-value="counter + 1"/>
                                             <tr>
-                                            <!-- No -->
+                                            
                                                 <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
-                                            <!-- Product Name -->
+                                            
                                                 <td class="text-center" style="font-size: 15px; margin-left: 10px;">
                                                     <t t-set="lot_names" t-value="', '.join(line.lot_ids.mapped('name')) or ''"/>
                                                     <t t-set="default_code" t-value="line.product_id.default_code or ''"/>
@@ -94,9 +94,9 @@
                                                     <span t-esc="', '.join(filter(None, [default_code, product_name]))"/><br/>
                                                     <span t-esc="', '.join(filter(None, [lot_names]))"/>
                                                 </td>
-                                            <!-- QTY -->
+                                            
                                                 <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.quantity) or ''" style="font-size: 15px;"/></td>
-                                            <!-- Unit -->
+                                            
                                                 <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_uom.name or ''" style="font-size: 15px;"/></td>
                                             </tr>
                                         </t>
@@ -104,13 +104,13 @@
                                 </table>
                             </div>
                             <div style="page-break-after:auto;">
-                                <!-- Note Section -->
+                                
                                 <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
                                     <div class="col-12 text-left">
                                         <p style="font-size: 16px;">Barang tersebut di atas sudah diterima engan BAIK dan CUKUP</p>
                                     </div>
                                 </div>
-                                <!-- Signature Section -->
+                                
                                 <div style="page-break-after: auto;">
                                     <div class="row" style="margin-top: 120px;">
                                         <div class="col-4 text-center"/>

@@ -1,5 +1,5 @@
-# Copyright 2017 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+                                
+                                                                   
 
 from markupsafe import Markup
 
@@ -80,8 +80,8 @@ class StockMoveLine(models.Model):
         for ml in self.filtered(
             lambda m: m.exists() and m.move_id.purchase_request_allocation_ids
         ):
-            # We do sudo because potentially the user that completes the move
-            #  may not have permissions for purchase.request.
+                                                                             
+                                                             
             to_allocate_qty = ml.quantity
             to_allocate_uom = ml.product_uom_id
             for allocation in ml.move_id.purchase_request_allocation_ids.sudo():

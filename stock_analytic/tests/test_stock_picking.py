@@ -1,10 +1,10 @@
-# Copyright 2013 Julius Network Solutions
-# Copyright 2015 Clear Corp
-# Copyright 2016 OpenSynergy Indonesia
-# Copyright 2017 ForgeFlow S.L.
-# Copyright 2018 Hibou Corp.
-# Copyright 2023 Quartile Limited
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+                                         
+                           
+                                      
+                               
+                            
+                                 
+                                                                    
 
 from datetime import datetime
 
@@ -78,7 +78,7 @@ class CommonStockPicking(TransactionCase):
         cls.product.update({"categ_id": cls.product_categ.id})
 
     def _create_analytic_applicability(self):
-        # analytic.analytic_agrolait belongs to analytic.analytic_plan_projects
+                                                                               
         return self.env["account.analytic.applicability"].create(
             {
                 "business_domain": "stock_move",
@@ -184,10 +184,10 @@ class TestStockPicking(CommonStockPicking):
         self._check_analytic_consistency(picking)
 
     def test_outgoing_picking_without_analytic_optional(self):
-        # Create a general optional applicability for stock moves.
+                                                                  
         self._create_analytic_applicability()
-        # Create a another applicability which makes the analytic mandatory only for
-        # incoming stock moves. i.e. applicability should be optional for the outgoing
+                                                                                    
+                                                                                      
         applicability_specific = self._create_analytic_applicability()
         applicability_specific.write(
             {
@@ -208,11 +208,11 @@ class TestStockPicking(CommonStockPicking):
         self._check_analytic_consistency(picking)
 
     def test_outgoing_picking_without_analytic_mandatory(self):
-        # Create a general mandatory applicability for stock moves.
+                                                                   
         applicability_general = self._create_analytic_applicability()
         applicability_general.write({"applicability": "mandatory"})
-        # Create a another applicability which makes the analytic optional only for
-        # incoming stock moves.
+                                                                                   
+                               
         applicability_specific = self._create_analytic_applicability()
         applicability_specific.write(
             {"stock_picking_type_id": self.incoming_picking_type.id}
@@ -268,15 +268,15 @@ class TestStockPicking(CommonStockPicking):
         self.assertEqual(self.analytic_distribution, move_after.analytic_distribution)
 
     def _replace_default_mto_route(self):
-        """
-        Set a new MTO route on the product.
-
-        If the tests of this module are run in a database that will also install
-        mrp (such as when also testing mrp_stock_analytic), the mrp module will
-        change the stock settings so that the default stock routes stop working.
-        So we make our own MTO route that will work regardless of whether mrp is
-        loaded alongside this module or not.
-        """
+\
+\
+\
+\
+\
+\
+\
+\
+           
         src_location = self.location.copy(
             {
                 "location_id": self.location.id,

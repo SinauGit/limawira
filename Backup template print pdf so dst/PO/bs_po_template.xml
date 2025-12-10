@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Template for Kwitansi -->
+        
         <template id="bs_po_template">
         <t t-call="web.basic_layout">
                         <t t-foreach="docs" t-as="o">
-                            <!-- Header Section -->
+                            
                             <div class="row">
                                 <div class="col-4" style="height: 150px; display: flex; flex-direction: column; justify-content: center;">
                                     <div style="font-size: 14px; line-height: 1.5; text-align: left;">
@@ -43,10 +43,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Main Section -->
+                            
                             <main>
                                 <div class="page" style="padding: 1px;">
-                                    <!-- Supplier Section -->
+                                    
                                     <div class="row" style="margin-bottom: 5px; font-size: 14px;">
                                         <table class="table table-sm" style="margin-bottom: 5px; border: 1px solid;">
                                             <tr>
@@ -99,7 +99,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                    <!-- Delivery Place Section -->
+                                    
                                     <div class="row" style="margin-bottom: 5px; margin-top: 10px; font-size: 14px;">
                                         <table class="table table-sm" style="margin-bottom: 5px; border: 1px solid;">
                                             <tr>
@@ -124,7 +124,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                    <!-- Table Product -->
+                                    
                                     <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
                                         <table class="table table-sm" style="margin-bottom: 5px; border: 1px;">
                                             <thead style="border: 1px;">
@@ -133,7 +133,7 @@
                                                     <th style="font-size: 16px; text-align: center; font-weight: bold;">Item Code</th>
                                                     <th style="font-size: 16px; text-align: center; font-weight: bold;">Subject</th>
                                                     <th style="font-size: 16px; text-align: center; font-weight: bold;">Qty</th>
-                                                    <!-- <th style="font-size: 16px; text-align: center; font-weight: bold;">Unit</th> -->
+                                                    
                                                     <th style="font-size: 16px; text-align: center; font-weight: bold;">Unit Price</th>
                                                     <th style="font-size: 16px; text-align: center; font-weight: bold;">Disc</th>
                                                     <th style="font-size: 16px; text-align: center; font-weight: bold;">Curr</th>
@@ -144,7 +144,7 @@
                                                 <t t-set="counter" t-value="0"/>
                                                 <t t-foreach="o.order_line" t-as="line">
                                                     
-                                                    <!-- Section Header -->
+                                                    
                                                     <t t-if="line.display_type == 'line_section'">
                                                         <tr>
                                                             <td colspan="9" style="font-weight: bold; font-size: 16px; background-color: #efefef; text-align: left; padding-left: 15px;">
@@ -152,7 +152,7 @@
                                                             </td>
                                                         </tr>
                                                     </t>
-                                                    <!-- Note -->
+                                                    
                                                     <t t-elif="line.display_type == 'line_note'">
                                                         <tr>
                                                             <td colspan="9" style="font-style: italic; font-size: 14px; text-align: left; padding-left: 15px;">
@@ -160,28 +160,28 @@
                                                             </td>
                                                         </tr>
                                                     </t>
-                                                    <!-- Product Line -->
+                                                    
                                                     <t t-else="">
                                                     <t t-set="counter" t-value="counter + 1"/>
                                                     <tr>
-                                                    <!-- No -->
+                                                    
                                                         <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
-                                                    <!-- Part Number -->
+                                                    
                                                         <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or ''" style="font-size: 15px;"/></td>
-                                                    <!-- Product Name -->
+                                                    
                                                         <td class="text-center" style="font-size: 15px; max-width: 300px; word-wrap: break-word; white-space: normal; overflow: hidden;">
                                                             <span t-esc="line.name or ''" style="font-size: 15px;"/></td>
-                                                    <!-- QTY -->
+                                                    
                                                         <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.product_qty) or ''" style="font-size: 15px;"/></td>
-                                                    <!-- Unit Price -->
+                                                    
                                                         <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit) or ''" style="font-size: 15px; text-align: right;"/></td>
-                                                    <!-- Unit -->
-                                                        <!-- <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_uom.name or ''" style="font-size: 15px;"/></td> -->
-                                                    <!-- Disc -->
+                                                    
+                                                        
+                                                    
                                                         <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.discount) or '0'" style="font-size: 15px;"/>%</td>
-                                                    <!-- Currency -->
+                                                    
                                                         <td class="text-center" style="font-size: 15px;"><span t-esc="o.currency_id.name or ''" style="font-size: 15px;"/></td>
-                                                    <!-- Total -->
+                                                    
                                                         <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_subtotal) or ''" style="font-size: 15px; text-align: right;"/></td>
                                                     </tr>
                                                 </t>
@@ -190,7 +190,7 @@
                                         </table>
                                     </div>
 
-                                    <!-- Total Section -->
+                                    
                                     <div class="row" style="margin-bottom: 3px; margin-top: 5px;">
                                         <div class="col-7"/>
                                         <div class="col-5">
@@ -203,46 +203,11 @@
                                         </div>
                                     </div>
 
-                                    <!-- <div class="row" style="margin-bottom: 5px; margin-top: 5px;">
-                                        <div class="col-10">
-                                            <p style="text-align: right; font-size: 16px;"><em style="font-weight: bold;">Sub Total: </em></p>
-                                        </div>
-                                        <div class="col-2">
-                                            <p style="font-size: 16px; text-align: right;">
-                                            <span t-esc="'{:,.2f}'.format(o.amount_untaxed)" style="font-size: 16px; text-align: right;"/>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-bottom: 5px; margin-top: 5px;">
-                                        <div class="col-5">
-                                            <p style="text-align: right; font-size: 16px;"><em style="font-weight: bold;">VAT </em></p>
-                                        </div>
-                                        <div class="col-5"/>
-                                        <div class="col-2">
-                                            <p style="font-size: 16px; text-align: right;">
-                                            <span t-esc="'{:,.2f}'.format(o.amount_tax)" style="font-size: 16px; text-align: right;"/>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-bottom: 10px; margin-top: 5px;">
-                                        <div class="col-5">
-                                            <p style="text-align: right; font-size: 16px;"><em style="font-weight: bold;">Summary </em></p>
-                                        </div>
-                                        <div class="col-4"/>
-                                        <div class="col-1"> -->
-                                        <!-- Currency -->
-                                            <!-- <p style="font-size: 16px; text-align: left; font-weight: bold;">
-                                            <span t-esc="o.currency_id.name or ''" style="font-size: 16px; text-align: right;"/>
-                                            </p>
-                                        </div>
-                                        <div class="col-2">
-                                            <p style="font-size: 16px; text-align: right;">
-                                            <span t-esc="'{:,.2f}'.format(o.amount_total)" style="font-size: 16px; text-align: right;"/>
-                                            </p>
-                                        </div>
-                                    </div> -->
-                                    <!-- Note Section -->
-                                <!-- Note Section -->
+                                    
+                                        
+                                            
+                                    
+                                
                                 <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
                                     <div class="col-12">
                                         <p style="font-size: 16px; margin-bottom: 0; width: 100%;">
@@ -253,12 +218,12 @@
                                 </div>
 
                                     <footer>
-                                        <!-- Signature Section -->
+                                        
                                         <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
                                             <div class="col-5"/>
                                             <div class="col-7">
                                                 <div class="row">
-                                                    <!-- Prepared by -->
+                                                    
                                                     <div class="col-6">
                                                         <p style="text-align: center; font-size: 16px;">Prepared by, </p>
                                                         <p style="text-align: left; font-size: 16px;">Name : </p>
@@ -266,18 +231,18 @@
                                                         <p style="text-align: center; margin-top: 120px; border-bottom: 1px solid; width: 80%;"/>
                                                     </div>
                                     
-                                                    <!-- Approved by -->
+                                                    
                                                     <div class="col-6" style="font-size: 16px; margin-left: 0.5rem;">
                                                         <p style="text-align: center; font-size: 16px;">Approved by, </p>
                                                         <p style="text-align: left; font-size: 16px;">Name : </p>
                                                         <p style="text-align: left; font-size: 16px;">Date : </p>
-                                                        <!-- Garis tanda tangan untuk Approved by -->
+                                                        
                                                         <p style="text-align: center; margin-top: 120px; border-bottom: 1px solid; width: 80%;"/>
                                     
                                                         <p style="text-align: center; margin-top: 60px; font-size: 16px;">Approved by, </p>
                                                         <p style="text-align: left; font-size: 16px;">Name : </p>
                                                         <p style="text-align: left; font-size: 16px;">Date : </p>
-                                                        <!-- Garis tanda tangan untuk Approved by -->
+                                                        
                                                         <p style="text-align: center; margin-top: 120px; border-bottom: 1px solid; width: 80%;"/>
                                                     </div>
                                                 </div>
@@ -290,7 +255,7 @@
             </t>
         </template>
 
-        <!-- Wrapper Template -->
+        
         <template id="bs_po">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">

@@ -6,9 +6,9 @@ class StockPicking(models.Model):
 
     @api.constrains('state')
     def _check_down_payment_before_delivery(self):
-        """
-        Prevent delivery validation if the customer requires down payment is not completed.
-        """
+\
+\
+           
         for picking in self:
             if picking.state == 'done' and picking.sale_id:
                 sale_order = picking.sale_id

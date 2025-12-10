@@ -1,5 +1,5 @@
-# Copyright 2018-2019 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0).
+                                     
+                                                                    
 from datetime import datetime
 
 import pytz
@@ -156,12 +156,12 @@ class PurchaseRequestLineMakePurchaseOrder(models.TransientModel):
             raise UserError(_("Please select a product for all lines"))
         product = item.product_id
 
-        # Keep the standard product UOM for purchase order so we should
-        # convert the product quantity to this UOM
+                                                                       
+                                                  
         qty = item.product_uom_id._compute_quantity(
             item.product_qty, product.uom_po_id or product.uom_id
         )
-        # Suggest the supplier min qty as it's done in Odoo core
+                                                                
         min_qty = item.line_id._get_supplier_min_qty(product, po.partner_id)
         qty = max(qty, min_qty)
         date_required = item.line_id.date_required
@@ -181,7 +181,7 @@ class PurchaseRequestLineMakePurchaseOrder(models.TransientModel):
 
     @api.model
     def _get_purchase_line_name(self, order, line):
-        """Fetch the product name as per supplier settings"""
+                                                             
         product_lang = line.product_id.with_context(
             lang=get_lang(self.env, self.supplier_id.lang).code,
             partner_id=self.supplier_id.id,
@@ -249,16 +249,16 @@ class PurchaseRequestLineMakePurchaseOrder(models.TransientModel):
                 )
                 purchase = purchase_obj.create(po_data)
 
-            # Look for any other PO line in the selected PO with same
-            # product and UoM to sum quantities instead of creating a new
-            # po line
+                                                                     
+                                                                         
+                     
             domain = self._get_order_line_search_domain(purchase, item)
             available_po_lines = po_line_obj.search(domain)
             new_pr_line = True
-            # If Unit of Measure is not set, update from wizard.
+                                                                
             if not line.product_uom_id:
                 line.product_uom_id = item.product_uom_id
-            # Allocation UoM has to be the same as PR line UoM
+                                                              
             alloc_uom = line.product_uom_id
             wizard_uom = item.product_uom_id
             if available_po_lines and not item.keep_description:
@@ -287,16 +287,16 @@ class PurchaseRequestLineMakePurchaseOrder(models.TransientModel):
                 )
                 all_qty = min(po_line_product_uom_qty, wizard_product_uom_qty)
                 self.create_allocation(po_line, line, all_qty, alloc_uom)
-            # TODO: Check propagate_uom compatibility:
+                                                      
             new_qty = pr_line_obj._calc_new_qty(
                 line, po_line=po_line, new_pr_line=new_pr_line
             )
             po_line.product_qty = new_qty
-            # The quantity update triggers a compute method that alters the
-            # unit price (which is what we want, to honor graduate pricing)
-            # but also the scheduled date which is what we don't want.
+                                                                           
+                                                                           
+                                                                      
             date_required = item.line_id.date_required
-            # we enforce to save the datetime value in the current tz of the user
+                                                                                 
             po_line.date_planned = (
                 user_tz.localize(
                     datetime(date_required.year, date_required.month, date_required.day)

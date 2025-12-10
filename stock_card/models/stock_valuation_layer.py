@@ -71,20 +71,20 @@ class StockValuationLayer(models.Model):
 
     @api.depends('company_id', 'product_id', 'create_date', 'value', 'quantity')
     def _compute_running_balance(self):
-        """
-        Hitung saldo berjalan (qty & value) per company+product, terurut by (create_date, id).
-        Non-stored agar aman dari isu dependensi lintas-record.
-        """
+\
+\
+\
+           
         if not self:
             return
         cr = self.env.cr
 
-        # Kumpulkan partisi yang relevan agar query efisien
+                                                           
         company_ids = tuple(set(self.mapped('company_id').ids)) or (0,)
         product_ids = tuple(set(self.mapped('product_id').ids)) or (0,)
         target_ids = tuple(self.ids) or (0,)
 
-        # Hitung window lalu ambil hanya baris target (filter di luar subquery)
+                                                                               
         cr.execute("""
             SELECT id, run_qty, run_val
             FROM (

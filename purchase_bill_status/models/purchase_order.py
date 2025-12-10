@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+                       
 
 from odoo import models, fields, api, _
 
@@ -43,6 +43,6 @@ class PurchaseOrder(models.Model):
                 order.payment_status = 'not_paid'
     
     def action_view_invoice(self, invoices=False):
-        """Override untuk mengelompokkan bill berdasarkan status pembayaran"""
+                                                                              
         result = super(PurchaseOrder, self).action_view_invoice(invoices)
         return result

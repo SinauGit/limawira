@@ -1,5 +1,5 @@
-# Copyright 2018-2019 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+                                     
+                                                                   
 
 from odoo import SUPERUSER_ID, exceptions
 from odoo.exceptions import UserError
@@ -34,7 +34,7 @@ class TestPurchaseRequest(TransactionCase):
         self.assertEqual(action["res_id"], self.purchase_request.line_ids.id)
 
     def test_purchase_request_status(self):
-        """Tests Purchase Request status workflow."""
+                                                     
         purchase_request = self.purchase_request
         purchase_request.write({"assigned_to": SUPERUSER_ID})
         self.assertEqual(purchase_request.is_editable, True, "Should be editable")
@@ -84,7 +84,7 @@ class TestPurchaseRequest(TransactionCase):
         purchase_request.button_approved()
         vals = {"supplier_id": self.env.ref("base.res_partner_1").id}
 
-        # It is required to have a picking type
+                                               
         purchase_request.picking_type_id = False
         with self.assertRaisesRegex(UserError, "a Picking Type"):
             self.wiz.with_context(
@@ -93,7 +93,7 @@ class TestPurchaseRequest(TransactionCase):
             ).create(vals)
         purchase_request.picking_type_id = self.picking_type_id
 
-        # Picking type across all lines have to be the same
+                                                           
         purchase_request2 = purchase_request.copy(
             {"picking_type_id": self.picking_type_id.copy().id}
         )
@@ -116,7 +116,7 @@ class TestPurchaseRequest(TransactionCase):
             active_model="purchase.request.line", active_ids=[purchase_request_line.id]
         ).create(vals)
         wiz_id.make_purchase_order()
-        # Unlink purchase_lines from state approved
+                                                   
         with self.assertRaises(exceptions.UserError):
             purchase_request_line.unlink()
         purchase = purchase_request_line.purchase_lines.order_id
@@ -132,7 +132,7 @@ class TestPurchaseRequest(TransactionCase):
             ).create(vals)
 
         purchase_request_line._compute_purchase_state()
-        # Error case purchase_order in state done
+                                                 
         with self.assertRaisesRegex(UserError, "has already been completed"):
             purchase.button_confirm()
         purchase.button_cancel()
@@ -147,10 +147,10 @@ class TestPurchaseRequest(TransactionCase):
         purchase_request.unlink()
 
     def test_auto_reject(self):
-        """Tests if a Purchase Request is autorejected when all lines are
-        cancelled."""
+\
+                     
         purchase_request = self.purchase_request
-        # Add a second line to the PR:
+                                      
         vals = {
             "request_id": purchase_request.id,
             "product_id": self.env.ref("product.product_product_16").id,
@@ -159,14 +159,14 @@ class TestPurchaseRequest(TransactionCase):
         }
         self.purchase_request_line_obj.create(vals)
         lines = purchase_request.line_ids
-        # Cancel one line:
+                          
         lines[0].do_cancel()
         self.assertNotEqual(
             purchase_request.state,
             "rejected",
             "Purchase Request should not have been rejected.",
         )
-        # Cancel the second one:
+                                
         lines[1].do_cancel()
         self.assertEqual(
             purchase_request.state,
@@ -188,7 +188,7 @@ class TestPurchaseRequest(TransactionCase):
         pr_lines.do_cancel()
         self.assertFalse(request.to_approve_allowed)
 
-        # Request has been automatically rejected
+                                                 
         request.button_draft()
         new_line = self.purchase_request_line_obj.create(
             {
@@ -225,7 +225,7 @@ class TestPurchaseRequest(TransactionCase):
 
     def test_copy_purchase_request(self):
         purchase_request = self.purchase_request
-        # Add a second line to the PR:
+                                      
         vals = {
             "request_id": purchase_request.id,
             "product_id": self.env.ref("product.product_product_16").id,
@@ -250,14 +250,14 @@ class TestPurchaseRequest(TransactionCase):
         }
         purchase_request_line = self.purchase_request_line_obj.create(vals)
         self.assertEqual(purchase_request.state, "draft")
-        # create purchase order from draft state
+                                                
         with self.assertRaises(UserError):
             self.wiz.with_context(
                 active_model="purchase.request.line",
                 active_ids=[purchase_request_line.id],
             ).create(vals)
         purchase_request.button_done()
-        # create purchase order from done state
+                                               
         self.assertEqual(purchase_request.state, "done")
         purchase_request_line._compute_is_editable()
         with self.assertRaisesRegex(UserError, "already been completed"):
@@ -265,7 +265,7 @@ class TestPurchaseRequest(TransactionCase):
                 active_model="purchase.request.line",
                 active_ids=[purchase_request_line.id],
             ).create(vals)
-        # Change product_qty to negative
+                                        
         purchase_request_line.write({"product_qty": -6})
         purchase_request.button_approved()
         self.assertEqual(purchase_request.state, "approved")

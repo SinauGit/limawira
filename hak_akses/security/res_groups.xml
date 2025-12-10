@@ -2,7 +2,7 @@
 
 <odoo>
     <data>
-        <!--  grup Admin LWW -->
+        
         <record id="group_admin_lww" model="res.groups">
             <field name="name">Admin Inventory LWW</field>
             <field name="category_id" ref="base.module_category_inventory_inventory"/>
@@ -12,7 +12,7 @@
             ]"/>
         </record>
 
-        <!--  User Admin LWW -->
+        
         <record id="group_user_lww" model="res.groups">
             <field name="name">User Inventory LWW</field>
             <field name="category_id" ref="base.module_category_inventory_inventory"/>

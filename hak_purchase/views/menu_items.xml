@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-    <!-- Membuat menu Operations di Purchase -->
+    
     <menuitem id="menu_purchase_warehouse_mgmt" 
               name="Operations" 
               parent="purchase.menu_purchase_root" 

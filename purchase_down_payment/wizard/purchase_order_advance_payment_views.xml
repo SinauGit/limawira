@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!--    Purchase Order Advance Payment Wizard-->
+    
     <record id="purchase_order_advance_payment_view_form" model="ir.ui.view">
         <field name="name">purchase.order.advance.payment.view.form</field>
         <field name="model">purchase.order.advance.payment</field>
@@ -58,7 +58,7 @@
             </form>
         </field>
     </record>
-    <!--Purchase Order Advance Payment Wizard action-->
+    
     <record id="purchase_order_advance_payment_action" model="ir.actions.act_window">
         <field name="name">Create Bill</field>
         <field name="type">ir.actions.act_window</field>

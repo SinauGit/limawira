@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+                       
 {
     'name': 'Lww customizations',
     'version': '18.0.1.0',

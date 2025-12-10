@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Template for Kwitansi -->
+        
         <template id="spartadua_kwitansi_template">
             <t t-call="web.basic_layout" pageLayout="landscape">
                 <t t-foreach="docs" t-as="o">
@@ -11,19 +11,19 @@
                             <div style="width: 100%; margin-bottom: 10px;">
                                 <div class="row" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                                     <div class="col-5">
-                                        <!-- Logo Perusahaan -->
+                                        
                                         <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 150px; max-height: 100;"/>
-                                        <!-- Alamat Perusahaan -->
+                                        
                                         <div style="font-size: 12px; line-height: 1.5; text-align: left;">
-                                            <!--<p style="font-weight: bold; margin-bottom: 2px; font-size: 20px;">-->
-                                            <!--    <span t-esc="o.company_id.name or ''" style="font-weight: bold;"/>-->
-                                            <!--</p>-->
+                                            
+                                            
+                                            
                                             <p>
                                                 <span t-esc="o.company_id.street"/><br/>
                                                 <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.zip"/>, 
                                                 <span t-esc="o.company_id.country_id.name"/><br/>
                                                 Telepon: <span t-esc="o.company_id.phone"/><br/>
-                                                <!-- Fax: <span t-esc="o.company_id.mobile"/> -->
+                                                
                                             </p>
                                         </div>
                                     </div>
@@ -43,8 +43,8 @@
                             </div>
                         </div>
                         <div class="oe_structure"/>
-                        <!-- <br/> -->
-                        <!-- Customer dan alamat customer -->
+                        
+                        
                         <div class="row">
                             <div class="col-3">
                                 <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Terima dari</em> : </p>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
                         <br/>
-                        <!-- Nominal disebutkan -->
+                        
                         <div class="row">
                             <div class="col-3">
                                 <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Uang sebanyak</em> : </p>
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <br/>
-                        <!-- Note atau Memo -->
+                        
                         <div class="row">
                             <div class="col-3"><p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Keterangan</em> : </p></div>
                             <div class="col-9" style="font-size: 16px; border-bottom: 1px solid #000;">
@@ -92,7 +92,7 @@
                     <span style="border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-right: 20px;"/>
                     <br/>
                     <div>
-                        <!-- Informasi Bank -->
+                        
                         <div class="row">
                             <div class="col-3">
                                 <p style="text-align: left; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Mohon ditransfer ke: </em></p>
@@ -122,9 +122,9 @@
                                 : <span t-field="o.company_id"/>
                             </div>
                         </div>
-                        <!-- Jumlah Uang dan TTD -->
+                        
                         <div class="row" style="margin-top: 30px;">
-                            <!-- Kolom Kiri: Total -->
+                            
                             <div class="col-6">
                                 <table width="100%">
                                     <tr class="text text-center" style="border-bottom: 1px solid;">
@@ -136,7 +136,7 @@
                                 </table>
                             </div>
 
-                            <!-- Kolom Kanan: TTD -->
+                            
                             <div class="col-8 text text-center">
                                 Hormat kami,
                                 <br/>
@@ -165,16 +165,16 @@
                                 </div>
                             </div>
                         </div>
-                    <!--<br/>-->
-                    <!--<footer>-->
-                    <!--    <p style="font-size: 12px; text-align: center;"><em>Mohon bukti transfer diemail ke: finance@limawira.com, harap cantumkan No. Invoice</em></p>-->
-                    <!--</footer>-->
+                    
+                    
+                    
+                    
                   </main>
                 </t>
             </t>
         </template>
 
-        <!-- Wrapper Template -->
+        
         <template id="spartadua_kwitansi">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">

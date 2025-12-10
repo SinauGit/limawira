@@ -3,7 +3,7 @@ from odoo import models, fields, api
 class ResPartner(models.Model):
     _inherit = 'res.partner'
     
-    # One-to-many relationship with vendor PICs
+                                               
     pic_ids = fields.One2many(
         'vendor.pic',
         'partner_id',

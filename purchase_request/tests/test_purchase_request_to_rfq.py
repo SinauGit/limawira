@@ -1,5 +1,5 @@
-# Copyright 2018-2019 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+                                     
+                                                                   
 
 import pytz
 
@@ -34,7 +34,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         )
 
     def test_wizard_default_get(self):
-        # Check that correct create items by purchase.request
+                                                             
         vals = {
             "picking_type_id": self.env.ref("stock.picking_type_in").id,
             "requested_by": SUPERUSER_ID,
@@ -121,8 +121,8 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         )
 
     def test_bug_is_editable_multiple_lines(self):
-        # Check that reading multiple lines is still possible
-        # https://github.com/OCA/purchase-workflow/pull/291
+                                                             
+                                                           
         vals = {
             "picking_type_id": self.env.ref("stock.picking_type_in").id,
             "requested_by": SUPERUSER_ID,
@@ -138,7 +138,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         request_lines = purchase_request_line + purchase_request_line.copy()
         request_lines.mapped("is_editable")
 
-        # Test also for onchanges on non created lines
+                                                      
         self.assertTrue(self.purchase_request_line_obj.new({}).is_editable)
 
     def test_purchase_request_to_purchase_rfq_minimum_order_qty(self):
@@ -290,7 +290,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         ).create(vals)
         for item in wiz_id.item_ids:
             if item.line_id.id == purchase_request_line2.id:
-                # PRL will be splitted into another POL to keep description
+                                                                           
                 item.keep_description = True
         wiz_id.make_purchase_order()
         po_line = purchase_request_line1.purchase_lines[0]
@@ -302,9 +302,9 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         )
 
     def test_purchase_request_to_rfq_minimum_order_qty_existing_po(self):
-        # Define Supplier
+                         
         supplier = self.env.ref("base.res_partner_1")
-        # Create Product Widget min_qty = 5
+                                           
         product = self.env["product.product"].create(
             {
                 "name": "Widget",
@@ -315,7 +315,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
                 ],
             }
         )
-        # Create Purchase Order with qty = 3 through Purchase Request
+                                                                     
         vals = {
             "picking_type_id": self.env.ref("stock.picking_type_in").id,
             "requested_by": SUPERUSER_ID,
@@ -334,20 +334,20 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
             active_model="purchase.request.line", active_ids=[purchase_request_line1.id]
         ).create(vals)
         wiz_id.make_purchase_order()
-        # The planned date is taken from the request, not from the supplier
+                                                                           
         user_tz = pytz.timezone(self.env.user.tz or "UTC")
         self.assertEqual(
             purchase_request_line1.date_required.day,
             purchase_request_line1.purchase_lines.date_planned.astimezone(user_tz).day,
         )
         po = purchase_request_line1.purchase_lines[0].order_id
-        # Create Purchase Request
+                                 
         vals = {
             "picking_type_id": self.env.ref("stock.picking_type_in").id,
             "requested_by": SUPERUSER_ID,
         }
         purchase_request2 = self.purchase_request_obj.create(vals)
-        # Create Purchase Request Line qty = 3
+                                              
 
         vals = {
             "request_id": purchase_request2.id,
@@ -356,20 +356,20 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
             "product_qty": 3.0,
         }
         purchase_request_line2 = self.purchase_request_line_obj.create(vals)
-        # Validate
+                  
         purchase_request2.button_approved()
-        # Create RFQ to Previous PO
+                                   
         vals = {"supplier_id": supplier.id, "purchase_order_id": po.id}
         wiz_id = self.wiz.with_context(
             active_model="purchase.request.line", active_ids=[purchase_request_line2.id]
         ).create(vals)
         wiz_id.make_purchase_order()
-        # Check Purchase qty should be 6
+                                        
         po_line = purchase_request_line2.purchase_lines[0]
-        # Add unit price in PO Line
+                                   
         po_line.write({"price_unit": 10})
         self.assertEqual(po_line.product_qty, 6.0, "Quantity should be 6")
-        # auto change state to done
+                                   
         po_line.order_id.button_confirm()
         picking = po_line.order_id.picking_ids[0]
         picking.move_line_ids[0].write({"quantity": 6.0})

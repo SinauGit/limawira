@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Vendor PIC Form View -->
+    
     <record id="view_vendor_pic_form" model="ir.ui.view">
         <field name="name">vendor.pic.form</field>
         <field name="model">vendor.pic</field>
@@ -37,7 +37,7 @@
         </field>
     </record>
 
-    <!-- Vendor PIC List View (changed from Tree to List) -->
+    
     <record id="view_vendor_pic_tree" model="ir.ui.view">
         <field name="name">vendor.pic.list</field>
         <field name="model">vendor.pic</field>
@@ -55,7 +55,7 @@
         </field>
     </record>
 
-    <!-- Vendor PIC Search View -->
+    
     <record id="view_vendor_pic_search" model="ir.ui.view">
         <field name="name">vendor.pic.search</field>
         <field name="model">vendor.pic</field>
@@ -77,7 +77,7 @@
         </field>
     </record>
 
-    <!-- Vendor PIC Action -->
+    
     <record id="action_vendor_pic" model="ir.actions.act_window">
         <field name="name">Persons in Charge</field>
         <field name="res_model">vendor.pic</field>
@@ -93,7 +93,7 @@
         </field>
     </record>
 
-    <!-- Menu Item -->
+    
     <menuitem id="menu_vendor_pic"
               name="Vendor PICs"
               parent="purchase.menu_purchase_root"
