@@ -1,5 +1,5 @@
-# Copyright 2018-2019 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+                                     
+                                                                   
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
@@ -38,7 +38,7 @@ class StockMove(models.Model):
         return distinct_fields
 
     def _action_cancel(self):
-        """Create an activity on the request for the cancelled procurement move"""
+                                                                                  
         for move in self:
             if move.created_purchase_request_line_id:
                 activity_type_id = self.env.ref("mail.mail_activity_data_todo").id
@@ -101,11 +101,11 @@ class StockMove(models.Model):
             )
 
     def copy_data(self, default=None):
-        """Propagate request allocation on copy.
-
-        If this move is being split, or if this move is processed and there is
-        a remaining allocation, move the appropriate quantity over to the new move.
-        """
+\
+\
+\
+\
+           
         if default is None:
             default = {}
         vals_list = super().copy_data(default)

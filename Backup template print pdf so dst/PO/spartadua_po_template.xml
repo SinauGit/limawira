@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Template for Kwitansi -->
+        
         <template id="spartadua_po_template">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
-                <!-- Header Section -->
+                
                 <div class="row">
                     <div class="col-4" style="height: 150px; display: flex; flex-direction: column; justify-content: center; padding-top: 50px;">
                         <div style="font-size: 16px; line-height: 1.5; text-align: left;">
@@ -40,15 +40,15 @@
                             </div>
                             <div class="col-8" style="font-size: 16px; border: 1px;">
                                 <span t-esc="o.picking_type_id.company_id.name or ''"/>
-                                <!-- : <span t-esc="o.date_approve.strftime('%d-%b-%y') or ''"/> -->
+                                
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Main Section -->
+                
                 <main>
                     <div class="page" style="padding: 1px;">
-                        <!-- Supplier Section -->
+                        
                         <div class="row" style="margin-bottom: 5px; font-size: 16px;">
                             <div class="col-6">
                                 <table class="table table-sm" style="margin-bottom: 5px; border: 1px solid;">
@@ -81,7 +81,7 @@
                                             &amp;nbsp;Contact Person
                                         </td>
                                         <td class="col-9" style="border: 1px solid; border-left: none; border-top: none;">
-                                            <!-- : <span t-esc="o.effective_date.strftime('%d-%b-%y') or ''" style="text-align: left; font-size: 16px; margin-left: 3px;"/> -->
+                                            
                                         </td>
                                     </tr>
                                     <tr>
@@ -141,7 +141,7 @@
 
                             </div>
                         </div>
-                        <!-- Table Product -->
+                        
                         <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
                             <table class="table table-sm" style="margin-bottom: 5px; border: 1px;">
                                 <thead style="border: 1px;">
@@ -151,9 +151,9 @@
                                         <th style="font-size: 16px; text-align: center; font-weight: bold;">Item</th>
                                         <th style="font-size: 16px; text-align: center; font-weight: bold;">Price</th>
                                         <th style="font-size: 16px; text-align: center; font-weight: bold;">Quantity</th>
-                                        <!-- <th style="font-size: 16px; text-align: center; font-weight: bold;">Unit</th> -->
-                                        <!-- <th style="font-size: 16px; text-align: center; font-weight: bold;">Disc</th> -->
-                                        <!-- <th style="font-size: 16px; text-align: center; font-weight: bold;">Curr</th> -->
+                                        
+                                        
+                                        
                                         <th style="font-size: 16px; text-align: center; font-weight: bold;">Rate</th>
                                         <th style="font-size: 16px; text-align: center; font-weight: bold;">Amount</th>
                                         <th style="font-size: 16px; text-align: center; font-weight: bold;">Remarks</th>
@@ -163,7 +163,7 @@
                                     <t t-set="counter" t-value="0"/>
                                     <t t-foreach="o.order_line" t-as="line">
                                                     
-                                        <!-- Section Header -->
+                                        
                                         <t t-if="line.display_type == 'line_section'">
                                             <tr>
                                                 <td colspan="9" style="font-weight: bold; font-size: 16px; background-color: #efefef; text-align: left; padding-left: 15px;">
@@ -171,7 +171,7 @@
                                                 </td>
                                             </tr>
                                         </t>
-                                        <!-- Note -->
+                                        
                                         <t t-elif="line.display_type == 'line_note'">
                                             <tr>
                                                 <td colspan="9" style="font-style: italic; font-size: 14px; text-align: left; padding-left: 15px;">
@@ -179,45 +179,43 @@
                                                 </td>
                                             </tr>
                                         </t>
-                                        <!-- Product Line -->
+                                        
                                         <t t-else="">
                                         <t t-set="counter" t-value="counter + 1"/>
                                         <tr>
-                                        <!-- No -->
+                                        
                                             <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
-                                        <!-- Part Number -->
+                                        
                                             <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or '-'" style="font-size: 15px;"/></td>
-                                        <!-- Product Name -->
+                                        
                                             <td class="text-center" style="font-size: 15px; max-width: 300px; word-wrap: break-word; white-space: normal; overflow: hidden;">
                                             <span t-esc="line.name or '-'" style="font-size: 15px;"/></td>
-                                        <!-- Price -->
+                                        
                                             <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit) or ''" style="font-size: 15px; text-align: right;"/></td>
-                                        <!-- QTY -->
+                                        
                                             <td class="text-center" style="font-size: 15px; "><span t-esc="int(line.product_qty) or ''" style="font-size: 15px;"/></td>
-                                        <!-- Unit -->
-                                            <!-- <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_uom.name or ''" style="font-size: 15px;"/></td> -->
-                                        <!-- Disc -->
-                                            <!-- <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.discount) or '0'" style="font-size: 15px;"/>%</td> -->
-                                        <!-- Currency -->
-                                            <!-- <td class="text-center" style="font-size: 15px;"><span t-esc="o.currency_id.name or ''" style="font-size: 15px;"/></td> -->
-                                        <!-- Rate -->
+                                        
+                                            
+                                        
+                                            
+                                        
+                                            
+                                        
                                             <td class="text-center" style="font-size: 15px;"/>
-                                        <!-- Amount -->
+                                        
                                             <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_subtotal) or ''" style="font-size: 15px; text-align: right;"/></td>
-                                        <!-- Remarks -->
+                                        
                                             <td class="text-center" style="font-size: 15px;"/>
-                                            <!-- <td class="text-center" style="font-size: 15px;">
-                                                <span t-esc="line.product_id.description_sale or ''" style="font-size: 15px;"/> 
-                                            </td> -->
+                                            
                                         </tr>
                                     </t>
                                     </t>
                                 </tbody>
                             </table>
                         </div>
-                        <!-- Footer with signatures and totals -->
+                        
                         <div class="row" style="margin-top: 20px;">
-                            <!-- Left column - Signatures -->
+                            
                             <div class="col-6 text-left">
                                 <div class="row">
                                     <div class="col-6">
@@ -235,7 +233,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Right column - Totals -->
+                            
                             <div class="col-6">
                                 <div class="row">
                                     <div class="col-7"/>
@@ -268,7 +266,7 @@
                                 </div>
                             </div>
                         </div>
-                                <!-- Payment Terms tanpa border -->
+                                
                                 <div class="row" style="margin-top: 10px;">
                                     <div class="col-12">
                                         <strong style="font-size: 16px; min-width: 130px; display: inline-block;">Payment Terms:</strong>
@@ -277,7 +275,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Note Section -->
+                                
                                 <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
                                     <div class="col-12">
                                         <p style="font-size: 16px; margin-bottom: 0; width: 100%;">
@@ -292,7 +290,7 @@
         </t>
         </template>
 
-        <!-- Wrapper Template -->
+        
         <template id="spartadua_po">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">

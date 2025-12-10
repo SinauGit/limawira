@@ -1,5 +1,5 @@
-# Copyright 2018-2019 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+                                     
+                                                                   
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -227,8 +227,8 @@ class PurchaseRequestLine(models.Model):
                     .filtered(lambda sm: sm.state == "cancel")
                     .mapped("product_qty")
                 )
-                # done this way as i cannot track what was received before
-                # cancelled the purchase order
+                                                                          
+                                              
                 qty_cancelled -= request.qty_done
             if request.product_uom_id:
                 request.qty_cancelled = (
@@ -284,11 +284,11 @@ class PurchaseRequestLine(models.Model):
             self.name = name
 
     def do_cancel(self):
-        """Actions to perform when cancelling a purchase request line."""
+                                                                         
         self.write({"cancelled": True})
 
     def do_uncancel(self):
-        """Actions to perform when uncancelling a purchase request line."""
+                                                                           
         self.write({"cancelled": False})
 
     def write(self, vals):
@@ -349,9 +349,9 @@ class PurchaseRequestLine(models.Model):
     @api.model
     def _calc_new_qty(self, request_line, po_line=None, new_pr_line=False):
         purchase_uom = po_line.product_uom or request_line.product_id.uom_po_id
-        # TODO: Not implemented yet.
-        #  Make sure we use the minimum quantity of the partner corresponding
-        #  to the PO. This does not apply in case of dropshipping
+                                    
+                                                                             
+                                                                 
         supplierinfo_min_qty = 0.0
         if not po_line.order_id.dest_address_id:
             supplierinfo_min_qty = self._get_supplier_min_qty(
@@ -359,7 +359,7 @@ class PurchaseRequestLine(models.Model):
             )
 
         rl_qty = 0.0
-        # Recompute quantity by adding existing running procurements.
+                                                                     
         if new_pr_line:
             rl_qty = po_line.product_uom_qty
         else:

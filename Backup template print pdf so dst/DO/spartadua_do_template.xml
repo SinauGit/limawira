@@ -1,7 +1,7 @@
 <t t-name="lww_delivery.spartadua_do_template">
              <t t-call="web.basic_layout">
                  <t t-foreach="docs" t-as="o">
-                     <!-- Header Section -->
+                     
                      <div class="row" style="border-bottom: 2px solid rgb(62, 54, 180);">
                          <div class="col-6" style="height: 130px; display: flex; flex-direction: column; justify-content: center;">
                              <div class="text" style="font-size: 30px; text-align: left;">
@@ -35,10 +35,10 @@
                              </div>
                          </div>
                      </div>
-                     <!-- Main Section -->
+                     
                      <main>
                          <div class="page" style="padding: 10px;">
-                             <!-- Address Section -->
+                             
                              <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
                                  <div class="col-6 text-left">
                                      <div class="row" style="border-style: solid; border: 1.5px rgb(62, 54, 180);">
@@ -107,7 +107,7 @@
                                      </table>
                                  </div>
                              </div>
-                             <!-- Table Product -->
+                             
                              <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
                                  <table class="table table-sm" style="margin-bottom: 5px; border: 1.5px;">
                                      <thead>
@@ -125,17 +125,17 @@
                                          <t t-foreach="o.move_ids" t-as="line">
                                              <t t-set="counter" t-value="counter + 1"/>
                                              <tr>
-                                             <!-- No -->
+                                             
                                                  <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
-                                             <!-- Model -->
+                                             
                                                  <td class="text-center" style="font-size: 15px;"><span t-esc="', '.join(line.lot_ids.mapped('name')) or ''" style="font-size: 15px;"/></td>
-                                             <!-- Description -->
+                                             
                                                  <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or ''" style="font-size: 15px;"/></td>
-                                             <!-- QTY -->
+                                             
                                                  <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.quantity) or ''" style="font-size: 15px;"/></td>
-                                             <!-- Unit -->
+                                             
                                                  <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_uom.name or ''" style="font-size: 15px;"/></td>
-                                             <!-- Etc -->
+                                             
                                                  <td class="text-center" style="font-size: 15px;"/>
                                              </tr>
                                          </t>
@@ -143,7 +143,7 @@
                                  </table>
                              </div>
                              <div style="page-break-after:auto;">
-                                 <!-- Note Section -->
+                                 
                                  <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
                                      <div class="col-6 text-left">
                                          <div class="row">
@@ -156,7 +156,7 @@
                                          </div>
                                      </div>
                                  </div>
-                                 <!-- Signature Section -->
+                                 
                                  <div style="page-break-after: auto;">
                                      <div class="row">
                                          <div class="col-4 text-center" style="margin-bottom: 5px;">

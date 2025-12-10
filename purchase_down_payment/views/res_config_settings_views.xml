@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <!--        Inherited the Res Config Settings to add new field on it-->
+    
     <record id="res_config_settings_view_form_purchase" model="ir.ui.view">
         <field name="name">
             res.config.settings.view.form.inherit.purchase.down.payment

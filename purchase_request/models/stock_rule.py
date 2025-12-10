@@ -1,5 +1,5 @@
-# Copyright 2018-2020 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+                                     
+                                                                   
 
 from odoo import api, fields, models
 
@@ -47,12 +47,12 @@ class StockRule(models.Model):
 
     @api.model
     def _make_pr_get_domain(self, values):
-        """
-        This method is to be implemented by other modules that can
-        provide a criteria to select the appropriate purchase request to be
-        extended.
-        :return: False
-        """
+\
+\
+\
+\
+\
+           
         domain = (
             ("state", "=", "draft"),
             ("picking_type_id", "=", self.picking_type_id.id),
@@ -69,11 +69,11 @@ class StockRule(models.Model):
         return domain
 
     def is_create_purchase_request_allowed(self, procurement):
-        """
-        Tell if current procurement order should
-        create a purchase request or not.
-        :return: boolean
-        """
+\
+\
+\
+\
+           
         return (
             procurement[1].action == "buy"
             and procurement[0].product_id.purchase_request
@@ -94,9 +94,9 @@ class StockRule(models.Model):
         return super()._run_buy(procurements)
 
     def create_purchase_request(self, procurement_group):
-        """
-        Create a purchase request containing procurement order product.
-        """
+\
+\
+           
         procurement = procurement_group[0]
         rule = procurement_group[1]
         purchase_request_model = self.env["purchase.request"]
@@ -126,6 +126,6 @@ class StockRule(models.Model):
                     pr.write({"origin": pr.origin + ", " + procurement.origin})
             else:
                 pr.write({"origin": procurement.origin})
-        # Create Line
+                     
         request_line_data = rule._prepare_purchase_request_line(pr, procurement)
         purchase_request_line_model.create(request_line_data)

@@ -2,12 +2,12 @@ from odoo import api, fields, models
 
 
 class SaleOrder(models.Model):
-    """Inherit 'sale.order' model and add fields needed"""
+                                                          
     _inherit = "sale.order"
 
     @api.depends('order_line.price_total')
     def _amount_all(self):
-        """Compute the total amounts of the SO."""
+                                                  
         for order in self:
             amount_untaxed = amount_tax = amount_discount = 0.0
             for line in order.order_line:
@@ -44,10 +44,10 @@ class SaleOrder(models.Model):
 
     @api.depends('amount_untaxed','amount_tax','amount_total')
     def _compute_margin_test(self):
-        # Compute logic for margin if sale_margin is installed
+                                                              
         if self.env['ir.module.module'].sudo().search(
                 [('name', '=', 'sale_margin'), ('state', '=', 'installed')]):
-            # If sale_margin is installed, calculate margin
+                                                           
             for record in self:
                 print(record.margin, 'll')
                 record.margin_test = record.margin
@@ -71,13 +71,13 @@ class SaleOrder(models.Model):
         super(SaleOrder, self).action_confirm()
 
     def action_approve(self):
-        """This super the class and calls the action_confirm method on clicking
-         approve button"""
+\
+                          
         super(SaleOrder, self).action_confirm()
         return
 
     def _can_be_confirmed(self):
-        """This function _can_be_confirmed adds waiting state """
+                                                                 
         self.ensure_one()
         return self.state in {'draft', 'sent', 'waiting'}
 
@@ -100,8 +100,8 @@ class SaleOrder(models.Model):
                     new_sub_price = (line.price_unit * (discount / 100))
                     line.total_discount = line.price_unit - new_sub_price
             elif order.discount_type == 'line_discount':
-                # Untuk tipe 'line_discount', kita biarkan diskon per line
-                # tidak melakukan perubahan pada baris order, tetapi tetap menghitung amount_discount
+                                                                          
+                                                                                                     
                 amount_discount = 0.0
                 for line in order.order_line:
                     discount_value = (line.product_uom_qty * line.price_unit * line.discount) / 100
@@ -110,7 +110,7 @@ class SaleOrder(models.Model):
                 order.amount_discount = amount_discount
 
     def _prepare_invoice(self, ):
-        """Super sale order class and update with fields"""
+                                                           
         invoice_vals = super(SaleOrder, self)._prepare_invoice()
         invoice_vals.update({
             'discount_type': self.discount_type,
@@ -120,7 +120,7 @@ class SaleOrder(models.Model):
         return invoice_vals
 
     def button_dummy(self):
-        """The button_dummy method is intended to perform some action related
-          to the supply rate and always return True"""
+\
+                                                      
         self.supply_rate()
         return True

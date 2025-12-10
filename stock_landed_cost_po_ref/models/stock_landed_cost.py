@@ -7,7 +7,7 @@ class StockLandedCost(models.Model):
     vendor_bill_amount_total = fields.Monetary(
         string='Total Vendor Bill',
         related='vendor_bill_id.amount_total',
-        # currency_field='vendor_bill_currency_id',
+                                                   
         store=True,
         readonly=True,
     )

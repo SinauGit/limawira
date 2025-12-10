@@ -2,7 +2,7 @@
 <odoo>
     <data>
         
-        <!-- Extend tree view untuk menampilkan department dan expense indicator -->
+        
         <record id="view_department_vendor_bill_tree" model="ir.ui.view">
             <field name="name">Department Expense Bills Tree</field>
             <field name="model">account.move</field>
@@ -25,7 +25,7 @@
             </field>
         </record>
 
-        <!-- Extend form view untuk menampilkan department dan expense indicator -->
+        
         <record id="view_department_vendor_bill_form" model="ir.ui.view">
             <field name="name">Department Expense Bills Form</field>
             <field name="model">account.move</field>
@@ -53,14 +53,12 @@
                         options="{'no_create': True}"/>
                 </xpath>
 
-                <!-- Add expense badge in header if this is expense bill -->
-                <!-- <xpath expr="//div[hasclass('oe_title')]//h1" position="after">
-                    <span class="badge badge-warning" invisible="not is_expense_bill">Expense Bill</span>
-                </xpath> -->
+                
+                
             </field>
         </record>
 
-        <!-- Search view dengan filter department dan expense bills -->
+        
         <record id="view_department_vendor_bill_search" model="ir.ui.view">
             <field name="name">Department Expense Bills Search</field>
             <field name="model">account.move</field>
@@ -79,25 +77,14 @@
             </field>
         </record>
 
-        <!-- Override journal_id field visibility - Remove group restriction -->
-        <!-- <record id="view_move_form_journal_public" model="ir.ui.view">
-            <field name="name">account.move.form.journal.public</field>
-            <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_move_form"/>
-            <field name="arch" type="xml"> -->
+        
+        
                 
-                <!-- Replace entire label untuk journal_id tanpa groups -->
-                <!-- <xpath expr="//label[@for='journal_id'][@groups='account.group_account_readonly']" position="replace">
-                    <label for="journal_id"/>
-                </xpath> -->
                 
-                <!-- Replace field journal_id untuk menghilangkan groups -->
-                <!-- <xpath expr="//field[@name='journal_id'][@groups='account.group_account_readonly']" position="replace">
-                    <field name="journal_id" options="{'no_create': True, 'no_open': True}" readonly="posted_before and name not in (False, '', '/')"/>
-                </xpath>
                 
-            </field>
-        </record> -->
+                
+                
+                
 
     </data>
 </odoo>

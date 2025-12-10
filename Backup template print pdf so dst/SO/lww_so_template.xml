@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Template for Kwitansi -->
+        
         <template id="lww_so_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="o">
-                    <!-- Compute dynamic title based on state: draft/sent => Quotation, sale/done => Sales Order -->
+                    
                     <t t-set="doc_title" t-value="'Quotation' if o.state in ['draft','sent'] else 'Sales Order'"/>
                     
-                    <!-- Header Section -->
+                    
                     <div class="row" style="border-bottom: 2px solid #35bdaf;">
                         <div class="col-6" style="height: 165px; display: flex; flex-direction: column; justify-content: center;">
                             <div class="text" style="font-size: 30px; text-align: left; padding-left: 2.5rem; padding-top: 50px;">
@@ -22,7 +22,7 @@
                                         <strong><span t-esc="o.project_id.name"/></strong>
                                     </h1>
                                 </div>
-                                <!-- Sales Person -->
+                                
                                 <div class="row">
                                     <p style="font-size: 1rem; margin: 0;">
                                         <span t-esc="o.employee_id.name"/>
@@ -38,17 +38,17 @@
                                     <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.zip"/>, 
                                     <span t-esc="o.company_id.country_id.name"/><br/>
                                     Telepon: <span t-esc="o.company_id.phone"/><br/>
-                                    <!--Fax: <span t-esc="o.company_id.mobile"/>-->
+                                    
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <!-- Main Section -->
+                    
                     <main>
                         <div class="page" style="padding: 10px;">
-                            <!-- Address Section -->
+                            
                             <div class="row" style="margin-bottom: 5px; margin-top: 10px; border-bottom: 2px solid #35bdaf">
-                                <!-- Sold To Section -->
+                                
                                 <div class="col-6 text-left">
                                     <strong style="font-size: 16px; margin-left: 5rem;">Sold To: </strong>
                                     <div class="row">
@@ -108,7 +108,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Ship To Section -->
+                                
                                 <div class="col-6 text-right" style="margin-left: 1rem; ">
                                     <strong style="font-size: 16px; margin-left: 5rem;">Ship To: </strong>
                                     <div class="row">
@@ -169,7 +169,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Reference and Date Section -->
+                            
                             <div class="row" style="margin-bottom: 5px; margin-top: 10px; border-bottom: 2px solid #35bdaf">
                                 <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
                                     <thead style="border: 0.5px; background-color: #efefef">
@@ -182,23 +182,23 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                        <!-- Our Ref No -->
+                                        
                                             <td class="text-center" style="font-size: 15px;">
                                                 <span t-esc="(o.name + ' ' + o.no_so) if o.name and o.no_so else (o.name or o.no_so or '')" style="font-size: 15px;"/>
                                             </td>
-                                        <!-- Date -->
+                                        
                                             <td class="text-center" style="font-size: 15px;">
                                                 <span t-esc="o.date_order.strftime('%d-%b-%y')" style="font-size: 15px;"/>
                                             </td>
-                                        <!-- Ship Via (Link to Receipt on carrier_id.name) -->
+                                        
                                             <td class="text-center" style="font-size: 15px;"><span t-esc="o.incoterm.name or ''" style="font-size: 15px;"/></td>
-                                        <!-- Your Ref No -->
+                                        
                                             <td class="text-center" style="font-size: 15px;"><span t-esc="o.client_order_ref or ''" style="font-size: 15px;"/></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- Table Product -->
+                            
                             <t t-set="lines_to_report" t-value="o._get_order_lines_to_report()"/>
                             <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
                                 <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
@@ -221,23 +221,23 @@
                                             <t t-if="not line.is_downpayment">
                                                 <t t-set="counter" t-value="counter + 1"/>
                                                 <tr t-att-class="'fw-bold o_line_section' if (                                                         line.display_type == 'line_section'                                                         or line.product_type == 'combo'                                                     )                                                     else 'fst-italic o_line_note' if line.display_type == 'line_note'                                                     else ''">
-                                                <!-- No -->
+                                                
                                                     <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
-                                                <!-- Part Number -->
+                                                
                                                     <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_template_id.default_code or ''" style="font-size: 15px;"/></td>
-                                                <!-- Product Name -->
+                                                
                                                     <td class="text-center" style="font-size: 15px;"><span t-esc="line.custom_description or ''" style="font-size: 15px;"/></td>
-                                                <!-- QTY -->
+                                                
                                                     <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.product_uom_qty) or ''" style="font-size: 15px;"/></td>
-                                                <!-- Unit -->
+                                                
                                                     <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_uom.name or ''" style="font-size: 15px;"/></td>
-                                                <!-- Disc -->
+                                                
                                                     <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.discount) or '0'" style="font-size: 15px;"/>%</td>
-                                                <!-- Unit Price -->
+                                                
                                                     <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_unit) or ''" style="font-size: 15px; text-align: right;"/></td>
-                                                <!-- Total -->
+                                                
                                                     <td class="text-right" style="font-size: 15px; text-align: right;"><span t-esc="'{:,.2f}'.format(line.price_subtotal) or ''" style="font-size: 15px; text-align: right;"/></td>
-                                                <!-- Currency -->
+                                                
                                                     <td class="text-center" style="font-size: 15px;"><span t-esc="o.currency_id.name or ''" style="font-size: 15px;"/></td>
                                                 </tr>
                                             </t>
@@ -246,7 +246,7 @@
                                 </table>
                             </div>
                             <div style="page-break-after:auto;">
-                                <!-- Total Section -->
+                                
                                 <div class="row" style="margin-bottom: 3px; margin-top: 5px;">
                                     <div class="col-7"/>
                                     <div class="col-5">
@@ -258,7 +258,7 @@
                                         <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style=" font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
                                     </div>
                                 </div>
-                                <!-- Note Section -->
+                                
                                 <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
                                     <div class="col-6 text-left">
                                         <div class="row">
@@ -271,7 +271,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Signature Section -->
+                                
                                 <div style="page-break-after: auto;">
                                     <div class="row" style="margin-bottom: 5px; margin-top: 120px;">
                                         <div class="col-4"/>
@@ -297,7 +297,7 @@
             </t>
         </template>
 
-        <!-- Wrapper Template -->
+        
         <template id="lww_so">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">

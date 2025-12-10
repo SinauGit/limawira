@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <!--        Form view of invoice approval model-->
+    
     <record id="invoice_approval_view_form" model="ir.ui.view">
         <field name="name">invoice.approval.view.form</field>
         <field name="model">invoice.approval</field>
@@ -43,7 +43,7 @@
             </form>
         </field>
     </record>
-    <!--Action for invoice approval model-->
+    
     <record id="invoice_approval_action" model="ir.actions.act_window">
         <field name="name">Invoice Multi Approval</field>
         <field name="type">ir.actions.act_window</field>

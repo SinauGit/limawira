@@ -1,6 +1,6 @@
-# Copyright 2015-2017 Akretion (http://www.akretion.com)
-# @author Alexis de Lattre <alexis.delattre@akretion.com>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+                                                        
+                                                         
+                                                               
 
 from odoo import _, api, models
 from odoo.exceptions import ValidationError
@@ -12,9 +12,9 @@ class StockQuant(models.Model):
 
     @api.constrains("product_id", "quantity")
     def check_negative_qty(self):
-        # To provide an option to skip the check when necessary.
-        # e.g. mrp_subcontracting_skip_no_negative - passes the context
-        # for subcontracting receipts.
+                                                                
+                                                                       
+                                      
         if self.env.context.get("skip_negative_qty_check"):
             return
         p = self.env["decimal.precision"].precision_get("Product Unit of Measure")

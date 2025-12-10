@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!--Inherited Template for sale order report-->
+    
     <template id="report_saleorder_customized"
               inherit_id="sale.report_saleorder_document">
         <xpath expr="//span[@t-field='line.discount']" position="replace">

@@ -1,5 +1,5 @@
-# Copyright 2018-2019 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+                                     
+                                                                   
 
 from markupsafe import Markup
 
@@ -120,9 +120,9 @@ class PurchaseOrderLine(models.Model):
     )
 
     def action_open_request_line_tree_view(self):
-        """
-        :return dict: dictionary value for created view
-        """
+\
+\
+           
         request_line_ids = []
         for line in self:
             request_line_ids += line.purchase_request_lines.ids
@@ -224,8 +224,8 @@ class PurchaseOrderLine(models.Model):
         }
 
     def write(self, vals):
-        #  As services do not generate stock move this tweak is required
-        #  to allocate them.
+                                                                        
+                            
         prev_qty_received = {}
         if vals.get("qty_received", False):
             service_lines = self.filtered(

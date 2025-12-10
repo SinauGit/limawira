@@ -5,7 +5,7 @@ class SaleOrder(models.Model):
 
     def action_confirm(self):
         res = super().action_confirm()
-        # Setelah konfirmasi, isi analytic_distribution pada DO yang terkait SO ini, jika masih kosong
+                                                                                                      
         for order in self:
             pickings = []
             if "picking_ids" in order._fields:

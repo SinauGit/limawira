@@ -36,7 +36,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
                         selected_lines.append((0, 0, {
                             'layer_id': layer.id,
                             'original_qty': layer.remaining_qty,
-                            'selected_qty': layer.remaining_qty,  # Default semua quantity
+                            'selected_qty': layer.remaining_qty,                          
                             'original_value': layer.remaining_value,
                         }))
                 
@@ -94,11 +94,11 @@ class StockValuationLayerRevaluation(models.TransientModel):
                 proportion = total_selected_qty / product_id.quantity_svl
                 product_id.with_context(disable_auto_svl=True).standard_price += (self.added_value / product_id.quantity_svl)
                 
-                # description += _(
-                #     " Product cost updated from %(previous)s to %(new_cost)s (partial update).",
-                #     previous=previous_cost,
-                #     new_cost=product_id.standard_price
-                # )
+                                   
+                                                                                                  
+                                             
+                                                        
+                   
 
         revaluation_svl_vals = {
             'company_id': self.company_id.id,
@@ -159,21 +159,21 @@ class StockValuationLayerRevaluation(models.TransientModel):
         move_description = _(
             '%(user)s changed stock valuation - %(product)s\n'
             '%(reason)s\n',
-            # 'Selected layers: %(layers)s',
+                                            
             user=self.env.user.name,
             product=product_id.display_name,
             reason=description,
-            # layers=', '.join(layer_descriptions)
+                                                  
         )
 
         move_description = _(
             '%(user)s changed stock valuation - %(product)s\n'
             '%(reason)s\n',
-            # 'Selected layers: %(layers)s',
+                                            
             user=self.env.user.name,
             product=product_id.display_name,
             reason=description,
-            # layers=', '.join(layer_descriptions)
+                                                  
         )
 
         move_vals = {

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <!--    To make fields approve_customer_invoice and approve_vendor_bill true
-     while installing the module -->
+    
     <data noupdate="1">
         <record id="default_invoice_multi_approval_config"
                 model="invoice.approval">

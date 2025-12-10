@@ -2,9 +2,9 @@
 <odoo>
     <data>
         
-        <!-- ============================================ -->
-        <!-- SERVER ACTION: My Bills (User) -->
-        <!-- ============================================ -->
+        
+        
+        
         <record id="action_server_my_bills" model="ir.actions.server">
             <field name="name">My Expense Bills</field>
             <field name="model_id" ref="account.model_account_move"/>
@@ -66,9 +66,9 @@ action = {
         </record>
 
 
-        <!-- ============================================ -->
-        <!-- SERVER ACTION: Department Bills (Manager) -->
-        <!-- ============================================ -->
+        
+        
+        
         <record id="action_server_department_bills" model="ir.actions.server">
             <field name="name">Department Expense Bills</field>
             <field name="model_id" ref="account.model_account_move"/>
@@ -152,9 +152,9 @@ action = {
         </record>
 
 
-        <!-- ============================================ -->
-        <!-- SERVER ACTION: All Bills (Admin) -->
-        <!-- ============================================ -->
+        
+        
+        
         <record id="action_server_all_bills" model="ir.actions.server">
             <field name="name">All Department Expense Bills</field>
             <field name="model_id" ref="account.model_account_move"/>
@@ -215,9 +215,9 @@ action = {
         </record>
 
 
-        <!-- ============================================ -->
-        <!-- OPTIONAL: Dashboard Action with Stats -->
-        <!-- ============================================ -->
+        
+        
+        
         <record id="action_server_expense_dashboard" model="ir.actions.server">
             <field name="name">Expense Bills Dashboard</field>
             <field name="model_id" ref="account.model_account_move"/>

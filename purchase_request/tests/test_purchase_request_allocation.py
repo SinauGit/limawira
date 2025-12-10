@@ -1,5 +1,5 @@
-# Copyright 2018-2019 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+                                     
+                                                                   
 
 from odoo import SUPERUSER_ID
 from odoo.tests import Form, common
@@ -73,7 +73,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         wiz_id.make_purchase_order()
         purchase_request1.action_view_purchase_order()
         po_line = purchase_request_line1.purchase_lines[0]
-        # Add unit price in PO Line
+                                   
         po_line.write({"price_unit": 10})
         purchase = po_line.order_id
         purchase.order_line.action_open_request_line_tree_view()
@@ -83,18 +83,18 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         self.assertEqual(purchase_request_line2.qty_in_progress, 2.0)
         picking = purchase.picking_ids[0]
 
-        # Check the move
+                        
         move = picking.move_ids
         self.assertEqual(move.purchase_request_ids, purchase_request1)
-        # Do a move split/merge roundtrip and check that the allocatable
-        # quantity remains the same.
+                                                                        
+                                    
         self.assertEqual(
             sum(move.purchase_request_allocation_ids.mapped("open_product_qty")), 4
         )
         split_move = self.env["stock.move"].create(move._split(1))
         split_move._action_confirm(merge=False)
         self.assertEqual(split_move.purchase_request_ids, purchase_request1)
-        # The quantity of 4 is now split between the two moves
+                                                              
         self.assertEqual(
             sum(move.purchase_request_allocation_ids.mapped("open_product_qty")), 3
         )
@@ -107,7 +107,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         self.assertEqual(
             sum(move.purchase_request_allocation_ids.mapped("open_product_qty")), 4
         )
-        # Reset reserved quantities messed up by the roundtrip
+                                                              
         move._do_unreserve()
         move._action_assign()
 
@@ -160,18 +160,18 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         wiz_id.make_purchase_order()
         purchase_request1.action_view_purchase_order()
         po_line = purchase_request_line1.purchase_lines[0]
-        # Add unit price in PO Line
+                                   
         po_line.write({"price_unit": 10})
         purchase = po_line.order_id
         purchase.button_confirm()
         self.assertEqual(purchase_request_line1.qty_in_progress, 2.0)
-        # manually set in the PO line
+                                     
         po_line.write({"qty_received": 0.5})
         self.assertEqual(purchase_request_line1.qty_done, 0.5)
         purchase.button_cancel()
         self.assertEqual(purchase_request_line1.qty_cancelled, 1.5)
         self.assertEqual(purchase_request_line1.pending_qty_to_receive, 1.5)
-        # Case revieve 2 product
+                                
         vals = {
             "picking_type_id": self.env.ref("stock.picking_type_in").id,
             "requested_by": SUPERUSER_ID,
@@ -198,7 +198,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         purchase2.button_confirm()
         self.assertEqual(purchase_request_line2.qty_in_progress, 2.0)
         purchase_request1.action_view_stock_picking()
-        # manually set in the PO line
+                                     
         po_line.write({"qty_received": 2.0})
         self.assertEqual(purchase_request_line2.qty_done, 2.0)
 
@@ -215,7 +215,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
             "product_qty": 2.0,
         }
         purchase_request_line1 = self.purchase_request_line.create(vals)
-        # add a vendor
+                      
         vendor1 = self.env.ref("base.res_partner_1")
         self.env["product.supplierinfo"].create(
             {
@@ -264,7 +264,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
             active_model="purchase.request.line",
             active_ids=[purchase_request_line1.id, purchase_request_line2.id],
         ).create(vals)
-        # Create PO
+                   
         wiz_id.make_purchase_order()
         po_line = purchase_request_line1.purchase_lines[0]
         self.assertEqual(po_line.product_qty, 2, "Quantity should be 2")
@@ -286,7 +286,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
             1.0,
         )
         purchase = po_line.order_id
-        # Cancel PO allocation requested quantity is set to 0.
+                                                              
         purchase.button_cancel()
         self.assertEqual(
             purchase_request_line1.purchase_request_allocation_ids[0].open_product_qty,
@@ -296,7 +296,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
             purchase_request_line2.purchase_request_allocation_ids[0].open_product_qty,
             0,
         )
-        # Set to draft allocation requested quantity is set
+                                                           
         purchase.button_draft()
         self.assertEqual(
             purchase_request_line1.purchase_request_allocation_ids[0].open_product_qty,
@@ -348,7 +348,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         wiz_id = self.wiz.with_context(
             active_model="purchase.request.line", active_ids=[purchase_request_line1.id]
         ).create(vals)
-        # Create PO
+                   
         wiz_id.make_purchase_order()
         po_line = purchase_request_line1.purchase_lines[0]
         self.assertEqual(
@@ -359,7 +359,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         )
         purchase = po_line.order_id
         purchase.button_cancel()
-        # Delete PO: allocation and Purchase Order Lines are unlinked from PRL
+                                                                              
         purchase.unlink()
         self.assertEqual(len(purchase_request_line1.purchase_lines), 0)
         self.assertEqual(len(purchase_request_line1.purchase_request_allocation_ids), 0)
@@ -383,7 +383,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         self.assertFalse(self.env["stock.move"]._check_company_purchase_request())
 
     def test_supplier_assignment(self):
-        """Suppliers are not assigned across the company boundary"""
+                                                                    
         product = self.env.ref("product.product_product_6")
         product.seller_ids.unlink()
         purchase_request = self.purchase_request.create(
@@ -402,7 +402,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
                 "company_id": self.env.ref("base.main_company").id,
             }
         )
-        # A supplier from another company is not assigned
+                                                         
         vendor3 = self.env["res.partner"].create({"name": "Partner #3"})
         supinfo = self.env["product.supplierinfo"].create(
             {
@@ -412,7 +412,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
             }
         )
         self.assertFalse(purchase_request_line.supplier_id)
-        # A supplierinfo of a matching company leads to supplier assignment
+                                                                           
         vendor4 = self.env["res.partner"].create({"name": "Partner #4"})
         supinfo = self.env["product.supplierinfo"].create(
             {
@@ -424,7 +424,7 @@ class TestPurchaseRequestToRfq(common.TransactionCase):
         self.assertEqual(purchase_request_line.supplier_id, vendor4)
         supinfo.unlink()
         self.assertFalse(purchase_request_line.supplier_id)
-        # A supplierinfo without company leads to supplier assignment as well
+                                                                             
         self.env["product.supplierinfo"].create(
             {
                 "partner_id": vendor4.id,

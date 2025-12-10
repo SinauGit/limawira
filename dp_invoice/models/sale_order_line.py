@@ -1,4 +1,4 @@
-# models/sale_order_line.py
+                           
 from odoo import models, fields, api, _
 from odoo.tools import format_date
 
@@ -14,22 +14,22 @@ class SaleOrderLine(models.Model):
     
     @api.model_create_multi
     def create(self, vals_list):
-        """Override create untuk auto-set sequence"""
+                                                     
         lines = super().create(vals_list)
         
         for line in lines:
             if line.is_downpayment and not line.display_type:
-                # Auto-set sequence berdasarkan existing down payment lines
+                                                                           
                 line.payment_sequence = line._get_next_payment_sequence()
         
         return lines
     
     def _get_next_payment_sequence(self):
-        """Get next sequence number untuk payment type ini"""
+                                                             
         if not self.order_id:
             return 1
         
-        # Cari semua down payment lines di SO ini dengan payment_type yang sama
+                                                                               
         existing_lines = self.order_id.order_line.filtered(
             lambda l: l.is_downpayment 
             and not l.display_type 
@@ -40,21 +40,21 @@ class SaleOrderLine(models.Model):
         if not existing_lines:
             return 1
         
-        # Ambil sequence tertinggi dan tambah 1
+                                               
         max_sequence = max(existing_lines.mapped('payment_sequence') or [0])
         return max_sequence + 1
     
     def _get_downpayment_description(self):
-        """Override description untuk include payment_type dan sequence"""
+                                                                          
         self.ensure_one()
         
         if self.display_type:
-            # Untuk section, selalu tampilkan "Down Payment / Termin"
+                                                                     
             return _("Test")
 
         dp_state = self._get_downpayment_state()
         
-        # Base name berdasarkan payment_type dan sequence
+                                                         
         if self.payment_type == 'installment':
             if self.payment_sequence > 1:
                 base_name = _("Termin %s", self.payment_sequence)

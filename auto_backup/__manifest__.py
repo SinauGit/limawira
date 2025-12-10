@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
+                       
 {
-    'name': "data",
-    'author': "Yenthe Van Ginneken di revisi dan migrasi dari odoo 17 ke 18 oleh Rizky",
+    'name': "mencadangkan",
+    'author': "Van Ginneken di revisi dan migrasi dari odoo 17 ke 18 oleh Rizky Abdi",
     'category': 'Administration',
     'version': '18.0.0.1',
     'installable': True,
@@ -11,7 +11,7 @@
     'depends': ['base'],
     'external_dependencies': {'python': ['paramiko']},
 
-    # always loaded
+                   
     'data': [
         'security/user_groups.xml',
         'security/ir.model.access.csv',

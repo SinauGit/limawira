@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <!--    Inherited form view of account.move model-->
+    
     <record id="account_move_approval_view_form" model="ir.ui.view" >
         <field name="name">account.move.view.form.inherit.invoice.multi.approval
         </field>
@@ -45,7 +45,7 @@
             </xpath>
         </field>
     </record>
-    <!--    Menu items for Approvals and Invoice approval-->
+    
     <menuitem id="invoice_approval_menu_root" name="Approvals"
               parent="account.menu_finance_configuration" sequence="10"
               groups="group_approve_manager"/>

@@ -5,10 +5,10 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     def _check_down_payment(self):
-        """
-        Check if the customer requires down payment
-        and ensure down payment invoice is paid.
-        """
+\
+\
+\
+           
         for order in self:
             if order.partner_id.requires_down_payment:
                 dp_invoices = order.invoice_ids.filtered(

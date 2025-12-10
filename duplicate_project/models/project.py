@@ -7,7 +7,7 @@ class Project(models.Model):
     @api.constrains('name')
     def _check_unique_name(self):
         for project in self:
-            # Cek duplikasi nama hanya untuk proyek yang aktif (case insensitive)
+                                                                                 
             duplicate = self.search([
                 ('id', '!=', project.id),
                 ('name', 'ilike', project.name),

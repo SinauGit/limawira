@@ -9,19 +9,19 @@ class StockMoveLine(models.Model):
         for line in self:
             if line.lot_id and line.product_id.tracking == 'serial':
                 
-                # Skip validasi untuk outgoing movements
+                                                        
                 if line.location_dest_id.usage in ['customer', 'supplier', 'inventory', 'production', 'transit']:
                     continue
                 
-                # Skip validasi untuk internal transfers
+                                                        
                 if line.location_id.usage == 'internal' and line.location_dest_id.usage == 'internal':
                     continue
                 
-                # CRITICAL: Skip validasi untuk return operations
+                                                                 
                 if line.location_id.usage in ['customer', 'supplier'] and line.location_dest_id.usage == 'internal':
                     continue
                 
-                # Additional check: Skip if this is part of a return picking
+                                                                            
                 if line.picking_id and self._is_return_picking(line.picking_id):
                     continue
                 
@@ -30,9 +30,9 @@ class StockMoveLine(models.Model):
                     ('product_id', '=', line.product_id.id),
                     ('id', '!=', line.id),
                     ('state', '=', 'done'),
-                    ('picking_id.picking_type_id.code', '=', 'incoming'),      # fokus receipt
-                    ('picking_id.company_id', '=', line.company_id.id),         # per company
-                    ('location_id.usage', 'in', ['supplier', 'production']),    # receipt asli
+                    ('picking_id.picking_type_id.code', '=', 'incoming'),                     
+                    ('picking_id.company_id', '=', line.company_id.id),                      
+                    ('location_id.usage', 'in', ['supplier', 'production']),                  
                 ])
                 
                 if existing_moves:
@@ -42,15 +42,15 @@ class StockMoveLine(models.Model):
                     ) % (line.lot_id.name, line.product_id.name))
 
     def _is_return_picking(self, picking):
-        """Check if picking is a return"""
+                                          
         if not picking:
             return False
             
-        # Check origin
+                      
         if picking.origin and 'return' in picking.origin.lower():
             return True
             
-        # Check source locations
+                                
         for move_line in picking.move_line_ids:
             if move_line.location_id.usage in ['customer', 'supplier']:
                 return True

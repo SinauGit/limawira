@@ -2,13 +2,13 @@
 <odoo>
     <data>
         
-        <!-- Main Menu -->
+        
         <menuitem id="menu_department_bill_root" 
                   name="Department Expense Bills" 
                   sequence="60"
                   groups="group_department_bill_user,group_department_bill_manager,group_department_bill_admin"/>
         
-        <!-- User Menu - My Bills (Server Action) -->
+        
         <menuitem id="menu_my_vendor_bills" 
                   name="My Expense Bills"
                   parent="menu_department_bill_root"
@@ -16,7 +16,7 @@
                   sequence="10"
                   groups="group_department_bill_user"/>
         
-        <!-- Manager Menu - Department Bills (Server Action) -->
+        
         <menuitem id="menu_department_vendor_bills" 
                   name="Department Expense Bills"
                   parent="menu_department_bill_root"
@@ -24,7 +24,7 @@
                   sequence="20"
                   groups="group_department_bill_manager"/>
 
-        <!-- Admin Menu - All Bills (Server Action) -->
+        
         <menuitem id="menu_all_department_bills" 
                   name="All Expense Bills"
                   parent="menu_department_bill_root"
@@ -32,20 +32,15 @@
                   sequence="30"
                   groups="group_department_bill_admin"/>
         
-        <!-- Separator -->
+        
         <menuitem id="menu_separator" 
                   name="---" 
                   parent="menu_department_bill_root"
                   sequence="35"
                   groups="group_department_bill_manager,group_department_bill_admin"/>
         
-        <!-- Dashboard Menu (Optional) -->
-        <!-- <menuitem id="menu_expense_dashboard" 
-                  name="Dashboard"
-                  parent="menu_department_bill_root"
-                  action="action_server_expense_dashboard"
-                  sequence="40"
-                  groups="group_department_bill_manager,group_department_bill_admin"/> -->
+        
+        
         
     </data>
 </odoo>

@@ -1,5 +1,5 @@
-# Copyright 2018-2019 ForgeFlow, S.L.
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+                                     
+                                                                   
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -192,7 +192,7 @@ class PurchaseRequest(models.Model):
         action = self.env["ir.actions.actions"]._for_xml_id(
             "stock.action_picking_tree_all"
         )
-        # remove default filters
+                                
         action["context"] = {}
         lines = self.mapped(
             "line_ids.purchase_request_allocation_ids.stock_move_id.picking_id"
@@ -297,8 +297,8 @@ class PurchaseRequest(models.Model):
         return self.write({"state": "done"})
 
     def check_auto_reject(self):
-        """When all lines are cancelled the purchase request should be
-        auto-rejected."""
+\
+                         
         for pr in self:
             if not pr.line_ids.filtered(lambda line: line.cancelled is False):
                 pr.write({"state": "rejected"})

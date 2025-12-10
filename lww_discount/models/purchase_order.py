@@ -75,10 +75,10 @@ class PurchaseOrder(models.Model):
         return super(PurchaseOrder, self).button_confirm()
 
     def action_approve(self):
-        """Fungsi untuk menyetujui pesanan dengan diskon"""
+                                                           
         return super(PurchaseOrder, self).button_confirm()
 
     def button_dummy(self):
-        """Fungsi untuk memperbarui diskon"""
+                                             
         self.supply_rate()
         return True

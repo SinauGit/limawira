@@ -1,22 +1,22 @@
-# -*- coding: utf-8 -*-
-################################################################################
-#
-#    Cybrosys Technologies Pvt. Ltd.
-#
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>).
-#    Author: Ashwin T (odoo@cybrosys.com)
-#
-#    You can modify it under the terms of the GNU AFFERO
-#    GENERAL PUBLIC LICENSE (AGPL v3), Version 3.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU AFFERO GENERAL PUBLIC LICENSE (AGPL v3) for more details.
-#
-#    You should have received a copy of the GNU AFFERO GENERAL PUBLIC LICENSE
-#    (AGPL v3) along with this program.
-##############################################################################
+                       
+                                                                                
+ 
+                                    
+ 
+                                                                                
+                                         
+ 
+                                                        
+                                                 
+ 
+                                                                    
+                                                                   
+                                                                  
+                                                                  
+ 
+                                                                             
+                                       
+                                                                              
 import time
 from datetime import datetime
 
@@ -26,21 +26,21 @@ from odoo.fields import Command
 
 
 class PurchaseOrderAdvancePayment(models.TransientModel):
-    """The class is created to creating a new model purchase order advance
-    payment."""
+\
+               
     _name = 'purchase.order.advance.payment'
     _description = 'Purchase Order Advance Payment Bill'
 
     @api.model
     def _default_product_id(self):
-        """Function to fetch the purchase down payment default product"""
+                                                                         
         product_id = self.env['ir.config_parameter'].sudo().get_param(
             'purchase_down_payment.po_deposit_default_product_id')
         return self.env['product.product'].browse(int(product_id)).exists()
 
     @api.model
     def _default_currency_id(self):
-        """Function to fetch the currency_id from purchase order"""
+                                                                   
         if self._context.get(
                 'active_model') == 'purchase.order' and self._context.get(
             'active_id', False):
@@ -50,7 +50,7 @@ class PurchaseOrderAdvancePayment(models.TransientModel):
 
     @api.model
     def _default_has_down_payment(self):
-        """Function to check the Purchase order has down payment or not"""
+                                                                          
         if self._context.get(
                 'active_model') == 'purchase.order' and self._context.get(
             'active_id', False):
@@ -104,7 +104,7 @@ class PurchaseOrderAdvancePayment(models.TransientModel):
                                          help="Taxes used for deposits")
 
     def _get_advance_details(self, order):
-        """Function to find get the down payment amount and purchase order"""
+                                                                             
         if self.advance_payment_method == 'percentage':
             if all(self.product_id.taxes_id.mapped('price_include')):
                 amount = order.amount_total * self.amount / 100
@@ -119,7 +119,7 @@ class PurchaseOrderAdvancePayment(models.TransientModel):
         return amount, name
 
     def _prepare_po_line(self, order, tax_ids, amount):
-        """Function to getting the purchase order line data"""
+                                                              
         context = {'lang': order.partner_id.lang}
         po_values = {
             'name': _('Down Payment: %s / %s') % (
@@ -140,7 +140,7 @@ class PurchaseOrderAdvancePayment(models.TransientModel):
         return po_values
 
     def _prepare_invoice_values(self, order, name, amount, so_line):
-        """Function for take invoice values"""
+                                              
         invoice_vals = {
             'ref': order.partner_ref or '',
             'move_type': 'in_invoice',
@@ -168,7 +168,7 @@ class PurchaseOrderAdvancePayment(models.TransientModel):
         return invoice_vals
 
     def _create_bill(self, order, so_line, amount):
-        """Function for creating the purchase bill"""
+                                                     
         if (
                 self.advance_payment_method == 'percentage' and self.amount <=
                 0.00) or (
@@ -181,7 +181,7 @@ class PurchaseOrderAdvancePayment(models.TransientModel):
                                                     so_line)
         if order.fiscal_position_id:
             invoice_vals['fiscal_position_id'] = order.fiscal_position_id.id
-        invoice = self.env['account.move'].with_company(order.company_id) \
+        invoice = self.env['account.move'].with_company(order.company_id)\
             .sudo().create(invoice_vals).with_user(self.env.uid)
         return invoice
 
@@ -196,7 +196,7 @@ class PurchaseOrderAdvancePayment(models.TransientModel):
         }
 
     def action_create_advance_bill(self):
-        """Function for creating purchase down payment bill"""
+                                                              
         purchase_order = self.env['purchase.order'].browse(
             self._context.get('active_ids', []))
         if self.advance_payment_method == 'delivered':

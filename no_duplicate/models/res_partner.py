@@ -7,7 +7,7 @@ class ResPartner(models.Model):
     @api.constrains('name')
     def _check_unique_vendor_name(self):
         for partner in self:
-            if partner.supplier_rank > 0:  # Hanya cek untuk vendor
+            if partner.supplier_rank > 0:                          
                 duplicate = self.search([
                     ('id', '!=', partner.id),
                     ('name', 'ilike', partner.name),

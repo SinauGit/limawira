@@ -28,7 +28,7 @@ class AccountInvoice(models.Model):
         'line_ids.payment_id.state',
         'line_ids.full_reconcile_id')
     def _compute_amount(self):
-        """This function computes amount based on taxed,untaxed"""
+                                                                  
         for move in self:
             total_untaxed, total_untaxed_currency = 0.0, 0.0
             total_tax, total_tax_currency = 0.0, 0.0
@@ -38,27 +38,27 @@ class AccountInvoice(models.Model):
             currencies = set()
             for line in move.line_ids:
                 if move.is_invoice(True):
-                    # === Invoices ===
+                                      
                     if line.display_type == 'tax' or (
                             line.display_type == 'rounding' and
                             line.tax_repartition_line_id):
-                        # Tax amount.
+                                     
                         total_tax += line.balance
                         total_tax_currency += line.amount_currency
                         total += line.balance
                         total_currency += line.amount_currency
                     elif line.display_type in ('product', 'rounding'):
-                        # Untaxed amount.
+                                         
                         total_untaxed += line.balance
                         total_untaxed_currency += line.amount_currency
                         total += line.balance
                         total_currency += line.amount_currency
                     elif line.display_type == 'payment_term':
-                        # Residual amount.
+                                          
                         total_residual += line.amount_residual
                         total_residual_currency += line.amount_residual_currency
                 else:
-                    # === Miscellaneous journal entry ===
+                                                         
                     if line.debit:
                         total += line.balance
                         total_currency += line.amount_currency
@@ -146,14 +146,14 @@ class AccountInvoice(models.Model):
             inv._compute_tax_totals()
 
     def button_dummy(self):
-        """The button_dummy method is intended to perform some action related
-        to the supply rate and always return True"""
+\
+                                                    
         self.supply_rate()
         return True
 
 
 class AccountInvoiceLine(models.Model):
-    """This class inherits "account.move.line" model and adds discount field"""
+                                                                               
     _inherit = "account.move.line"
     discount = fields.Float(string='Discount (%)', digits=(16, 20), default=0.0)
 
@@ -163,7 +163,7 @@ class AccountMove(models.Model):
 
     @api.onchange('invoice_line_ids')
     def _onchange_invoice_line_ids(self):
-        """Fungsi untuk mengupdate amount_discount saat invoice line berubah"""
+                                                                               
         if self.move_type in ['in_invoice', 'in_refund']:
             discount_totals = 0
             for line in self.invoice_line_ids:

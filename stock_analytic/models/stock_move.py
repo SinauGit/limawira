@@ -1,10 +1,10 @@
-# Copyright 2013 Julius Network Solutions
-# Copyright 2015 Clear Corp
-# Copyright 2016 OpenSynergy Indonesia
-# Copyright 2017 ForgeFlow S.L.
-# Copyright 2018 Hibou Corp.
-# Copyright 2023 Quartile Limited
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+                                         
+                           
+                                      
+                               
+                            
+                                 
+                                                                    
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
@@ -18,7 +18,7 @@ class StockMove(models.Model):
         inverse="_inverse_analytic_distribution",
     )
 
-    # stock.move
+                
     def _inverse_analytic_distribution(self):
         for move in self:
             move.move_line_ids.with_context(_skip_move_sync=True).write(
@@ -39,15 +39,15 @@ class StockMove(models.Model):
                 line[2]["account_id"]
                 != self.product_id.categ_id.property_stock_valuation_account_id.id
             ):
-                # Add analytic account in debit line
+                                                    
                 line[2].update({"analytic_distribution": self.analytic_distribution})
         return res
 
     def _prepare_procurement_values(self):
-        """
-        Allows to transmit analytic account from moves to new
-        moves through procurement.
-        """
+\
+\
+\
+           
         res = super()._prepare_procurement_values()
         if self.analytic_distribution:
             res.update(
@@ -58,10 +58,10 @@ class StockMove(models.Model):
         return res
 
     def _prepare_move_line_vals(self, quantity=None, reserved_quant=None):
-        """
-        We fill in the analytic account when creating the move line from
-        the move
-        """
+\
+\
+\
+           
         res = super()._prepare_move_line_vals(
             quantity=quantity, reserved_quant=reserved_quant
         )
@@ -70,10 +70,10 @@ class StockMove(models.Model):
         return res
 
     def _need_validate_distribution(self):
-        """Return moves are made outside the scope of the validation for now, since
-        there could be cases where the necessity cannot be judged solely by the
-        operation type.
-        """
+\
+\
+\
+           
         self.ensure_one()
         if self._is_in() and self._is_returned(valued_type="in"):
             return False
@@ -83,11 +83,11 @@ class StockMove(models.Model):
             return False
         return True
 
-    # PERBAIKAN: Override create method untuk memastikan location_id ter-set
+                                                                            
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            # Pastikan location_id dan location_dest_id ter-set
+                                                               
             if not vals.get('location_id') and vals.get('picking_id'):
                 picking = self.env['stock.picking'].browse(vals['picking_id'])
                 if picking and picking.location_id:
@@ -102,7 +102,7 @@ class StockMove(models.Model):
 
     def _action_done(self, cancel_backorder=False):
         for move in self:
-            # PERBAIKAN: Validasi location sebelum action_done
+                                                              
             if not move.location_id:
                 raise ValidationError(
                     f"Source location is mandatory for move {move.name}. "
@@ -134,15 +134,15 @@ class StockMoveLine(models.Model):
 
     @api.model
     def _prepare_stock_move_vals(self):
-        """
-        In the case move lines are created manually, we should fill in the
-        new move created here with the analytic account if filled in.
-        """
+\
+\
+\
+           
         res = super()._prepare_stock_move_vals()
         if self.analytic_distribution:
             res.update({"analytic_distribution": self.analytic_distribution})
         
-        # PERBAIKAN: Pastikan location_id dan location_dest_id ter-set dari move line
+                                                                                     
         if not res.get('location_id') and self.location_id:
             res['location_id'] = self.location_id.id
         if not res.get('location_dest_id') and self.location_dest_id:
@@ -150,7 +150,7 @@ class StockMoveLine(models.Model):
             
         return res
 
-    # stock.move.line
+                     
     def write(self, vals):
         if "analytic_distribution" in vals and not self.env.context.get("_skip_move_sync"):
             new_dist = vals["analytic_distribution"]

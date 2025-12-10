@@ -11,7 +11,7 @@
         'security/security.xml',
         'security/ir.rule.xml',
         'security/ir.model.access.csv',
-        # 'data/journal_data.xml',
+                                  
         'data/ir_actions_data.xml',
         'views/account_move_views.xml',
         'views/menu_views.xml',

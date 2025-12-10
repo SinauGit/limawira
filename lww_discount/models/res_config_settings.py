@@ -2,8 +2,8 @@ from odoo import fields, models
 
 
 class ResConfigSettings(models.TransientModel):
-    """This class inherits 'res.config.settings' model and adds fields
-    to the settings"""
+\
+                      
     _inherit = 'res.config.settings'
 
     so_order_approval = fields.Boolean(
@@ -39,8 +39,8 @@ class ResConfigSettings(models.TransientModel):
     )
 
     def set_values(self):
-        """Function to set values"""
+                                    
         super(ResConfigSettings, self).set_values()
-        self.so_double_validation = 'two_step' if self.so_order_approval \
+        self.so_double_validation = 'two_step' if self.so_order_approval\
             else 'one_step'
         self.po_double_validation = 'two_step' if self.po_order_approval else 'one_step'

@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
-<!-- Copyright 2018-2019 ForgeFlow, S.L.
-     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0) -->
+
 <odoo>
     <record id="purchase_request_line_tree" model="ir.ui.view">
         <field name="name">purchase.request.line.list</field>

@@ -61,7 +61,7 @@ class VendorPIC(models.Model):
     
     @api.model
     def create(self, vals):
-        # If setting this PIC as primary, unset others
+                                                      
         if vals.get('is_primary') and vals.get('partner_id'):
             self.search([
                 ('partner_id', '=', vals['partner_id']),
@@ -70,7 +70,7 @@ class VendorPIC(models.Model):
         return super().create(vals)
     
     def write(self, vals):
-        # If setting this PIC as primary, unset others
+                                                      
         if vals.get('is_primary') and vals['is_primary']:
             for pic in self:
                 self.search([

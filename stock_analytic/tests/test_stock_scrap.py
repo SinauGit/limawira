@@ -1,6 +1,6 @@
-# Copyright (C) 2019 Open Source Integrators
-# Copyright 2023 Quartile Limited
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+                                            
+                                 
+                                                                    
 from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase
 
@@ -15,7 +15,7 @@ class TestStockScrap(TransactionCase):
         self.analytic_distribution = dict(
             {str(self.env.ref("analytic.analytic_agrolait").id): 100.0}
         )
-        # analytic.analytic_agrolait belongs to analytic.analytic_plan_projects
+                                                                               
         self.analytic_applicability = self.env["account.analytic.applicability"].create(
             {
                 "business_domain": "stock_move",

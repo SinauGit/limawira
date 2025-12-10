@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Template for Kwitansi -->
+        
         <template id="bs_kwitansi_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="o">
@@ -25,17 +25,17 @@
                                         </table>
                                     </div>
                                     <div class="col-5" style="padding-right: 1.5rem; text-align: right;">
-                                <!-- Logo Perusahaan -->
+                                
                                 <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode()" style="max-width: 150px; height: auto;"/>
-                                        <!-- Alamat Perusahaan -->
+                                        
                                         <div style="line-height: 1.5; text-align: right;">
-                                            <!--<p style="font-weight: bold; margin-bottom: 2px; margin-left: 20px; font-size: 24px"><span t-esc="o.company_id.name or ''" style="font-weight: bold;"/></p>-->
+                                            
                                             <p style="font-size: 12px;">
                                                 <span t-esc="o.company_id.street"/> <br/>
                                                 <span t-if="o.company_id.street2" t-esc="o.company_id.street2"/> <br/> 
                                                 <span t-esc="o.company_id.city"/> - <span t-esc="o.company_id.country_id.name"/><br/>
                                                 Telepon: <span t-esc="o.company_id.phone"/><br/>
-                                                <!--Fax: <span t-esc="o.company_id.mobile"/>-->
+                                                
                                             </p>
                                         </div>
                                     </div>
@@ -51,8 +51,8 @@
                                     </h1>
                                 </div>
                             </div>
-                            <!-- <div class='col-2'></div> -->
-                            <!-- Logo dan Alamat Perusahaan -->
+                            
+                            
                             <div class="col-5">
                                 <br/>
                                 <div class="text" style="font-size: 24px;">
@@ -64,7 +64,7 @@
                             </div>
                         </div>
                         <br/>
-                        <!-- Customer dan alamat customer -->
+                        
                         <div class="row">
                             <div class="col-3">
                                 <p style="text-align: right; margin-right: 0.5rem; font-size: 16px;"><em style="border-bottom: 1px solid;">Terima dari</em> : </p>
@@ -165,17 +165,17 @@
                             </div>
                         </div>
                     </div>
-                    <!--<span style="border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-right: 20px;"/>-->
-                    <!--<br/>-->
-                    <!--<footer>-->
-                    <!--    <p style="font-size: 12px; text-align: center;"><em>Mohon bukti transfer difax ke No: 021 - 88951097, harap cantumkan No. Invoice</em></p>-->
-                    <!--</footer>-->
+                    
+                    
+                    
+                    
+                    
                   </main>
                 </t>
             </t>
         </template>
 
-        <!-- Wrapper Template -->
+        
         <template id="bs_kwitansi">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">

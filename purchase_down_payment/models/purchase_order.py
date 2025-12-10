@@ -1,22 +1,22 @@
-# -*- coding: utf-8 -*-
-################################################################################
-#
-#    Cybrosys Technologies Pvt. Ltd.
-#
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>).
-#    Author: Ashwin T (odoo@cybrosys.com)
-#
-#    You can modify it under the terms of the GNU AFFERO
-#    GENERAL PUBLIC LICENSE (AGPL v3), Version 3.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU AFFERO GENERAL PUBLIC LICENSE (AGPL v3) for more details.
-#
-#    You should have received a copy of the GNU AFFERO GENERAL PUBLIC LICENSE
-#    (AGPL v3) along with this program.
-##############################################################################
+                       
+                                                                                
+ 
+                                    
+ 
+                                                                                
+                                         
+ 
+                                                        
+                                                 
+ 
+                                                                    
+                                                                   
+                                                                  
+                                                                  
+ 
+                                                                             
+                                       
+                                                                              
 from odoo import api, models, _
 from odoo.tools import float_is_zero
 from itertools import groupby
@@ -24,29 +24,29 @@ from odoo.exceptions import UserError
 
 
 class PurchaseOrder(models.Model):
-    """
-        This class is created for inherited model Purchase Order.
-
-        Methods: _nothing_to_invoice_error(self): Function for showing the
-        user error while there is no products are received for the purchase
-        order.
-
-            _deduct_payment(self): This function is for deducting the down
-            payment amount from next down payment invoice.
-
-            _prepare_down_payment_section_line(self): Function for creating
-            dict of values to create a new purchase down payment section.
-
-            _get_invoiceable_lines(self):
-                Function for returning the orders invoiceable lines.
-
-        """
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+           
     _inherit = 'purchase.order'
 
     @api.model
     def _nothing_to_invoice_error(self):
-        """Function to showing user error while there is no products are
-        received for the purchase order"""
+\
+                                          
         return UserError(_(
             "There is nothing to bill!\n\n"
             "Reason(s) of this behavior could be:\n"
@@ -61,13 +61,13 @@ class PurchaseOrder(models.Model):
         ))
 
     def _deduct_payment(self, grouped=False, final=False, date=None):
-        """
-        Create the Bill associated to the PO.
-        :returns: list of created invoices
-        """
+\
+\
+\
+           
         invoice_vals_list = []
-        invoice_item_sequence = 0  # Incremental sequencing to keep the lines
-        # order on the invoice.
+        invoice_item_sequence = 0                                            
+                               
         for order in self:
             order = order.with_company(order.company_id)
             invoice_vals = order._prepare_invoice()
@@ -147,11 +147,11 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def _prepare_down_payment_section_line(self, **optional_values):
-        """
-        Prepare the dict of values to create a new down payment section for a
-        purchase order line. :param optional_values: any parameter that
-        should be added to the returned down payment section
-        """
+\
+\
+\
+\
+           
         context = {'lang': self.partner_id.lang}
         down_payments_section_line = {
             'display_type': 'line_section',
@@ -169,11 +169,11 @@ class PurchaseOrder(models.Model):
         return down_payments_section_line
 
     def _get_invoice_grouping_keys(self):
-        """Return invoice grouping keys"""
+                                          
         return ['company_id', 'partner_id', 'currency_id']
 
     def _get_invoiceable_lines(self, final=False):
-        """Return the invoiceable lines for order `self`."""
+                                                            
         down_payment_line_ids = []
         invoiceable_line_ids = []
         pending_section = None

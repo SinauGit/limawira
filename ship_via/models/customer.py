@@ -13,7 +13,7 @@ class PurchaseOrder(models.Model):
     customer_id = fields.Many2one(
         comodel_name='res.partner',
         string='Customer',
-        domain="[('customer_rank', '>', 0)]",  # opsional: hanya tampilkan partner bertipe customer
+        domain="[('customer_rank', '>', 0)]",                                                      
         help="Customer terkait dengan purchase order ini (tidak sama dengan supplier/vendor).",
     )
     
@@ -25,6 +25,6 @@ class PurchaseOrder(models.Model):
                 
     @api.onchange('is_po_service') 
     def _onchange_is_po_service(self):
-        """Reset customer_id when is_po_service is turned off"""
+                                                                
         if not self.is_po_service:
             self.customer_id = False

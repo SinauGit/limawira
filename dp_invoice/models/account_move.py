@@ -1,4 +1,4 @@
-# models/account_move.py
+                        
 from odoo import models, fields, api, _
 
 class AccountMove(models.Model):
@@ -6,11 +6,11 @@ class AccountMove(models.Model):
     
     @api.model_create_multi
     def create(self, vals_list):
-        """Override create untuk update section name di invoice"""
+                                                                  
         moves = super().create(vals_list)
         
         for move in moves:
-            # Update section name untuk down payment invoices
+                                                             
             section_lines = move.line_ids.filtered(
                 lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
             )
@@ -31,30 +31,30 @@ class AccountMoveLine(models.Model):
     
     @api.model_create_multi
     def create(self, vals_list):
-        """Override create untuk copy payment_type dan sequence dari SO line"""
+                                                                               
         lines = super().create(vals_list)
         
         for line in lines:
-            # Handle section lines
+                                  
             if line.display_type == 'line_section' and line.is_downpayment:
                 line.name = _('Down Payment / Termin')
             
-            # Handle down payment lines
+                                       
             elif line.is_downpayment and line.sale_line_ids:
-                # Copy payment_type dan sequence dari SO line
+                                                             
                 so_line = line.sale_line_ids[0]
                 if hasattr(so_line, 'payment_type'):
                     line.payment_type = so_line.payment_type
                 if hasattr(so_line, 'payment_sequence'):
                     line.payment_sequence = so_line.payment_sequence
                 
-                # Update name berdasarkan payment_type
+                                                      
                 line._update_downpayment_name()
         
         return lines
     
     def _update_downpayment_name(self):
-        """Update name dan custom_description field untuk down payment lines"""
+                                                                               
         self.ensure_one()
         if not self.is_downpayment:
             return
@@ -75,7 +75,7 @@ class AccountMoveLine(models.Model):
                 self.custom_description = _("Down Payment")
     
     def write(self, vals):
-        """Override write untuk handle perubahan payment_type"""
+                                                                
         result = super().write(vals)
         
         if 'payment_type' in vals or 'payment_sequence' in vals:

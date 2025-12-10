@@ -1,7 +1,7 @@
 <t t-name="lww_delivery.lww_do_template_no_header">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="o">
-                    <!-- Header Section -->
+                    
                     <div class="row" style="border-bottom: 2px solid rgb(0, 0, 0);">
                         <div class="text-center" style="height: 150px; display: flex; flex-direction: column; justify-content: center; font-size: 30px;">
                             <h1 style="font-size: 2rem;">
@@ -9,10 +9,10 @@
                             </h1>
                         </div>
                     </div>
-                    <!-- Main Section -->
+                    
                     <main>
                         <div class="page" style="padding: 10px;">
-                            <!-- Address Section -->
+                            
                             <div class="row" style="margin-bottom: 5px; margin-top: 10px; border-bottom: 2px solid rgb(0, 0, 0)">
                                 <div class="col-6 text-left">
                                     <strong style="font-size: 16px;">Sold To: </strong>
@@ -133,32 +133,32 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Reference and Date Section -->
+                            
                             <div class="row" style="margin-bottom: 5px; margin-top: 10px; border-bottom: 2px solid rgb(0, 0, 0)">
                                 <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
                                     <thead style="border: 0.5px; background-color: #efefef">
                                         <tr>
                                             <th style="font-size: 16px; text-align: center;">OUR REF NO</th>
-                                            <!-- <th style="font-size: 16px; text-align: center;">DATE</th> -->
+                                            
                                             <th style="font-size: 16px; text-align: center;">PRJ/PO NO</th>
                                             <th style="font-size: 16px; text-align: center;">SPK/PO CUSTOMER</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                        <!-- Our Ref No -->
+                                        
                                             <td class="text-center" style="font-size: 15px;">
                                                 <span t-esc="o.sale_id.name or ''" style="font-size: 15px;"/>
                                             </td>
-                                        <!-- PRJ/PO NO -->
+                                        
                                             <td class="text-center" style="font-size: 15px;"><span t-esc="o.project_id.name or ''" style="font-size: 15px;"/></td>
-                                        <!-- SPK/PO CUSTOMER -->
+                                        
                                             <td class="text-center" style="font-size: 15px;"><span t-esc="o.sale_id.client_order_ref or ''" style="font-size: 15px;"/></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- Table Product -->
+                            
                             <div class="row" style="margin-bottom: 5px; margin-top: 10px;">
                                 <table class="table table-sm" style="margin-bottom: 5px; border: 0.5px;">
                                     <thead style="border: 0.5px;">
@@ -176,17 +176,17 @@
                                         <t t-foreach="o.move_ids" t-as="line">
                                             <t t-set="counter" t-value="counter + 1"/>
                                             <tr>
-                                            <!-- No -->
+                                            
                                                 <td class="text-center" style="font-weight: bold;"><span t-esc="counter" style="font-weight: bold; text-align: center;"/></td>
-                                            <!-- Serial Number -->
+                                            
                                                 <td class="text-center" style="font-size: 15px;"><span t-esc="', '.join(line.lot_ids.mapped('name')) or ''" style="font-size: 15px;"/></td>
-                                            <!-- Part Number -->
+                                            
                                                 <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.default_code or ''" style="font-size: 15px;"/></td>
-                                            <!-- Product Name -->
+                                            
                                                 <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_id.name or ''" style="font-size: 15px;"/></td>
-                                            <!-- QTY -->
+                                            
                                                 <td class="text-center" style="font-size: 15px;"><span t-esc="int(line.quantity) or ''" style="font-size: 15px;"/></td>
-                                            <!-- Unit -->
+                                            
                                                 <td class="text-center" style="font-size: 15px;"><span t-esc="line.product_uom.name or ''" style="font-size: 15px;"/></td>
                                             </tr>
                                         </t>
@@ -194,7 +194,7 @@
                                 </table>
                             </div>
                             <div style="page-break-after:auto;">
-                                <!-- Note Section -->
+                                
                                 <div class="row" style="margin-bottom: 10px; margin-top: 10px;">
                                     <div class="col-6 text-left">
                                         <div class="row">
@@ -207,7 +207,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Signature Section -->
+                                
                                 <div style="page-break-after: auto;">
                                     <div class="row" style="margin-top: 120px;">
                                         <div class="col-4 text-center"/>

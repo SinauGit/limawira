@@ -1,8 +1,8 @@
-# Copyright 2015-2016 Akretion (http://www.akretion.com) - Alexis de Lattre
-# Copyright 2016 ForgeFlow (http://www.forgeflow.com)
-# Copyright 2016 Serpent Consulting Services (<http://www.serpentcs.com>)
-# Copyright 2018 Tecnativa - Pedro M. Baeza
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+                                                                           
+                                                     
+                                                                         
+                                           
+                                                               
 
 
 from odoo.exceptions import UserError, ValidationError
@@ -19,13 +19,13 @@ class TestStockNoNegative(TransactionCase):
         cls.picking_type_id = cls.env.ref("stock.picking_type_out")
         cls.location_id = cls.env.ref("stock.stock_location_stock")
         cls.location_dest_id = cls.env.ref("stock.stock_location_customers")
-        # Create product category
+                                 
         cls.product_ctg = cls._create_product_category(cls)
-        # Create a Product
+                          
         cls.product = cls._create_product(cls, "test_product1")
-        # Create a Product With Lot
+                                   
         cls.product_with_lot = cls._create_product_with_lot(cls, "test_lot_product1")
-        # Create Lot
+                    
         cls.lot1 = cls._create_lot(cls, "lot1")
         cls._create_picking(cls)
         cls._create_picking_with_lot(cls)
@@ -127,18 +127,18 @@ class TestStockNoNegative(TransactionCase):
         )
 
     def test_check_constrains(self):
-        """Assert that constraint is raised when user
-        tries to validate the stock operation which would
-        make the stock level of the product negative"""
+\
+\
+                                                       
         self.stock_picking.action_confirm()
         with self.assertRaises(ValidationError):
             self.stock_picking.button_validate()
 
     def test_check_constrains_with_lot(self):
-        """Assert that constraint is raised when user
-        tries to validate the stock operation which would
-        make the stock level of the product negative with
-        a product with lot"""
+\
+\
+\
+                             
         self.stock_picking_with_lot.action_confirm()
         self.stock_move_line_with_lot = self.env["stock.move.line"].create(
             {
@@ -155,8 +155,8 @@ class TestStockNoNegative(TransactionCase):
             self.stock_picking_with_lot.button_validate()
 
     def test_true_allow_negative_stock_product(self):
-        """Assert that negative stock levels are allowed when
-        the allow_negative_stock is set active in the product"""
+\
+                                                                
         self.product.allow_negative_stock = True
         self.stock_picking.action_confirm()
         self.stock_picking.button_validate()
@@ -169,8 +169,8 @@ class TestStockNoNegative(TransactionCase):
         self.assertEqual(quant.quantity, -100)
 
     def test_true_allow_negative_stock_location(self):
-        """Assert that negative stock levels are allowed when
-        the allow_negative_stock is set active in the product"""
+\
+                                                                
         self.product.allow_negative_stock = False
         self.location_id.allow_negative_stock = True
         self.stock_picking.action_confirm()
@@ -184,13 +184,13 @@ class TestStockNoNegative(TransactionCase):
         self.assertEqual(quant.quantity, -100)
 
     def test_true_allow_negative_stock_product_with_lot(self):
-        """Assert that negative stock levels are allowed when
-        the allow_negative_stock is set active in the product with lot"""
+\
+                                                                         
         self.product_with_lot.allow_negative_stock = True
         self.stock_picking_with_lot.action_confirm()
         with self.assertRaises(UserError):
             self.stock_picking_with_lot.button_validate()
-        # create Detail Operations (move line with lot)
+                                                       
         self.stock_move_line_with_lot = self.env["stock.move.line"].create(
             {
                 "product_id": self.product_with_lot.id,
