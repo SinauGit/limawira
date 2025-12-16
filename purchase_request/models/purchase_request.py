@@ -297,7 +297,7 @@ class PurchaseRequest(models.Model):
         return self.write({"state": "done"})
 
     def check_auto_reject(self):
-\
+
                          
         for pr in self:
             if not pr.line_ids.filtered(lambda line: line.cancelled is False):

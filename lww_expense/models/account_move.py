@@ -70,11 +70,7 @@ class AccountMove(models.Model):
 
 
     @api.model
-    def create(self, vals):
-\
-\
-           
-        
+    def create(self, vals):   
                                             
         journal_id = vals.get('journal_id')
         if journal_id:
@@ -128,18 +124,7 @@ class AccountMove(models.Model):
         
         return move
     
-    def write(self, vals):
-\
-\
-\
-\
-\
-\
-\
-\
-\
-           
-        
+    def write(self, vals):           
                                                
         if 'is_expense_bill' in vals and not vals['is_expense_bill']:
             if any(rec.is_expense_bill for rec in self):
@@ -215,14 +200,7 @@ class AccountMove(models.Model):
 
     @api.constrains('is_expense_bill', 'move_type', 'journal_id', 'company_id', 'department_id')
     def _check_expense_bill_consistency(self):
-\
-\
-\
-\
-\
-\
-\
-           
+       
         for move in self:
             if move.is_expense_bill:
                                  
@@ -238,36 +216,11 @@ class AccountMove(models.Model):
                         'Expense bills must use the EXP journal. '
                         'Current journal: %s'
                     ) % move.journal_id.name)
-                
-                                                                                         
-                                                                    
-                
-                                                             
-                                  
-                                                 
-                                                                        
-                                                                          
-                                                                          
-                                                  
-                                                                                       
-                                                                                       
-                                                                                        
-                                                       
-                               
-                                                              
-                                                                            
-                                                             
+                                                                     
                             
     
     @api.model
-    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
-\
-\
-\
-\
-\
-\
-           
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):  
                                                               
         return super()._name_search(
             name=name, args=args, operator=operator, 

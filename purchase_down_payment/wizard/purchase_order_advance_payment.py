@@ -1,22 +1,3 @@
-                       
-                                                                                
- 
-                                    
- 
-                                                                                
-                                         
- 
-                                                        
-                                                 
- 
-                                                                    
-                                                                   
-                                                                  
-                                                                  
- 
-                                                                             
-                                       
-                                                                              
 import time
 from datetime import datetime
 
@@ -26,7 +7,6 @@ from odoo.fields import Command
 
 
 class PurchaseOrderAdvancePayment(models.TransientModel):
-\
                
     _name = 'purchase.order.advance.payment'
     _description = 'Purchase Order Advance Payment Bill'

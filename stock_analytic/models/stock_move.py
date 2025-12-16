@@ -44,9 +44,9 @@ class StockMove(models.Model):
         return res
 
     def _prepare_procurement_values(self):
-\
-\
-\
+
+
+
            
         res = super()._prepare_procurement_values()
         if self.analytic_distribution:
@@ -58,9 +58,9 @@ class StockMove(models.Model):
         return res
 
     def _prepare_move_line_vals(self, quantity=None, reserved_quant=None):
-\
-\
-\
+
+
+
            
         res = super()._prepare_move_line_vals(
             quantity=quantity, reserved_quant=reserved_quant
@@ -70,9 +70,9 @@ class StockMove(models.Model):
         return res
 
     def _need_validate_distribution(self):
-\
-\
-\
+
+
+
            
         self.ensure_one()
         if self._is_in() and self._is_returned(valued_type="in"):
@@ -134,9 +134,9 @@ class StockMoveLine(models.Model):
 
     @api.model
     def _prepare_stock_move_vals(self):
-\
-\
-\
+
+
+
            
         res = super()._prepare_stock_move_vals()
         if self.analytic_distribution:

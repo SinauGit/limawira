@@ -17,11 +17,11 @@ class AccountMove(models.Model):
 
     @api.depends("invoice_line_ids.sale_line_ids.order_id.project_id", "move_type")
     def _compute_project_id(self):
-\
-\
-\
-\
-\
+
+
+
+
+
            
         for move in self:
             proj = False

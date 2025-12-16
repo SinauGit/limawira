@@ -71,9 +71,9 @@ class StockValuationLayer(models.Model):
 
     @api.depends('company_id', 'product_id', 'create_date', 'value', 'quantity')
     def _compute_running_balance(self):
-\
-\
-\
+
+
+
            
         if not self:
             return

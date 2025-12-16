@@ -6,8 +6,8 @@ class StockPicking(models.Model):
 
     @api.constrains('state')
     def _check_down_payment_before_delivery(self):
-\
-\
+
+
            
         for picking in self:
             if picking.state == 'done' and picking.sale_id:

@@ -5,9 +5,9 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     def _check_down_payment(self):
-\
-\
-\
+
+
+
            
         for order in self:
             if order.partner_id.requires_down_payment:

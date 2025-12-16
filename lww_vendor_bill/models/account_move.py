@@ -12,9 +12,9 @@ class AccountMove(models.Model):
 
                                                                                  
     def action_post(self):
-\
-\
-\
+
+
+
            
         to_autodate = self.filtered(lambda m: m.move_type == "in_invoice" and not m.invoice_date)
         if to_autodate:
@@ -25,10 +25,10 @@ class AccountMove(models.Model):
 
                                                                               
     def _post(self, soft=True):
-\
-\
-\
-\
+
+
+
+
            
 
                                                              
@@ -55,7 +55,7 @@ class AccountMove(models.Model):
                 ))
             if invoice.partner_bank_id and not invoice.partner_bank_id.active:
                 validation_msgs.add(_(
-                    "The recipient bank account linked to this invoice is archived.\n"
+                    "The recipient bank account linked to this invoice is archived.n"
                     "So you cannot confirm the invoice."
                 ))
             if float_compare(invoice.amount_total, 0.0, precision_rounding=invoice.currency_id.rounding) < 0:
