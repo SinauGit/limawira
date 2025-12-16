@@ -276,7 +276,7 @@
           <attribute name="string">Salesperson</attribute>
         </xpath>
       </data>
-    </field>
+    </field>  
     <field name="inherit_id" ref="sale.view_order_tree"/>
     <field name="mode">extension</field>
     <field name="model">sale.order</field>
