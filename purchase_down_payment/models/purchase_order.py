@@ -1,22 +1,3 @@
-                       
-                                                                                
- 
-                                    
- 
-                                                                                
-                                         
- 
-                                                        
-                                                 
- 
-                                                                    
-                                                                   
-                                                                  
-                                                                  
- 
-                                                                             
-                                       
-                                                                              
 from odoo import api, models, _
 from odoo.tools import float_is_zero
 from itertools import groupby
@@ -24,28 +5,12 @@ from odoo.exceptions import UserError
 
 
 class PurchaseOrder(models.Model):
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-           
+          
     _inherit = 'purchase.order'
 
     @api.model
     def _nothing_to_invoice_error(self):
-\
+
                                           
         return UserError(_(
             "There is nothing to bill!\n\n"
@@ -61,9 +26,6 @@ class PurchaseOrder(models.Model):
         ))
 
     def _deduct_payment(self, grouped=False, final=False, date=None):
-\
-\
-\
            
         invoice_vals_list = []
         invoice_item_sequence = 0                                            
@@ -147,11 +109,7 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def _prepare_down_payment_section_line(self, **optional_values):
-\
-\
-\
-\
-           
+        
         context = {'lang': self.partner_id.lang}
         down_payments_section_line = {
             'display_type': 'line_section',

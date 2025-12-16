@@ -1,29 +1,8 @@
-                       
-                                                                             
- 
-                                    
- 
-                                                                                
-                                                          
- 
-                                                        
-                                                 
- 
-                                                                    
-                                                                   
-                                                                  
-                                                                  
- 
-                                                                             
-                                       
-                                                
- 
-                                                                             
 from odoo import api, fields, models
 
 
 class InvoiceApproval(models.Model):
-\
+
                       
     _name = 'invoice.approval'
     _rec_name = 'name'

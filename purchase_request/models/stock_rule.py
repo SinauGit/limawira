@@ -47,11 +47,11 @@ class StockRule(models.Model):
 
     @api.model
     def _make_pr_get_domain(self, values):
-\
-\
-\
-\
-\
+
+
+
+
+
            
         domain = (
             ("state", "=", "draft"),
@@ -69,10 +69,10 @@ class StockRule(models.Model):
         return domain
 
     def is_create_purchase_request_allowed(self, procurement):
-\
-\
-\
-\
+
+
+
+
            
         return (
             procurement[1].action == "buy"
@@ -94,8 +94,8 @@ class StockRule(models.Model):
         return super()._run_buy(procurements)
 
     def create_purchase_request(self, procurement_group):
-\
-\
+
+
            
         procurement = procurement_group[0]
         rule = procurement_group[1]

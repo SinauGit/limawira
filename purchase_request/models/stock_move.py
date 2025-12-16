@@ -101,10 +101,10 @@ class StockMove(models.Model):
             )
 
     def copy_data(self, default=None):
-\
-\
-\
-\
+
+
+
+
            
         if default is None:
             default = {}

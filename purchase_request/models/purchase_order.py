@@ -120,8 +120,8 @@ class PurchaseOrderLine(models.Model):
     )
 
     def action_open_request_line_tree_view(self):
-\
-\
+
+
            
         request_line_ids = []
         for line in self:

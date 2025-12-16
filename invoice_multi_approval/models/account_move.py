@@ -1,24 +1,3 @@
-                       
-                                                                             
- 
-                                    
- 
-                                                                                
-                                                          
- 
-                                                        
-                                                 
- 
-                                                                    
-                                                                   
-                                                                  
-                                                                  
- 
-                                                                             
-                                       
-                                                
- 
-                                                                             
 from odoo import api, fields, models
 
 
@@ -57,7 +36,7 @@ class AccountMove(models.Model):
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
-\
+
                                                                              
         res = super(AccountMove, self)._onchange_partner_id()
         invoice_approval_id = self.env['invoice.approval'].browse(
@@ -149,7 +128,7 @@ class AccountMove(models.Model):
         return True
 
     def _compute_is_approved(self):
-\
+
                                                                  
         for rec in self:
             current_user = rec.env.uid
@@ -168,7 +147,7 @@ class AccountMove(models.Model):
 
     @api.depends('approval_ids')
     def _compute_document_fully_approved(self):
-\
+
                                                      
         for rec in self:
             length_approval_ids = len(rec.approval_ids)
@@ -187,9 +166,9 @@ class AccountMove(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-\
-\
-\
+
+
+
                           
         res = super(AccountMove, self).create(vals_list)
         res._onchange_partner_id()

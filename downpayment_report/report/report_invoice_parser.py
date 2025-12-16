@@ -5,16 +5,11 @@ class AccountMove(models.Model):
     _inherit = 'account.move'
 
     def _get_downpayment_keywords(self):
-\
-\
-\
-           
+          
         return ['down payment', 'termin']
 
     def _is_downpayment_line(self, line):
-\
-\
-\
+
            
         keywords = self._get_downpayment_keywords()
         
@@ -39,8 +34,6 @@ class AccountMove(models.Model):
         return False
 
     def has_downpayment_line_section(self):
-\
-\
            
         target_section_name = 'Down Payment / Termin'
         
@@ -52,8 +45,6 @@ class AccountMove(models.Model):
         return False
 
     def get_down_payment_or_termin_count(self):
-\
-\
            
         count = 0
         for line in self.invoice_line_ids:
@@ -62,15 +53,13 @@ class AccountMove(models.Model):
         return count
 
     def has_exactly_one_down_payment_or_termin(self):
-\
-\
            
         return self.get_down_payment_or_termin_count() == 1
 
     def get_related_sale_order_lines(self):
-\
-\
-\
+
+
+
            
         self.ensure_one()
         if not self.invoice_origin:
@@ -86,9 +75,9 @@ class AccountMove(models.Model):
         return []
 
     def get_downpayment_lines(self):
-\
-\
-\
+
+
+
            
         downpayment_lines = []
         for line in self.invoice_line_ids:
@@ -97,13 +86,13 @@ class AccountMove(models.Model):
         return downpayment_lines
 
     def get_all_downpayment_invoices_for_so(self):
-\
-\
-\
-\
-\
-\
-\
+
+
+
+
+
+
+
            
         self.ensure_one()
         if not self.invoice_origin:
@@ -125,34 +114,34 @@ class AccountMove(models.Model):
         return downpayment_invoices
 
     def get_total_downpayment_count_for_so(self):
-\
-\
-\
-\
+
+
+
+
            
         self.ensure_one()
         return len(self.get_all_downpayment_invoices_for_so())
 
     def get_downpayment_lines_with_installment_numbers(self):
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
            
         self.ensure_one()
         
@@ -189,15 +178,15 @@ class AccountMove(models.Model):
         return dp_lines_with_numbers
 
     def should_show_downpayment_template(self):
-\
-\
-\
-\
-\
-\
-\
-\
-\
+
+
+
+
+
+
+
+
+
            
                                                                  
         has_one_downpayment_line = self.has_exactly_one_down_payment_or_termin()
@@ -216,14 +205,14 @@ class AccountMove(models.Model):
         return False
 
     def get_invoice_lines_for_report(self):
-\
-\
-\
-\
-\
-\
-\
-\
+
+
+
+
+
+
+
+
            
                                                                    
         if not self.should_show_downpayment_template():
@@ -249,9 +238,9 @@ class AccountMove(models.Model):
         return sorted_lines
 
     def get_downpayment_debug_info(self):
-\
-\
-\
+
+
+
            
         debug_info = {
             'total_lines': len(self.invoice_line_ids),

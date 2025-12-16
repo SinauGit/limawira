@@ -2,8 +2,7 @@
 <odoo>
     
     <record id="view_order_form" model="ir.ui.view">
-        <field name="name">sale.order.view.form.inherit.sale.discount.total
-        </field>
+        <field name="name">sale.order.view.form.inherit.sale.discount.total</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
@@ -14,19 +13,17 @@
                         <field name="discount_type"/>
                         <field name="discount_rate"/>
                     </group>
-                    
-                        <field name="amount_total" nolabel="1"
-                               class="oe_subtotal_footer_separator"
-                               widget='monetary'
-                               options="{'currency_field': 'currency_id'}"/>
+                    <group colspan="2">
+                        <field name="amount_discount" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_total" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
                     </group>
                     <group colspan="4">
-                        <field colspan="2" name="note" nolabel="1"
-                               placeholder="Terms and conditions..."/>
-                    
+                        <field colspan="2" name="note" nolabel="1" placeholder="Terms and conditions..."/>
+                    </group>
                 </group>
             </xpath>
-            
             
         </field>
     </record>

@@ -21,12 +21,12 @@ from odoo import fields, models
 
 
 class PurchaseOrderLine(models.Model):
-\
-\
-\
-\
-\
-\
+
+
+
+
+
+
        
     _inherit = 'purchase.order.line'
 
@@ -37,11 +37,11 @@ class PurchaseOrderLine(models.Model):
                                          "duplicating a purchase order.")
 
     def _prepare_invoice_line(self, **optional_values):
-\
-\
-\
-\
-\
+
+
+
+
+
            
         self.ensure_one()
         res = {

@@ -145,9 +145,7 @@ class AccountInvoice(models.Model):
                 inv.amount_discount = discount_totals
             inv._compute_tax_totals()
 
-    def button_dummy(self):
-\
-                                                    
+    def button_dummy(self):                                                    
         self.supply_rate()
         return True
 

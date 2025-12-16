@@ -274,7 +274,7 @@ class DbBackup(models.Model):
                                
 
     def _take_dump(self, db_name, stream, model, backup_format='zip'):
-\
+
                                               
         print(stream)
 
