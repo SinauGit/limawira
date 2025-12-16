@@ -71,56 +71,48 @@ class SaleOrder(models.Model):
         super(SaleOrder, self).action_confirm()
 
     def action_approve(self):
-\
-                          
-        super(SaleOrder, self).action_confirm()
-        return
+            super(SaleOrder, self).action_confirm()
+            return
 
     def _can_be_confirmed(self):
-                                                                 
-        self.ensure_one()
-        return self.state in {'draft', 'sent', 'waiting'}
+            self.ensure_one()
+            return self.state in {'draft', 'sent', 'waiting'}
 
     @api.onchange('discount_type', 'discount_rate', 'order_line')
     def supply_rate(self):
-        for order in self:
-            if order.discount_type == 'percent':
-                for line in order.order_line:
-                    line.discount = order.discount_rate
-            elif order.discount_type == 'amount':
-                total = 0.0
-                for line in order.order_line:
-                    total += round((line.product_uom_qty * line.price_unit))
-                if order.discount_rate != 0:
-                    discount = (order.discount_rate / total) * 100 if total > 0 else 0
-                else:
-                    discount = order.discount_rate
-                for line in order.order_line:
-                    line.discount = discount
-                    new_sub_price = (line.price_unit * (discount / 100))
-                    line.total_discount = line.price_unit - new_sub_price
-            elif order.discount_type == 'line_discount':
-                                                                          
-                                                                                                     
-                amount_discount = 0.0
-                for line in order.order_line:
-                    discount_value = (line.product_uom_qty * line.price_unit * line.discount) / 100
-                    amount_discount += discount_value
-                    line.total_discount = discount_value
-                order.amount_discount = amount_discount
+            for order in self:
+                if order.discount_type == 'percent':
+                    for line in order.order_line:
+                        line.discount = order.discount_rate
+                elif order.discount_type == 'amount':
+                    total = 0.0
+                    for line in order.order_line:
+                        total += round((line.product_uom_qty * line.price_unit))
+                    if order.discount_rate != 0:
+                        discount = (order.discount_rate / total) * 100 if total > 0 else 0
+                    else:
+                        discount = order.discount_rate
+                    for line in order.order_line:
+                        line.discount = discount
+                        new_sub_price = (line.price_unit * (discount / 100))
+                        line.total_discount = line.price_unit - new_sub_price
+                elif order.discount_type == 'line_discount':
+                    amount_discount = 0.0
+                    for line in order.order_line:
+                        discount_value = (line.product_uom_qty * line.price_unit * line.discount) / 100
+                        amount_discount += discount_value
+                        line.total_discount = discount_value
+                    order.amount_discount = amount_discount
 
-    def _prepare_invoice(self, ):
-                                                           
-        invoice_vals = super(SaleOrder, self)._prepare_invoice()
-        invoice_vals.update({
-            'discount_type': self.discount_type,
-            'discount_rate': self.discount_rate,
-            'amount_discount': self.amount_discount,
-        })
-        return invoice_vals
+    def _prepare_invoice(self):
+            invoice_vals = super(SaleOrder, self)._prepare_invoice()
+            invoice_vals.update({
+                'discount_type': self.discount_type,
+                'discount_rate': self.discount_rate,
+                'amount_discount': self.amount_discount,
+            })
+            return invoice_vals
 
     def button_dummy(self):
-\
-                                                      
-        self.supply_rate()
-        return True
+            self.supply_rate()
+            return True
