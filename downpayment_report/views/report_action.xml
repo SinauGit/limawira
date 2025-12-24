@@ -21,14 +21,20 @@
                             <span t-field="so_line.custom_description"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-field="so_line.product_uom_qty"/>
+                            <span t-esc="int(so_line.product_uom_qty)"/>
                             <span t-field="so_line.product_uom"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-field="so_line.price_unit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                            <span>
+                                <t t-esc="o.currency_id.symbol or 'Rp'"/>
+                                <t t-esc="'{:,.0f}'.format(so_line.price_unit).replace(',', '.')"/>
+                            </span>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-field="so_line.price_subtotal" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                            <span>
+                                <t t-esc="o.currency_id.symbol or 'Rp'"/>
+                                <t t-esc="'{:,.0f}'.format(so_line.price_subtotal).replace(',', '.')"/>
+                            </span>
                         </td>
                     </tr>
                 </t>     
@@ -44,13 +50,19 @@
                             <span t-out="dp_item['display_name']"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="'{:.2f}'.format(dp_item['quantity'])"/>
+                            <span t-esc="int(dp_item['quantity'])"/>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="dp_item['price_unit']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                            <span>
+                                <t t-esc="o.currency_id.symbol or 'Rp'"/>
+                                <t t-esc="'{:,.0f}'.format(dp_item['price_unit']).replace(',', '.')"/>
+                            </span>
                         </td>
                         <td class="text-end text-nowrap">
-                            <span t-out="dp_item['price_subtotal']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                            <span>
+                                <t t-esc="o.currency_id.symbol or 'Rp'"/>
+                                <t t-esc="'{:,.0f}'.format(dp_item['price_subtotal']).replace(',', '.')"/>
+                            </span>
                         </td>
                     </tr>
                 </t>
