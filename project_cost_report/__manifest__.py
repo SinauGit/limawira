@@ -2,10 +2,8 @@
 {
     'name': 'Project Cost Report Export',
     'version': '18.0.1.0.0',
-    'category': 'Project',
-    'summary': 'Export Project Cost Report to Excel',
-    'author': 'Your Company',
-    'website': 'https://www.yourcompany.com',
+    'author': 'Rizky Abdi S.H',
+    'website': 'www.lui.co.id',
     'license': 'LGPL-3',
     'depends': [
         'project',
