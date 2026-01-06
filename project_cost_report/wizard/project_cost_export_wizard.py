@@ -178,7 +178,7 @@ class ProjectCostExportWizard(models.TransientModel):
         
         # Cari semua payment dengan state posted
         all_payments = self.env['account.payment'].search([
-            ('state', '=', 'posted'),
+            ('state', '=', 'paid'),
             ('payment_type', '=', 'outbound'),  # Vendor payment
         ], order='date asc, id asc')
         
