@@ -168,53 +168,84 @@ class ProjectCostExportWizard(models.TransientModel):
         return False
 
     def _get_vendor_bill_payments(self, project):
-        """Get vendor bill payments terkait project via analytic_distribution"""
+        """Get vendor bill payments terkait project via analytic_distribution di Vendor Bill"""
         analytic_ids = self._get_project_analytic_account_ids(project)
         
         if not analytic_ids:
             return []
         
-        payments = []
+        payments_data = []
+        processed_payment_ids = set()
         
-        # Cari semua payment dengan state posted
-        all_payments = self.env['account.payment'].search([
-            ('state', '=', 'paid'),
-            ('payment_type', '=', 'outbound'),  # Vendor payment
-        ], order='date asc, id asc')
+        # Step 1: Cari Vendor Bills (account.move) yang memiliki analytic_distribution sesuai project
+        vendor_bills = self.env['account.move'].search([
+            ('move_type', '=', 'in_invoice'),
+            ('state', '=', 'posted'),
+        ], order='invoice_date asc, id asc')
         
-        for payment in all_payments:
-            # Check analytic_distribution di payment
+        for bill in vendor_bills:
             has_analytic = False
             
-            if hasattr(payment, 'analytic_distribution') and payment.analytic_distribution:
-                has_analytic = self._check_analytic_distribution(payment.analytic_distribution, analytic_ids)
+            # Check analytic_distribution di invoice lines
+            for line in bill.invoice_line_ids:
+                if hasattr(line, 'analytic_distribution') and line.analytic_distribution:
+                    if self._check_analytic_distribution(line.analytic_distribution, analytic_ids):
+                        has_analytic = True
+                        break
             
-            # Jika tidak ada di payment, cek di move_id (journal entry)
-            if not has_analytic and payment.move_id:
-                for line in payment.move_id.line_ids:
+            # Jika tidak ada di invoice lines, cek di semua journal items
+            if not has_analytic:
+                for line in bill.line_ids:
                     if hasattr(line, 'analytic_distribution') and line.analytic_distribution:
                         if self._check_analytic_distribution(line.analytic_distribution, analytic_ids):
                             has_analytic = True
                             break
             
             if has_analytic:
-                note = ''
-                if hasattr(payment, 'narration') and payment.narration:
-                    note = html2plaintext(payment.narration) if '<' in str(payment.narration) else payment.narration
-                elif hasattr(payment, 'ref') and payment.ref:
-                    note = payment.ref
+                # Step 2: Cari Payment yang terkait dengan Vendor Bill ini
+                # Cara 1: Via reconciled_bill_ids di payment
+                related_payments = self.env['account.payment'].search([
+                    ('state', '=', 'posted'),
+                    ('reconciled_bill_ids', 'in', [bill.id]),
+                ])
                 
-                payments.append({
-                    'txno': payment.name or '',
-                    'date': payment.date,
-                    'subject': payment.partner_id.name if payment.partner_id else '',
-                    'value': payment.amount or 0.0,
-                    'debet': payment.amount or 0.0,
-                    'credit': 0.0,
-                    'note': note,
-                })
+                # Cara 2: Jika tidak ketemu, cari via move line reconciliation
+                if not related_payments:
+                    for line in bill.line_ids.filtered(lambda l: l.account_id.account_type in ('liability_payable', 'asset_receivable')):
+                        if line.matched_credit_ids:
+                            for partial in line.matched_credit_ids:
+                                if partial.credit_move_id.move_id.payment_id:
+                                    related_payments |= partial.credit_move_id.move_id.payment_id
+                        if line.matched_debit_ids:
+                            for partial in line.matched_debit_ids:
+                                if partial.debit_move_id.move_id.payment_id:
+                                    related_payments |= partial.debit_move_id.move_id.payment_id
+                
+                # Tambahkan payment ke hasil
+                for payment in related_payments:
+                    if payment.id not in processed_payment_ids:
+                        processed_payment_ids.add(payment.id)
+                        
+                        note = ''
+                        if hasattr(payment, 'narration') and payment.narration:
+                            note = html2plaintext(payment.narration) if '<' in str(payment.narration) else payment.narration
+                        elif hasattr(payment, 'ref') and payment.ref:
+                            note = payment.ref
+                        
+                        payments_data.append({
+                            'txno': payment.name or '',
+                            'date': payment.date,
+                            'subject': payment.partner_id.name if payment.partner_id else '',
+                            'value': payment.amount or 0.0,
+                            'debet': payment.amount or 0.0,
+                            'credit': 0.0,
+                            'note': note,
+                        })
         
-        return payments
+        # Sort by date
+        payments_data.sort(key=lambda x: x['date'] if x['date'] else fields.Date.today())
+        
+        return payments_data
 
     def _get_stock_pickings(self, project):
         """Get stock pickings terkait project via analytic_distribution"""
