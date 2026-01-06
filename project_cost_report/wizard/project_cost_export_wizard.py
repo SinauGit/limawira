@@ -214,12 +214,12 @@ class ProjectCostExportWizard(models.TransientModel):
                     for line in bill.line_ids.filtered(lambda l: l.account_id.account_type in ('liability_payable', 'asset_receivable')):
                         if line.matched_credit_ids:
                             for partial in line.matched_credit_ids:
-                                if partial.credit_move_id.move_id.payment_id:
-                                    related_payments |= partial.credit_move_id.move_id.payment_id
+                                if partial.credit_move_id.move_id.payment_ids:
+                                    related_payments |= partial.credit_move_id.move_id.payment_ids
                         if line.matched_debit_ids:
                             for partial in line.matched_debit_ids:
-                                if partial.debit_move_id.move_id.payment_id:
-                                    related_payments |= partial.debit_move_id.move_id.payment_id
+                                if partial.debit_move_id.move_id.payment_ids:
+                                    related_payments |= partial.debit_move_id.move_id.payment_ids
                 
                 # Tambahkan payment ke hasil
                 for payment in related_payments:
