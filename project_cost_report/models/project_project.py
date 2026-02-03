@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models
+from odoo import models, _
 
 
 class ProjectProject(models.Model):
@@ -9,7 +9,7 @@ class ProjectProject(models.Model):
         """Open the export wizard for project cost report"""
         self.ensure_one()
         return {
-            'name': 'Export Project Cost Report',
+            'name': _('Export Project Cost Report'),
             'type': 'ir.actions.act_window',
             'res_model': 'project.cost.export.wizard',
             'view_mode': 'form',

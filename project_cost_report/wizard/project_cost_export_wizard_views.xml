@@ -13,9 +13,9 @@
                 <group invisible="state != 'done'">
                     <field name="state" invisible="1"/>
                     <div class="alert alert-success" role="alert">
-                        <strong>File berhasil dibuat!</strong>
+                        <strong>File created successfully!</strong>
                         <br/>
-                        Klik tombol Download di bawah untuk mengunduh file Excel.
+                        Click the Download button below to download the Excel file.
                     </div>
                     <field name="file_data" filename="file_name" readonly="1"/>
                     <field name="file_name" invisible="1"/>
@@ -23,7 +23,7 @@
                 <footer>
                     <button name="action_export_excel" string="Export Excel" type="object" 
                             class="btn-primary" invisible="state == 'done'"/>
-                    <button string="Tutup" class="btn-secondary" special="cancel"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
