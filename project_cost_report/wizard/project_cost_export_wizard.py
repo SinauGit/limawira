@@ -187,90 +187,46 @@ class ProjectCostExportWizard(models.TransientModel):
         
         return False
 
-    def _get_vendor_bill_payments(self, project):
-        """Get vendor bill payments terkait project via analytic_distribution di Vendor Bill"""
+    def _get_vendor_bills(self, project):
+        """Get vendor bills terkait project berdasarkan line_ids dengan account 1061"""
         analytic_ids = self._get_project_analytic_account_ids(project)
         
         if not analytic_ids:
             return []
         
-        payments_data = []
-        processed_payment_ids = set()
+        bills_data = []
         
-        # Optimasi: Filter vendor bills dengan analytic_distribution
         vendor_bills = self.env['account.move'].search([
             ('move_type', '=', 'in_invoice'),
             ('state', '=', 'posted'),
-            ('invoice_line_ids.analytic_distribution', '!=', False),
         ], order='invoice_date asc, id asc')
         
         for bill in vendor_bills:
-            has_analytic = False
-            
-            # Check analytic_distribution di invoice lines
-            for line in bill.invoice_line_ids:
-                if hasattr(line, 'analytic_distribution') and line.analytic_distribution:
-                    if self._check_analytic_distribution(line.analytic_distribution, analytic_ids):
-                        has_analytic = True
-                        break
-            
-            # Jika tidak ada di invoice lines, cek di semua journal items
-            if not has_analytic:
-                for line in bill.line_ids:
-                    if hasattr(line, 'analytic_distribution') and line.analytic_distribution:
+            for line in bill.line_ids:
+                # Kondisi 1: Account code harus 1061
+                if line.account_id.code == '1061':
+                    # Kondisi 2: Hanya ambil yang debit (normal case)
+                    if line.debit > 0:
+                        # Kondisi 3: Analytic distribution harus match dengan project
                         if self._check_analytic_distribution(line.analytic_distribution, analytic_ids):
-                            has_analytic = True
-                            break
-            
-            if has_analytic:
-                # Cara 1: Via reconciled_bill_ids di payment
-                related_payments = self.env['account.payment'].search([
-                    ('state', '=', 'posted'),
-                    ('reconciled_bill_ids', 'in', [bill.id]),
-                ])
-                
-                # Cara 2: Jika tidak ketemu, cari via move line reconciliation
-                if not related_payments:
-                    payable_receivable_lines = bill.line_ids.filtered(
-                        lambda l: l.account_id.account_type in ('liability_payable', 'asset_receivable')
-                    )
-                    
-                    for line in payable_receivable_lines:
-                        # Check matched_credit_ids
-                        for partial in line.matched_credit_ids:
-                            if partial.credit_move_id.move_id.payment_ids:
-                                related_payments |= partial.credit_move_id.move_id.payment_ids
-                        
-                        # Check matched_debit_ids
-                        for partial in line.matched_debit_ids:
-                            if partial.debit_move_id.move_id.payment_ids:
-                                related_payments |= partial.debit_move_id.move_id.payment_ids
-                
-                # Tambahkan payment ke hasil
-                for payment in related_payments:
-                    if payment.id not in processed_payment_ids:
-                        processed_payment_ids.add(payment.id)
-                        
-                        note = ''
-                        if hasattr(payment, 'narration') and payment.narration:
-                            note = html2plaintext(payment.narration) if '<' in str(payment.narration) else payment.narration
-                        elif hasattr(payment, 'ref') and payment.ref:
-                            note = payment.ref
-                        
-                        payments_data.append({
-                            'txno': payment.name or '',
-                            'date': payment.date,
-                            'subject': payment.partner_id.name if payment.partner_id else '',
-                            'value': payment.amount or 0.0,
-                            'debet': payment.amount or 0.0,
-                            'credit': 0.0,
-                            'note': note,
-                        })
+                            
+                            note = ''
+                            if hasattr(line, 'custom_description') and line.custom_description:
+                                note = line.custom_description
+                            elif line.name:
+                                note = line.name
+                            
+                            bills_data.append({
+                                'txno': bill.name or '',
+                                'date': bill.invoice_date or bill.date,
+                                'subject': bill.partner_id.name if bill.partner_id else '',
+                                'value': line.debit,
+                                'debet': line.debit,
+                                'credit': 0.0,
+                                'note': note,
+                            })
         
-        # Sort by date
-        payments_data.sort(key=lambda x: x['date'] if x['date'] else fields.Date.today())
-        
-        return payments_data
+        return bills_data
 
     def _get_stock_pickings(self, project):
         """Get stock pickings terkait project via analytic_distribution"""
@@ -470,7 +426,7 @@ class ProjectCostExportWizard(models.TransientModel):
                 ws[f'{col}{row_idx}'].border = styles['thin_border']
 
     def _render_transaction_section(self, ws, current_row, trans_data, styles):
-        """Render transaction section (vendor payments atau stock pickings)"""
+        """Render transaction section (vendor bills atau stock pickings)"""
         trans_headers = [
             _('TXNO'), _('DATE'), _('SUBJECT'), 
             _('VALUE'), _('DEBIT'), _('CREDIT'), _('NOTE')
@@ -598,7 +554,7 @@ class ProjectCostExportWizard(models.TransientModel):
         try:
             # Get related data
             sale_order = self._get_sale_order(project)
-            vendor_payments = self._get_vendor_bill_payments(project)
+            vendor_bills = self._get_vendor_bills(project)
             stock_pickings = self._get_stock_pickings(project)
 
             # Create workbook
@@ -618,9 +574,9 @@ class ProjectCostExportWizard(models.TransientModel):
             # Starting row for transactions
             current_row = 8
 
-            # Render vendor bill payments section
+            # Render vendor bills section
             current_row, vendor_debet, vendor_credit = self._render_transaction_section(
-                ws, current_row, vendor_payments, styles
+                ws, current_row, vendor_bills, styles
             )
 
             # Render stock pickings section
