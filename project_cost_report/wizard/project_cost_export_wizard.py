@@ -199,7 +199,7 @@ class ProjectCostExportWizard(models.TransientModel):
         vendor_bills = self.env['account.move'].search([
             ('move_type', '=', 'in_invoice'),
             ('state', '=', 'posted'),
-        ], order='invoice_date asc, id asc')
+        ], order='date asc, id asc')
         
         for bill in vendor_bills:
             for line in bill.line_ids:
@@ -218,7 +218,7 @@ class ProjectCostExportWizard(models.TransientModel):
                             
                             bills_data.append({
                                 'txno': bill.name or '',
-                                'date': bill.invoice_date or bill.date,
+                                'date': bill.date or '',
                                 'subject': bill.partner_id.name if bill.partner_id else '',
                                 'value': line.debit,
                                 'debet': line.debit,
