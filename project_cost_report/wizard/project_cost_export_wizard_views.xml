@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Export Excel Wizard Form View -->
+
     <record id="view_project_cost_export_wizard_form" model="ir.ui.view">
         <field name="name">project.cost.export.wizard.form</field>
         <field name="model">project.cost.export.wizard</field>
@@ -29,7 +29,6 @@
         </field>
     </record>
 
-    <!-- Inherit Project Form View untuk tambah button Export -->
     <record id="view_project_form_inherit_cost_export" model="ir.ui.view">
         <field name="name">project.project.form.inherit.cost.export</field>
         <field name="model">project.project</field>
