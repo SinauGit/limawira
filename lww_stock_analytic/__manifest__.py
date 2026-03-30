@@ -8,6 +8,7 @@
         "stock",
         "analytic",
         "sale_stock",
+        "purchase_stock",
         "project_stock",
         "stock_analytic",
     ],

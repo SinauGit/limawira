@@ -15,6 +15,13 @@ class StockMove(models.Model):
                         vals["analytic_distribution"] = sol.analytic_distribution
                         continue
                                                                         
+                pol_id = vals.get("purchase_line_id")
+                if pol_id:
+                    pol = self.env["purchase.order.line"].sudo().browse(pol_id)
+                    if pol and pol.analytic_distribution:
+                        vals["analytic_distribution"] = pol.analytic_distribution
+                        continue
+
                 origin_id = vals.get("origin_returned_move_id")
                 if origin_id:
                     origin = self.env["stock.move"].sudo().browse(origin_id)
