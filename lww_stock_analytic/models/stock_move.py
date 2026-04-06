@@ -32,17 +32,20 @@ class StockMove(models.Model):
 
     @api.model
     def _analytic_from_project(self, project):
-                                                                                   
         if not project:
             return False
         project = project.sudo()
 
         if 'analytic_distribution' in project._fields and project.analytic_distribution:
             return project.analytic_distribution
+        # Odoo 18: project.project menggunakan field 'account_id'
+        if 'account_id' in project._fields and project.account_id:
+            return {str(project.account_id.id): 100.0}
+        # fallback untuk field lama
         if 'analytic_account_id' in project._fields and project.analytic_account_id:
-            return {project.analytic_account_id.id: 100.0}
+            return {str(project.analytic_account_id.id): 100.0}
         if 'analytic_account_ids' in project._fields and project.analytic_account_ids:
             aa = project.analytic_account_ids[:1]
             if aa:
-                return {aa.id: 100.0}
+                return {str(aa.id): 100.0}
         return False
