@@ -9,6 +9,7 @@ class StockPicking(models.Model):
     def _onchange_project_id_fill_moves_from_sol(self):
         for picking in self:
             picking._fill_moves_analytic_from_sol()
+            picking._fill_moves_analytic_from_pol()
 
     @api.onchange("purchase_id")
     def _onchange_purchase_id_fill_moves_from_pol(self):
@@ -20,6 +21,7 @@ class StockPicking(models.Model):
         if "project_id" in vals:
             for picking in self:
                 picking._fill_moves_analytic_from_sol()
+                picking._fill_moves_analytic_from_pol()
         if "purchase_id" in vals:
             for picking in self:
                 picking._fill_moves_analytic_from_pol()
@@ -77,24 +79,32 @@ class StockPicking(models.Model):
     def _fill_moves_analytic_from_pol(self):
         for picking in self:
             order = getattr(picking, "purchase_id", False)
-            if not order:
+            project = getattr(picking, "project_id", False)
+
+            if not order and not project:
                 continue
 
-            pol_candidates = order.order_line.filtered(lambda l: l.analytic_distribution)
+            pol_candidates = order.order_line.filtered(
+                lambda l: l.analytic_distribution
+            ) if order else self.env["purchase.order.line"]
 
             for move in picking.move_ids_without_package.filtered(
                 lambda m: not m.analytic_distribution and m.state not in ("done", "cancel")
             ):
                 analytic = False
-                same_prod = pol_candidates.filtered(
-                    lambda l: l.product_id == move.product_id and l.analytic_distribution
-                )
-                if same_prod:
-                    analytic = same_prod[0].analytic_distribution
-                else:
-                    first_with_analytic = pol_candidates.filtered(lambda l: l.analytic_distribution)
-                    if first_with_analytic:
-                        analytic = first_with_analytic[0].analytic_distribution
+                if pol_candidates:
+                    same_prod = pol_candidates.filtered(
+                        lambda l: l.product_id == move.product_id and l.analytic_distribution
+                    )
+                    if same_prod:
+                        analytic = same_prod[0].analytic_distribution
+                    else:
+                        first_with_analytic = pol_candidates.filtered(lambda l: l.analytic_distribution)
+                        if first_with_analytic:
+                            analytic = first_with_analytic[0].analytic_distribution
+
+                if not analytic and project:
+                    analytic = self.env["stock.move"]._analytic_from_project(project)
 
                 if analytic:
                     move.analytic_distribution = analytic
