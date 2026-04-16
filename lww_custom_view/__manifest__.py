@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "author": "Rizky Abdi S.H",
     "website": "www.lui.co.id",
-    "depends": ["account", "sale", "project","stock","sales_team",        
+    "depends": ["account", "sale", "project","stock","sales_team","lww_sales",        
     ],
     "data": [
         "views/account_move_views.xml",
