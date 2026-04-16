@@ -54,17 +54,11 @@ class SaleOrder(models.Model):
         store=True,
     )
 
-    @api.depends('order_line.custom_description', 'order_line.product_id')
+    @api.depends('order_line.custom_description')
     def _compute_order_line_descriptions(self):
-        dp_product_id = int(
-            self.env['ir.config_parameter'].sudo().get_param(
-                'sale.default_deposit_product_id', 0
-            )
-        )
         for order in self:
             descriptions = order.order_line.filtered(
-                lambda l: l.custom_description 
-                and l.product_id.id != dp_product_id
+                lambda l: l.custom_description
             ).mapped('custom_description')
             order.order_line_descriptions = ', '.join(descriptions)
                                         
