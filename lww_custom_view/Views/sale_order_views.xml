@@ -39,27 +39,28 @@
     </record>
 
 
-<!-- Tree view Sale Order / Quotation -->
-<record id="view_order_tree_inherit_custom_desc" model="ir.ui.view">
-    <field name="name">sale.order.tree.inherit.custom.description</field>
-    <field name="model">sale.order</field>
-    <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
-    <field name="arch" type="xml">
-        <xpath expr="//list//field[@name='no_so']" position="after">
-            <field name="order_line_descriptions" optional="show"/>
-        </xpath>
-    </field>
-</record>
+    <!-- Tree view Sales Orders -->
+    <record id="view_order_tree_inherit_descriptions" model="ir.ui.view">
+        <field name="name">sale.order.tree.inherit.descriptions</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list//field[@name='partner_id']" position="after">
+                <field name="order_line_descriptions" optional="show"/>
+            </xpath>
+        </field>
+    </record>
 
-<record id="view_order_tree_inherit_custom_desc_so" model="ir.ui.view">
-    <field name="name">sale.order.tree.inherit.custom.description.so</field>
-    <field name="model">sale.order</field>
-    <field name="inherit_id" ref="sale.sale.order.list.select"/>
-    <field name="arch" type="xml">
-        <xpath expr="//list//field[@name='partner_id']" position="after">
-            <field name="order_line_descriptions" optional="show"/>
-        </xpath>
-    </field>
-</record>
+    <!-- Tree view Quotations -->
+    <record id="view_quotation_tree_inherit_descriptions" model="ir.ui.view">
+        <field name="name">sale.quotation.tree.inherit.descriptions</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_with_onboarding"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list//field[@name='partner_id']" position="after">
+                <field name="order_line_descriptions" optional="show"/>
+            </xpath>
+        </field>
+    </record>
 
 </odoo>
