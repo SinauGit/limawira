@@ -54,7 +54,7 @@
 <record id="view_order_tree_inherit_custom_desc_so" model="ir.ui.view">
     <field name="name">sale.order.tree.inherit.custom.description.so</field>
     <field name="model">sale.order</field>
-    <field name="inherit_id" ref="sale.sale_order_list_upload"/>
+    <field name="inherit_id" ref="sale.sale.order.list.select"/>
     <field name="arch" type="xml">
         <xpath expr="//list//field[@name='partner_id']" position="after">
             <field name="order_line_descriptions" optional="show"/>
