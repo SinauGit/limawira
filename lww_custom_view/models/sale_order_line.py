@@ -54,11 +54,11 @@ class SaleOrder(models.Model):
         store=True,
     )
 
-    @api.depends('order_line.custom_description')
+    @api.depends('order_line.custom_description', 'order_line.is_downpayment')
     def _compute_order_line_descriptions(self):
         for order in self:
             descriptions = order.order_line.filtered(
-                lambda l: l.custom_description
+                lambda l: l.custom_description and not l.is_downpayment
             ).mapped('custom_description')
             order.order_line_descriptions = ', '.join(descriptions)
                                         
