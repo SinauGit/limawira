@@ -33,32 +33,6 @@ class SaleOrderLine(models.Model):
                 record.custom_description = record.product_template_id.name
         return res
     
-                                        
-                              
-             
-                                                           
-             
-                           
-                                         
-                                                     
-                   
-                                                                             
-                                                                     
-                              
-
-                                                  
-                                           
-                                                         
-
-                                     
-                                                                                        
-                              
-
-                                         
-                                                                     
-    
-
-
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
     
@@ -70,6 +44,23 @@ class AccountMoveLine(models.Model):
         readonly=False
     )
     
+
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    order_line_descriptions = fields.Char(
+        string='Descriptions',
+        compute='_compute_order_line_descriptions',
+        store=True,
+    )
+
+    @api.depends('order_line.custom_description')
+    def _compute_order_line_descriptions(self):
+        for order in self:
+            descriptions = order.order_line.filtered(
+                lambda l: l.custom_description
+            ).mapped('custom_description')
+            order.order_line_descriptions = ', '.join(descriptions)
                                         
                               
              
