@@ -60,15 +60,4 @@ class SaleOrder(models.Model):
             descriptions = order.order_line.filtered(
                 lambda l: l.custom_description
             ).mapped('custom_description')
-            order.order_line_descriptions = ', '.join(descriptions)
-                                        
-                              
-             
-                                                           
-             
-                           
-                                         
-                                                     
-                   
-                                                                             
-                                         
+            order.order_line_descriptions = ', '.join(descriptions)                                                    
