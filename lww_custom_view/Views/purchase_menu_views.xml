@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+        <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_purchase_rfq_po_only'))]"/>
+        </record>
+        
+        <record id="purchase.menu_procurement_management" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_purchase_rfq_po_only'))]"/>
+        </record>
+        
+        <record id="purchase.menu_purchase_rfq" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_purchase_rfq_po_only'))]"/>
+        </record>
+        
+        <record id="purchase.menu_purchase_form_action" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_purchase_rfq_po_only'))]"/>
+        </record>
+    </data>
+</odoo>
