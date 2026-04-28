@@ -27,7 +27,7 @@ class AccountMove(models.Model):
             move.project_id = proj
 
 
-        invoice_line_descriptions = fields.Char(
+    invoice_line_descriptions = fields.Char(
         string='Descriptions',
         compute='_compute_invoice_line_descriptions',
         store=True,
