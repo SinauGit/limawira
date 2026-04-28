@@ -39,11 +39,21 @@ class AccountMoveLine(models.Model):
                                               
     custom_description = fields.Text(
         string='Description',
-        related='sale_line_ids.custom_description',
+        compute='_compute_custom_description',
+        inverse='_inverse_custom_description',
         store=True,
-        readonly=False
+        readonly=False,
     )
-    
+
+    @api.depends('sale_line_ids.custom_description', 'move_id.move_type')
+    def _compute_custom_description(self):
+        for line in self:
+            if line.move_id.move_type in ('out_invoice', 'out_refund') and line.sale_line_ids:
+                line.custom_description = line.sale_line_ids[:1].custom_description
+            # vendor bill: tidak di-overwrite, biarkan nilai yang sudah ada
+
+    def _inverse_custom_description(self):
+        pass  # store=True sudah handle penyimpanan
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
