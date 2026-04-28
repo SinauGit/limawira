@@ -85,8 +85,8 @@ class AccountMoveLine(models.Model):
         
         return result
 
-    def _prepare_analytic_line_values(self, distribution, amount, unit_amount):
-        res = super()._prepare_analytic_line_values(distribution, amount, unit_amount)
+    def _prepare_analytic_distribution_line(self, distribution, account_ids, distribution_on_each_plan):
+        res = super()._prepare_analytic_distribution_line(distribution, account_ids, distribution_on_each_plan)
         if self.custom_description:
             res['name'] = self.custom_description
         return res
