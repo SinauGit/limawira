@@ -84,3 +84,9 @@ class AccountMoveLine(models.Model):
                     line._update_downpayment_name()
         
         return result
+
+    def _prepare_analytic_line_values(self, distribution, amount, unit_amount):
+        res = super()._prepare_analytic_line_values(distribution, amount, unit_amount)
+        if self.custom_description:
+            res['name'] = self.custom_description
+        return res
