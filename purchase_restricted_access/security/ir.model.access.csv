@@ -1,7 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_purchase_order_own_user,purchase.order (own user),purchase.model_purchase_order,purchase_restricted_access.group_purchase_own_user,1,1,1,0
 access_purchase_order_line_own_user,purchase.order.line (own user),purchase.model_purchase_order_line,purchase_restricted_access.group_purchase_own_user,1,1,1,0
-access_purchase_tag_own_user,purchase.tags (own user),purchase.model_purchase_tags,purchase_restricted_access.group_purchase_own_user,1,0,0,0
 access_purchase_order_dept_user,purchase.order (dept user),purchase.model_purchase_order,purchase_restricted_access.group_purchase_department_user,1,1,1,0
 access_purchase_order_line_dept_user,purchase.order.line (dept user),purchase.model_purchase_order_line,purchase_restricted_access.group_purchase_department_user,1,1,1,0
-access_purchase_tag_dept_user,purchase.tags (dept user),purchase.model_purchase_tags,purchase_restricted_access.group_purchase_department_user,1,0,0,0
