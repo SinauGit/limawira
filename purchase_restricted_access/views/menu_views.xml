@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        ================================================================
+        PURCHASE RESTRICTED MENU
+        ================================================================
+        Membuat menu Purchase khusus yang hanya menampilkan:
+          1. Requests for Quotation
+          2. Purchase Orders
+
+        Menu ini HANYA tampil untuk grup:
+          - group_purchase_own_user
+          - group_purchase_department_user
+
+        Pengguna di luar kedua grup ini TIDAK akan melihat menu ini.
+        Pengguna dalam kedua grup ini TIDAK memiliki akses ke
+        purchase.group_purchase_user, sehingga menu Purchase asli
+        (beserta Products, Reporting, Configuration) tidak akan terlihat.
+        ================================================================
+    -->
+
+    <!-- ============================================================
+         ROOT MENU - Tampil di Home Screen sebagai aplikasi Purchase
+    ============================================================ -->
+    <menuitem
+        id="menu_purchase_restricted_root"
+        name="Purchase"
+        web_icon="purchase,static/description/icon.png"
+        sequence="50"
+        groups="purchase_restricted_access.group_purchase_own_user,
+                purchase_restricted_access.group_purchase_department_user"/>
+
+
+    <!-- ============================================================
+         LEVEL 1: Orders Group
+         Sub-menu "Orders" sebagai pengelompokan (tanpa action)
+    ============================================================ -->
+    <menuitem
+        id="menu_purchase_restricted_orders"
+        name="Orders"
+        parent="menu_purchase_restricted_root"
+        sequence="10"
+        groups="purchase_restricted_access.group_purchase_own_user,
+                purchase_restricted_access.group_purchase_department_user"/>
+
+
+    <!-- ============================================================
+         LEVEL 2: Requests for Quotation
+         Menggunakan action bawaan purchase module (purchase.purchase_rfq)
+         Action ini menampilkan PO dengan state: draft, sent, cancel
+    ============================================================ -->
+    <menuitem
+        id="menu_purchase_restricted_rfq"
+        name="Requests for Quotation"
+        parent="menu_purchase_restricted_orders"
+        action="purchase.purchase_rfq"
+        sequence="1"
+        groups="purchase_restricted_access.group_purchase_own_user,
+                purchase_restricted_access.group_purchase_department_user"/>
+
+
+    <!-- ============================================================
+         LEVEL 2: Purchase Orders
+         Menggunakan action bawaan purchase module (purchase.purchase_form_action)
+         Action ini menampilkan PO dengan state: purchase, done
+    ============================================================ -->
+    <menuitem
+        id="menu_purchase_restricted_po"
+        name="Purchase Orders"
+        parent="menu_purchase_restricted_orders"
+        action="purchase.purchase_form_action"
+        sequence="2"
+        groups="purchase_restricted_access.group_purchase_own_user,
+                purchase_restricted_access.group_purchase_department_user"/>
+
+</odoo>
