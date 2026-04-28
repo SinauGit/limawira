@@ -27,8 +27,7 @@
         name="Purchase"
         web_icon="purchase,static/description/icon.png"
         sequence="50"
-        groups="purchase_restricted_access.group_purchase_own_user,
-                purchase_restricted_access.group_purchase_department_user"/>
+        groups="purchase_restricted_access.group_purchase_own_user,purchase_restricted_access.group_purchase_department_user"/>
 
 
     <!-- ============================================================
@@ -40,8 +39,7 @@
         name="Orders"
         parent="menu_purchase_restricted_root"
         sequence="10"
-        groups="purchase_restricted_access.group_purchase_own_user,
-                purchase_restricted_access.group_purchase_department_user"/>
+        groups="purchase_restricted_access.group_purchase_own_user,purchase_restricted_access.group_purchase_department_user"/>
 
 
     <!-- ============================================================
@@ -55,8 +53,7 @@
         parent="menu_purchase_restricted_orders"
         action="purchase.purchase_rfq"
         sequence="1"
-        groups="purchase_restricted_access.group_purchase_own_user,
-                purchase_restricted_access.group_purchase_department_user"/>
+        groups="purchase_restricted_access.group_purchase_own_user,purchase_restricted_access.group_purchase_department_user"/>
 
 
     <!-- ============================================================
@@ -70,7 +67,6 @@
         parent="menu_purchase_restricted_orders"
         action="purchase.purchase_form_action"
         sequence="2"
-        groups="purchase_restricted_access.group_purchase_own_user,
-                purchase_restricted_access.group_purchase_department_user"/>
+        groups="purchase_restricted_access.group_purchase_own_user,purchase_restricted_access.group_purchase_department_user"/>
 
 </odoo>
