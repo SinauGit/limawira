@@ -27,12 +27,13 @@ class ProjectCostExportWizard(models.TransientModel):
     
     COLUMN_WIDTHS = {
         'A': 25,
-        'B': 18,
-        'C': 28,
-        'D': 18,
+        'B': 22,
+        'C': 18,
+        'D': 28,
         'E': 18,
         'F': 18,
-        'G': 60
+        'G': 18,
+        'H': 60
     }
     
     MONTHS_ID = {
@@ -215,9 +216,16 @@ class ProjectCostExportWizard(models.TransientModel):
                                 note = line.custom_description
                             elif line.name:
                                 note = line.name
-                            
+
+                            invoice_no = ''
+                            if hasattr(bill, 'invoice_no') and bill.invoice_no:
+                                invoice_no = bill.invoice_no
+                            elif bill.ref:
+                                invoice_no = bill.ref
+
                             bills_data.append({
                                 'txno': bill.name or '',
+                                'invoice_no': invoice_no,
                                 'date': bill.date or '',
                                 'subject': bill.partner_id.name if bill.partner_id else '',
                                 'value': line.debit,
@@ -306,9 +314,14 @@ class ProjectCostExportWizard(models.TransientModel):
                     note = ''
                     if hasattr(picking, 'note') and picking.note:
                         note = html2plaintext(picking.note) if '<' in str(picking.note) else picking.note
-                    
+
+                    no_do = ''
+                    if hasattr(picking, 'no_do') and picking.no_do:
+                        no_do = picking.no_do
+
                     pickings_data.append({
                         'txno': picking.name or '',
+                        'no_do': no_do,
                         'date': picking.date_done or picking.scheduled_date,
                         'subject': picking.partner_id.name if picking.partner_id else '',
                         'value': value,
@@ -316,7 +329,7 @@ class ProjectCostExportWizard(models.TransientModel):
                         'credit': 0.0,
                         'note': note,
                     })
-                
+
                 # Untuk incoming (Receipt Return saja)
                 elif picking_type == 'incoming':
                     # Check jika ini adalah return
@@ -355,9 +368,14 @@ class ProjectCostExportWizard(models.TransientModel):
                     note = ''
                     if hasattr(picking, 'note') and picking.note:
                         note = html2plaintext(picking.note) if '<' in str(picking.note) else picking.note
-                    
+
+                    no_do = ''
+                    if hasattr(picking, 'no_do') and picking.no_do:
+                        no_do = picking.no_do
+
                     pickings_data.append({
                         'txno': picking.name or '',
+                        'no_do': no_do,
                         'date': picking.date_done or picking.scheduled_date,
                         'subject': picking.partner_id.name if picking.partner_id else '',
                         'value': value,
@@ -422,17 +440,21 @@ class ProjectCostExportWizard(models.TransientModel):
             ws[f'B{row_idx}'].border = styles['thin_border']
             ws[f'B{row_idx}'].font = styles['data_font']
             
-            for col in ['C', 'D', 'E', 'F', 'G']:
+            for col in ['C', 'D', 'E', 'F', 'G', 'H']:
                 ws[f'{col}{row_idx}'].border = styles['thin_border']
 
-    def _render_transaction_section(self, ws, current_row, trans_data, styles):
-        """Render transaction section (vendor bills atau stock pickings)"""
+    def _render_transaction_section(self, ws, current_row, trans_data, styles, extra_col_header='', extra_col_key=''):
+        """Render transaction section (vendor bills atau stock pickings)
+
+        Layout: A(TXNO), B(extra_col), C(DATE), D(SUBJECT), E(VALUE), F(DEBIT), G(CREDIT), H(NOTE)
+        """
         trans_headers = [
-            _('TXNO'), _('DATE'), _('SUBJECT'), 
+            _('TXNO'), extra_col_header or '',
+            _('DATE'), _('SUBJECT'),
             _('VALUE'), _('DEBIT'), _('CREDIT'), _('NOTE')
         ]
-        trans_cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
-        
+        trans_cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+
         # Render headers
         for col, header in zip(trans_cols, trans_headers):
             cell = ws[f'{col}{current_row}']
@@ -441,7 +463,7 @@ class ProjectCostExportWizard(models.TransientModel):
             cell.font = styles['header_font']
             cell.border = styles['thin_border']
             cell.alignment = styles['center_align']
-        
+
         current_row += 1
 
         total_debet = 0.0
@@ -452,86 +474,88 @@ class ProjectCostExportWizard(models.TransientModel):
             ws[f'A{current_row}'] = item['txno']
             ws[f'A{current_row}'].border = styles['thin_border']
             ws[f'A{current_row}'].font = styles['data_font']
-            
-            ws[f'B{current_row}'] = self._format_date(item['date'])
+
+            ws[f'B{current_row}'] = item.get(extra_col_key, '') if extra_col_key else ''
             ws[f'B{current_row}'].border = styles['thin_border']
             ws[f'B{current_row}'].font = styles['data_font']
-            ws[f'B{current_row}'].alignment = styles['center_align']
-            
-            ws[f'C{current_row}'] = item['subject']
+
+            ws[f'C{current_row}'] = self._format_date(item['date'])
             ws[f'C{current_row}'].border = styles['thin_border']
             ws[f'C{current_row}'].font = styles['data_font']
-            
-            ws[f'D{current_row}'] = self._format_number(item['value'])
+            ws[f'C{current_row}'].alignment = styles['center_align']
+
+            ws[f'D{current_row}'] = item['subject']
             ws[f'D{current_row}'].border = styles['thin_border']
             ws[f'D{current_row}'].font = styles['data_font']
-            ws[f'D{current_row}'].alignment = styles['right_align']
-            
-            ws[f'E{current_row}'] = self._format_number(item['debet'])
+
+            ws[f'E{current_row}'] = self._format_number(item['value'])
             ws[f'E{current_row}'].border = styles['thin_border']
             ws[f'E{current_row}'].font = styles['data_font']
             ws[f'E{current_row}'].alignment = styles['right_align']
-            
-            ws[f'F{current_row}'] = self._format_number(item['credit'])
+
+            ws[f'F{current_row}'] = self._format_number(item['debet'])
             ws[f'F{current_row}'].border = styles['thin_border']
             ws[f'F{current_row}'].font = styles['data_font']
             ws[f'F{current_row}'].alignment = styles['right_align']
-            
-            ws[f'G{current_row}'] = item['note']
+
+            ws[f'G{current_row}'] = self._format_number(item['credit'])
             ws[f'G{current_row}'].border = styles['thin_border']
             ws[f'G{current_row}'].font = styles['data_font']
-            ws[f'G{current_row}'].alignment = styles['left_align']
-            
+            ws[f'G{current_row}'].alignment = styles['right_align']
+
+            ws[f'H{current_row}'] = item['note']
+            ws[f'H{current_row}'].border = styles['thin_border']
+            ws[f'H{current_row}'].font = styles['data_font']
+            ws[f'H{current_row}'].alignment = styles['left_align']
+
             total_debet += item['debet']
             total_credit += item['credit']
             current_row += 1
-        
+
         return current_row, total_debet, total_credit
 
     def _render_totals_section(self, ws, current_row, total_debet, total_credit, styles):
-        """Render totals section"""
-        trans_cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
-        
+        """Render totals section — layout A-H (8 kolom)"""
         # Empty row before totals
         current_row += 1
-        
-        # Totals row
-        for col in trans_cols[:4]:
+
+        # Totals row: A-E border, F=total debet, G=total credit, H=border
+        for col in ['A', 'B', 'C', 'D', 'E']:
             ws[f'{col}{current_row}'].border = styles['thin_border']
-        
-        ws[f'E{current_row}'] = self._format_number(total_debet)
-        ws[f'E{current_row}'].fill = styles['total_fill']
-        ws[f'E{current_row}'].font = styles['total_font']
-        ws[f'E{current_row}'].border = styles['thin_border']
-        ws[f'E{current_row}'].alignment = styles['right_align']
-        
-        ws[f'F{current_row}'] = self._format_number(total_credit)
+
+        ws[f'F{current_row}'] = self._format_number(total_debet)
         ws[f'F{current_row}'].fill = styles['total_fill']
         ws[f'F{current_row}'].font = styles['total_font']
         ws[f'F{current_row}'].border = styles['thin_border']
         ws[f'F{current_row}'].alignment = styles['right_align']
-        
+
+        ws[f'G{current_row}'] = self._format_number(total_credit)
+        ws[f'G{current_row}'].fill = styles['total_fill']
+        ws[f'G{current_row}'].font = styles['total_font']
         ws[f'G{current_row}'].border = styles['thin_border']
+        ws[f'G{current_row}'].alignment = styles['right_align']
+
+        ws[f'H{current_row}'].border = styles['thin_border']
 
         current_row += 2
 
-        # Total cost row
+        # Total cost row: A=label, B-F border, G=total cost, H=border
         ws[f'A{current_row}'] = _('TOTAL COST')
         ws[f'A{current_row}'].fill = styles['label_fill']
         ws[f'A{current_row}'].font = styles['label_font']
         ws[f'A{current_row}'].border = styles['thin_border']
-        
-        for col in ['B', 'C', 'D', 'E']:
+
+        for col in ['B', 'C', 'D', 'E', 'F']:
             ws[f'{col}{current_row}'].border = styles['thin_border']
-        
+
         total_cost = total_debet - total_credit
-        ws[f'F{current_row}'] = self._format_number(total_cost)
-        ws[f'F{current_row}'].fill = styles['total_fill']
-        ws[f'F{current_row}'].font = styles['total_font']
-        ws[f'F{current_row}'].border = styles['thin_border']
-        ws[f'F{current_row}'].alignment = styles['right_align']
-        
+        ws[f'G{current_row}'] = self._format_number(total_cost)
+        ws[f'G{current_row}'].fill = styles['total_fill']
+        ws[f'G{current_row}'].font = styles['total_font']
         ws[f'G{current_row}'].border = styles['thin_border']
+        ws[f'G{current_row}'].alignment = styles['right_align']
+
+        ws[f'H{current_row}'].border = styles['thin_border']
 
     def action_export_excel(self):
         """Main export action dengan error handling"""
@@ -576,12 +600,16 @@ class ProjectCostExportWizard(models.TransientModel):
 
             # Render vendor bills section
             current_row, vendor_debet, vendor_credit = self._render_transaction_section(
-                ws, current_row, vendor_bills, styles
+                ws, current_row, vendor_bills, styles,
+                extra_col_header=_('INVOICE NO'),
+                extra_col_key='invoice_no',
             )
 
             # Render stock pickings section
             current_row, stock_debet, stock_credit = self._render_transaction_section(
-                ws, current_row, stock_pickings, styles
+                ws, current_row, stock_pickings, styles,
+                extra_col_header=_('NO DO'),
+                extra_col_key='no_do',
             )
 
             # Calculate total

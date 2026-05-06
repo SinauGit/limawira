@@ -13,6 +13,9 @@
         'account',
         'stock',
         'stock_account',
+        'lww_delivery',
+        'lww_accounting',
+
     ],
     'data': [
         'security/ir.model.access.csv',
