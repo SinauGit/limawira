@@ -239,7 +239,7 @@ class ProjectCostExportWizard(models.TransientModel):
     def _build_picking_note(self, picking):
         """Bangun note dari daftar barang di picking.
         
-        Format per baris: {qty} {uom} {custom_description} - PO {po_number}
+        Format per baris: {qty} {uom} {custom_description} - {po_number}
         Setiap barang dipisahkan dengan newline.
         """
         lines = []
@@ -267,9 +267,7 @@ class ProjectCostExportWizard(models.TransientModel):
             if not po_number and hasattr(move, 'purchase_line_id') and move.purchase_line_id:
                 po_order = move.purchase_line_id.order_id
                 if po_order:
-                    raw_name = po_order.name or ''
-                    digits = ''.join(filter(str.isdigit, raw_name)).lstrip('0')
-                    po_number = digits if digits else raw_name
+                    po_number = po_order.name or ''
 
             # Jalur 2: serial/lot number dari move_line_ids
             # → cari receipt asal lot → purchase_id picking
@@ -283,9 +281,7 @@ class ProjectCostExportWizard(models.TransientModel):
                     ], limit=1)
                     if origin_lines:
                         po_order = origin_lines.picking_id.purchase_id
-                        raw_name = po_order.name or ''
-                        digits = ''.join(filter(str.isdigit, raw_name)).lstrip('0')
-                        po_number = digits if digits else raw_name
+                        po_number = po_order.name or ''
                         break
 
             # Jalur 3: parsing field origin picking
@@ -293,11 +289,11 @@ class ProjectCostExportWizard(models.TransientModel):
                 import re
                 match = re.search(r'P[O0]*(\d+)', picking.origin, re.IGNORECASE)
                 if match:
-                    po_number = match.group(1).lstrip('0') or match.group(1)
+                    po_number = match.group(0).upper()
 
             # Rakit baris
             if po_number:
-                line = f"{qty_str} {uom_str} {item_name} - PO {po_number}"
+                line = f"{qty_str} {uom_str} {item_name} - {po_number}"
             else:
                 line = f"{qty_str} {uom_str} {item_name}"
 
