@@ -260,18 +260,36 @@ class ProjectCostExportWizard(models.TransientModel):
             else:
                 item_name = ''
 
-            # Nomor PO — cari via purchase_line_id pada move,
-            # lalu via origin picking, lalu kosong
+            # Nomor PO — 3 jalur pencarian
             po_number = ''
-            if hasattr(move, 'purchase_line_id') and move.purchase_line_id:
+
+            # Jalur 1: purchase_line_id langsung di move (receipt)
+            if not po_number and hasattr(move, 'purchase_line_id') and move.purchase_line_id:
                 po_order = move.purchase_line_id.order_id
                 if po_order:
-                    # Ambil bagian numerik saja dari nama PO, misal 'P00053' → '53'
                     raw_name = po_order.name or ''
                     digits = ''.join(filter(str.isdigit, raw_name)).lstrip('0')
                     po_number = digits if digits else raw_name
+
+            # Jalur 2: serial/lot number dari move_line_ids
+            # → cari receipt asal lot → purchase_id picking
+            if not po_number:
+                lot_ids = move.move_line_ids.mapped('lot_id')
+                for lot in lot_ids:
+                    origin_lines = self.env['stock.move.line'].search([
+                        ('lot_id', '=', lot.id),
+                        ('state', '=', 'done'),
+                        ('picking_id.purchase_id', '!=', False),
+                    ], limit=1)
+                    if origin_lines:
+                        po_order = origin_lines.picking_id.purchase_id
+                        raw_name = po_order.name or ''
+                        digits = ''.join(filter(str.isdigit, raw_name)).lstrip('0')
+                        po_number = digits if digits else raw_name
+                        break
+
+            # Jalur 3: parsing field origin picking
             if not po_number and picking.origin:
-                # Coba parsing origin jika ada format PO/xxxxx
                 import re
                 match = re.search(r'P[O0]*(\d+)', picking.origin, re.IGNORECASE)
                 if match:
