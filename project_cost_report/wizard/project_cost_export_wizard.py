@@ -236,6 +236,58 @@ class ProjectCostExportWizard(models.TransientModel):
         
         return bills_data
 
+    def _build_picking_note(self, picking):
+        """Bangun note dari daftar barang di picking.
+        
+        Format per baris: {qty} {uom} {custom_description} - PO {po_number}
+        Setiap barang dipisahkan dengan newline.
+        """
+        lines = []
+        for move in picking.move_ids:
+            # Qty — tampilkan tanpa desimal jika bilangan bulat
+            qty = move.product_uom_qty
+            qty_str = str(int(qty)) if qty == int(qty) else str(qty)
+
+            # UOM
+            uom_str = move.product_uom.name if move.product_uom else ''
+
+            # Nama barang — utamakan description_picking, fallback ke product name
+            product = move.product_id
+            if move.description_picking:
+                item_name = move.description_picking
+            elif product:
+                item_name = product.name or ''
+            else:
+                item_name = ''
+
+            # Nomor PO — cari via purchase_line_id pada move,
+            # lalu via origin picking, lalu kosong
+            po_number = ''
+            if hasattr(move, 'purchase_line_id') and move.purchase_line_id:
+                po_order = move.purchase_line_id.order_id
+                if po_order:
+                    # Ambil bagian numerik saja dari nama PO, misal 'P00053' → '53'
+                    raw_name = po_order.name or ''
+                    digits = ''.join(filter(str.isdigit, raw_name)).lstrip('0')
+                    po_number = digits if digits else raw_name
+            if not po_number and picking.origin:
+                # Coba parsing origin jika ada format PO/xxxxx
+                import re
+                match = re.search(r'P[O0]*(\d+)', picking.origin, re.IGNORECASE)
+                if match:
+                    po_number = match.group(1).lstrip('0') or match.group(1)
+
+            # Rakit baris
+            if po_number:
+                line = f"{qty_str} {uom_str} {item_name} - PO {po_number}"
+            else:
+                line = f"{qty_str} {uom_str} {item_name}"
+
+            if line.strip():
+                lines.append(line)
+
+        return '\n'.join(lines)
+
     def _get_stock_pickings(self, project):
         """Get stock pickings terkait project via analytic_distribution"""
         analytic_ids = self._get_project_analytic_account_ids(project)
@@ -311,9 +363,7 @@ class ProjectCostExportWizard(models.TransientModel):
                             if hasattr(move, 'price_unit'):
                                 value += abs(move.product_uom_qty * move.price_unit)
                     
-                    note = ''
-                    if hasattr(picking, 'note') and picking.note:
-                        note = html2plaintext(picking.note) if '<' in str(picking.note) else picking.note
+                    note = self._build_picking_note(picking)
 
                     no_do = ''
                     if hasattr(picking, 'no_do') and picking.no_do:
@@ -365,9 +415,7 @@ class ProjectCostExportWizard(models.TransientModel):
                             if hasattr(move, 'price_unit'):
                                 value += abs(move.product_uom_qty * move.price_unit)
                     
-                    note = ''
-                    if hasattr(picking, 'note') and picking.note:
-                        note = html2plaintext(picking.note) if '<' in str(picking.note) else picking.note
+                    note = self._build_picking_note(picking)
 
                     no_do = ''
                     if hasattr(picking, 'no_do') and picking.no_do:
@@ -601,14 +649,14 @@ class ProjectCostExportWizard(models.TransientModel):
             # Render vendor bills section
             current_row, vendor_debet, vendor_credit = self._render_transaction_section(
                 ws, current_row, vendor_bills, styles,
-                extra_col_header=_('INVOICE NO'),
+                extra_col_header=_('INVOICE MANUAL'),
                 extra_col_key='invoice_no',
             )
 
             # Render stock pickings section
             current_row, stock_debet, stock_credit = self._render_transaction_section(
                 ws, current_row, stock_pickings, styles,
-                extra_col_header=_('NO DO'),
+                extra_col_header=_('DO MANUAL'),
                 extra_col_key='no_do',
             )
 
