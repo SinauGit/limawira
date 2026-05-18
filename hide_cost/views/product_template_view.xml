@@ -1,18 +1,45 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
+
+    <!-- Form View: Batasi standard_price hanya untuk stock.group_stock_manager -->
     <record id="view_product_form_inherited" model="ir.ui.view">
         <field name="name">product.template.inherited</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@name='standard_price_uom']" position="replace">
-                <div name="standard_price_uom" invisible="product_variant_count &gt; 1 and not is_product_variant" groups="stock.group_stock_manager, account.group_account_manager">
+                <div name="standard_price_uom" invisible="product_variant_count &gt; 1 and not is_product_variant" groups="stock.group_stock_manager">
                     <field name="standard_price" class="oe_inline" widget='monetary' options="{'currency_field': 'cost_currency_id', 'field_digits': True}"/>
-                    <span groups="uom.group_uom" >per
-                      <field name="uom_name" class="oe_inline"/>
-                    </span>                                         
-                </div>                        
+                    <span groups="uom.group_uom">per
+                        <field name="uom_name" class="oe_inline"/>
+                    </span>
+                </div>
             </xpath>
         </field>
     </record>
+
+    <!-- List View Product Template: Batasi kolom Cost hanya untuk stock.group_stock_manager -->
+    <record id="view_product_template_tree_inherited" model="ir.ui.view">
+        <field name="name">product.template.tree.inherited</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="groups">stock.group_stock_manager</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- List View Product Variants: Batasi kolom Cost hanya untuk stock.group_stock_manager -->
+    <record id="view_product_product_tree_inherited" model="ir.ui.view">
+        <field name="name">product.product.tree.inherited</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="groups">stock.group_stock_manager</attribute>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
