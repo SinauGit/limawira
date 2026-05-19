@@ -5,7 +5,7 @@
     'website': 'www.lui.co.id',
     'category': 'Project',
     'license': 'LGPL-3',
-    'depends': ['project','account'],
+    'depends': ['project','account','stock','sales_team'],
     'data': [
         # 'security/ir.model.access.csv',
         'views/product_template_view.xml',
