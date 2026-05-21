@@ -3,4 +3,4 @@ access_sale_order_readonly,sale order readonly,sale.model_sale_order,sale_readon
 access_sale_order_line_readonly,sale order line readonly,sale.model_sale_order_line,sale_readonly_access.group_sale_readonly,1,0,0,0
 access_crm_team_readonly,crm team readonly,sales_team.model_crm_team,sale_readonly_access.group_sale_readonly,1,0,0,0
 access_crm_team_member_readonly,crm team member readonly,sales_team.model_crm_team_member,sale_readonly_access.group_sale_readonly,1,0,0,0
-access_sale_order_spreadsheet_readonly,sale order spreadsheet readonly,sale.model_sale_order_spreadsheet,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_sale_order_spreadsheet_readonly,sale order spreadsheet readonly,sale.access.sale.order.spreadsheet,sale_readonly_access.group_sale_readonly,1,0,0,0
