@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale.menu_sale_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+    </record>
+    <record id="sale.menu_sale_order" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+    </record>
+    <record id="sale.menu_orders" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+    </record>
+    <record id="sale.menu_sale_quotations_with_onboarding" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+    </record>
+</odoo>
