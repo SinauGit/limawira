@@ -5,7 +5,7 @@
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.view_project_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='action_view_so']" position="attributes">
+            <xpath expr="//button[@name='action_view_sos']" position="attributes">
                 <attribute name="groups">sales_team.group_sale_salesman,sale_readonly_access.group_sale_readonly</attribute>
             </xpath>
         </field>
