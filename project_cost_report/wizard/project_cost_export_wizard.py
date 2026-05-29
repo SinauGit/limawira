@@ -236,71 +236,54 @@ class ProjectCostExportWizard(models.TransientModel):
         
         return bills_data
 
-    def _build_picking_note(self, picking):
-        """Bangun note dari daftar barang di picking.
-        
-        Format per baris: {qty} {uom} {custom_description} - {po_number}
-        Setiap barang dipisahkan dengan newline.
+    def _build_move_note(self, move, picking):
+        """Bangun note satu baris untuk satu stock.move.
+
+        Format: {qty} {uom} {item_name} - {po_number}
         """
-        lines = []
-        for move in picking.move_ids:
-            # Qty — tampilkan tanpa desimal jika bilangan bulat
-            qty = move.product_uom_qty
-            qty_str = str(int(qty)) if qty == int(qty) else str(qty)
+        import re
 
-            # UOM
-            uom_str = move.product_uom.name if move.product_uom else ''
+        qty = move.product_uom_qty
+        qty_str = str(int(qty)) if qty == int(qty) else str(qty)
 
-            # Nama barang — utamakan description_picking, fallback ke product name
-            product = move.product_id
-            if move.description_picking:
-                item_name = move.description_picking
-            elif product:
-                item_name = product.name or ''
-            else:
-                item_name = ''
+        uom_str = move.product_uom.name if move.product_uom else ''
 
-            # Nomor PO — 3 jalur pencarian
-            po_number = ''
+        product = move.product_id
+        if move.description_picking:
+            item_name = move.description_picking
+        elif product:
+            item_name = product.name or ''
+        else:
+            item_name = ''
 
-            # Jalur 1: purchase_line_id langsung di move (receipt)
-            if not po_number and hasattr(move, 'purchase_line_id') and move.purchase_line_id:
-                po_order = move.purchase_line_id.order_id
-                if po_order:
+        po_number = ''
+
+        if not po_number and hasattr(move, 'purchase_line_id') and move.purchase_line_id:
+            po_order = move.purchase_line_id.order_id
+            if po_order:
+                po_number = po_order.name or ''
+
+        if not po_number:
+            lot_ids = move.move_line_ids.mapped('lot_id')
+            for lot in lot_ids:
+                origin_lines = self.env['stock.move.line'].search([
+                    ('lot_id', '=', lot.id),
+                    ('state', '=', 'done'),
+                    ('picking_id.purchase_id', '!=', False),
+                ], limit=1)
+                if origin_lines:
+                    po_order = origin_lines.picking_id.purchase_id
                     po_number = po_order.name or ''
+                    break
 
-            # Jalur 2: serial/lot number dari move_line_ids
-            # → cari receipt asal lot → purchase_id picking
-            if not po_number:
-                lot_ids = move.move_line_ids.mapped('lot_id')
-                for lot in lot_ids:
-                    origin_lines = self.env['stock.move.line'].search([
-                        ('lot_id', '=', lot.id),
-                        ('state', '=', 'done'),
-                        ('picking_id.purchase_id', '!=', False),
-                    ], limit=1)
-                    if origin_lines:
-                        po_order = origin_lines.picking_id.purchase_id
-                        po_number = po_order.name or ''
-                        break
+        if not po_number and picking.origin:
+            match = re.search(r'P[O0]*(\d+)', picking.origin, re.IGNORECASE)
+            if match:
+                po_number = match.group(0).upper()
 
-            # Jalur 3: parsing field origin picking
-            if not po_number and picking.origin:
-                import re
-                match = re.search(r'P[O0]*(\d+)', picking.origin, re.IGNORECASE)
-                if match:
-                    po_number = match.group(0).upper()
-
-            # Rakit baris
-            if po_number:
-                line = f"{qty_str} {uom_str} {item_name} - {po_number}"
-            else:
-                line = f"{qty_str} {uom_str} {item_name}"
-
-            if line.strip():
-                lines.append(line)
-
-        return '\n'.join(lines)
+        if po_number:
+            return f"{qty_str} {uom_str} {item_name} - {po_number}"
+        return f"{qty_str} {uom_str} {item_name}"
 
     def _get_stock_pickings(self, project):
         """Get stock pickings terkait project via analytic_distribution"""
@@ -348,103 +331,114 @@ class ProjectCostExportWizard(models.TransientModel):
                 
                 # Untuk outgoing (Delivery Order)
                 if picking_type == 'outgoing':
-                    # Check account code 1061 dari stock moves
-                    has_account_1061 = False
-                    value = 0.0
-                    
+                    picking_has_account_1061 = False
                     for move in picking.move_ids:
                         if move.account_move_ids:
                             for account_move in move.account_move_ids:
                                 for line in account_move.line_ids:
                                     if line.account_id.code == '1061':
-                                        has_account_1061 = True
-                                        value += abs(line.debit - line.credit)
-                    
-                    if not has_account_1061:
+                                        picking_has_account_1061 = True
+                                        break
+                                if picking_has_account_1061:
+                                    break
+                        if picking_has_account_1061:
+                            break
+
+                    if not picking_has_account_1061:
                         continue
-                    
-                    # Jika tidak ada value dari account move, hitung dari valuation layer
-                    if value == 0.0:
-                        valuation_layers = self.env['stock.valuation.layer'].search([
-                            ('stock_move_id', 'in', picking.move_ids.ids)
-                        ])
-                        for layer in valuation_layers:
-                            value += abs(layer.value)
-                    
-                    # Jika masih 0, hitung manual
-                    if value == 0.0:
-                        for move in picking.move_ids:
-                            if hasattr(move, 'price_unit'):
-                                value += abs(move.product_uom_qty * move.price_unit)
-                    
-                    note = self._build_picking_note(picking)
 
                     no_do = ''
                     if hasattr(picking, 'no_do') and picking.no_do:
                         no_do = picking.no_do
 
-                    pickings_data.append({
-                        'txno': picking.name or '',
-                        'no_do': no_do,
-                        'date': picking.date_done or picking.scheduled_date,
-                        'subject': picking.partner_id.name if picking.partner_id else '',
-                        'value': value,
-                        'debet': value,
-                        'credit': 0.0,
-                        'note': note,
-                    })
+                    for move in picking.move_ids:
+                        move_value = 0.0
+
+                        if move.account_move_ids:
+                            for account_move in move.account_move_ids:
+                                for line in account_move.line_ids:
+                                    if line.account_id.code == '1061':
+                                        move_value += abs(line.debit - line.credit)
+
+                        if move_value == 0.0:
+                            valuation_layers = self.env['stock.valuation.layer'].search([
+                                ('stock_move_id', '=', move.id)
+                            ])
+                            for layer in valuation_layers:
+                                move_value += abs(layer.value)
+
+                        if move_value == 0.0 and hasattr(move, 'price_unit'):
+                            move_value = abs(move.product_uom_qty * move.price_unit)
+
+                        note = self._build_move_note(move, picking)
+
+                        pickings_data.append({
+                            'txno': picking.name or '',
+                            'no_do': no_do,
+                            'date': picking.date_done or picking.scheduled_date,
+                            'subject': picking.partner_id.name if picking.partner_id else '',
+                            'value': move_value,
+                            'debet': move_value,
+                            'credit': 0.0,
+                            'note': note,
+                        })
 
                 # Untuk incoming (Receipt Return saja)
                 elif picking_type == 'incoming':
-                    # Check jika ini adalah return
                     if not picking.origin or 'Return' not in picking.origin:
                         continue
-                    
-                    # Check account code 1061 dari stock moves
-                    has_account_1061 = False
-                    value = 0.0
-                    
+
+                    picking_has_account_1061 = False
                     for move in picking.move_ids:
                         if move.account_move_ids:
                             for account_move in move.account_move_ids:
                                 for line in account_move.line_ids:
                                     if line.account_id.code == '1061':
-                                        has_account_1061 = True
-                                        value += abs(line.debit - line.credit)
-                    
-                    if not has_account_1061:
+                                        picking_has_account_1061 = True
+                                        break
+                                if picking_has_account_1061:
+                                    break
+                        if picking_has_account_1061:
+                            break
+
+                    if not picking_has_account_1061:
                         continue
-                    
-                    # Jika tidak ada value dari account move, hitung dari valuation layer
-                    if value == 0.0:
-                        valuation_layers = self.env['stock.valuation.layer'].search([
-                            ('stock_move_id', 'in', picking.move_ids.ids)
-                        ])
-                        for layer in valuation_layers:
-                            value += abs(layer.value)
-                    
-                    # Jika masih 0, hitung manual
-                    if value == 0.0:
-                        for move in picking.move_ids:
-                            if hasattr(move, 'price_unit'):
-                                value += abs(move.product_uom_qty * move.price_unit)
-                    
-                    note = self._build_picking_note(picking)
 
                     no_do = ''
                     if hasattr(picking, 'no_do') and picking.no_do:
                         no_do = picking.no_do
 
-                    pickings_data.append({
-                        'txno': picking.name or '',
-                        'no_do': no_do,
-                        'date': picking.date_done or picking.scheduled_date,
-                        'subject': picking.partner_id.name if picking.partner_id else '',
-                        'value': value,
-                        'debet': 0.0,
-                        'credit': value,
-                        'note': note,
-                    })
+                    for move in picking.move_ids:
+                        move_value = 0.0
+
+                        if move.account_move_ids:
+                            for account_move in move.account_move_ids:
+                                for line in account_move.line_ids:
+                                    if line.account_id.code == '1061':
+                                        move_value += abs(line.debit - line.credit)
+
+                        if move_value == 0.0:
+                            valuation_layers = self.env['stock.valuation.layer'].search([
+                                ('stock_move_id', '=', move.id)
+                            ])
+                            for layer in valuation_layers:
+                                move_value += abs(layer.value)
+
+                        if move_value == 0.0 and hasattr(move, 'price_unit'):
+                            move_value = abs(move.product_uom_qty * move.price_unit)
+
+                        note = self._build_move_note(move, picking)
+
+                        pickings_data.append({
+                            'txno': picking.name or '',
+                            'no_do': no_do,
+                            'date': picking.date_done or picking.scheduled_date,
+                            'subject': picking.partner_id.name if picking.partner_id else '',
+                            'value': move_value,
+                            'debet': 0.0,
+                            'credit': move_value,
+                            'note': note,
+                        })
         
         return pickings_data
 
