@@ -3,17 +3,17 @@
 
     <record id="group_project_cost_export" model="res.groups">
         <field name="name">Project Cost Export</field>
-        <field name="category_id" ref="project.module_project"/>
+        <field name="category_id" ref="base.module_category_technical"/>
         <field name="implied_ids" eval="[(4, ref('project.group_project_user'))]"/>
     </record>
 
     <record id="view_project_form_inherit_cost_export_group" model="ir.ui.view">
         <field name="name">project.project.form.inherit.cost.export.group</field>
         <field name="model">project.project</field>
-        <field name="inherit_id" ref="project_cost_export.view_project_form_inherit_cost_export"/>
+        <field name="inherit_id" ref="project_cost_report.view_project_form_inherit_cost_export"/>
         <field name="arch" type="xml">
             <button name="action_open_export_cost_report" position="attributes">
-                <attribute name="groups">project_cost_export.group_project_cost_export</attribute>
+                <attribute name="groups">project_cost_report.group_project_cost_export</attribute>
             </button>
         </field>
     </record>

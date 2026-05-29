@@ -18,7 +18,7 @@
 
     ],
     'data': [
-        'security/security.xml'
+        'security/security.xml',
         'security/ir.model.access.csv',
         'wizard/project_cost_export_wizard_views.xml',
     ],
