@@ -7,8 +7,7 @@
         'security/sale_readonly_security.xml',
         'security/ir.model.access.csv',
         # 'views/sale_menu_access.xml',
-        'views/project_view_inherit.xml',
+        # 'views/project_view_inherit.xml',
     ],
-    'post_init_hook': 'post_init_hook',
     'license': 'LGPL-3',
 }
