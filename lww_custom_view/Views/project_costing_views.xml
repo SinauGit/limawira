@@ -1,0 +1,12 @@
+<odoo>
+    <record id="view_account_analytic_line_list_wip_inherit_partner" model="ir.ui.view">
+        <field name="name">account.analytic.line.list.wip.inherit.partner</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="project_wip_monitoring.view_account_analytic_line_list_wip"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="partner_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

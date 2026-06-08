@@ -24,7 +24,6 @@
         <record id="group_purchase_own_user" model="res.groups">
             <field name="name">Purchase User (Own Records)</field>
             <field name="category_id" ref="module_category_purchase_restricted"/>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">
                 Pengguna dalam grup ini hanya dapat melihat Request for Quotation
                 dan Purchase Orders yang dibuat oleh mereka sendiri
@@ -41,7 +40,6 @@
         <record id="group_purchase_department_user" model="res.groups">
             <field name="name">Purchase User (Department Records)</field>
             <field name="category_id" ref="module_category_purchase_restricted"/>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">
                 Pengguna dalam grup ini dapat melihat Request for Quotation
                 dan Purchase Orders dari seluruh anggota departemen mereka.
