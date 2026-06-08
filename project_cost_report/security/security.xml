@@ -4,7 +4,6 @@
     <record id="group_project_cost_export" model="res.groups">
         <field name="name">Project Cost Export</field>
         <field name="category_id" ref="base.module_category_technical"/>
-        <field name="implied_ids" eval="[(4, ref('project.group_project_user'))]"/>
     </record>
 
     <record id="view_project_form_inherit_cost_export_group" model="ir.ui.view">
