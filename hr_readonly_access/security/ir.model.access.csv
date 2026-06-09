@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+hr_readonly_access_employee,hr.employee sale_readonly,hr.model_hr_employee,sale_readonly_access.group_sale_readonly,1,1,1,1
+hr_readonly_access_employee_public,hr.employee.public sale_readonly,hr.model_hr_employee_public,sale_readonly_access.group_sale_readonly,1,1,1,1
+hr_readonly_access_department,hr.department sale_readonly,hr.model_hr_department,sale_readonly_access.group_sale_readonly,1,1,1,1
+hr_readonly_access_job,hr.job sale_readonly,hr.model_hr_job,sale_readonly_access.group_sale_readonly,1,1,1,1

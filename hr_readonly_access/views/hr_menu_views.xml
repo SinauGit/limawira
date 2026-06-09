@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_hr_readonly_root"
+        name="Employees"
+        web_icon="hr,static/description/icon.png"
+        groups="sale_readonly_access.group_sale_readonly"
+        sequence="90"/>
+
+    <menuitem
+        id="menu_hr_readonly_employees"
+        name="Employees"
+        parent="menu_hr_readonly_root"
+        action="hr.open_view_employee_list_my"
+        groups="sale_readonly_access.group_sale_readonly"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_hr_readonly_org_chart"
+        name="Org Chart"
+        parent="menu_hr_readonly_root"
+        action="hr_org_chart.action_hr_org_chart"
+        groups="sale_readonly_access.group_sale_readonly"
+        sequence="20"/>
+
+</odoo>
