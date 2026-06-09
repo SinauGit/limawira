@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="rule_purchase_order_service_readonly" model="ir.rule">
+        <field name="name">Purchase Order: Service Readonly (is_po_service only)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="domain_force">[('is_po_service', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>
