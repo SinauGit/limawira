@@ -20,7 +20,7 @@
         id="menu_hr_readonly_org_chart"
         name="Org Chart"
         parent="menu_hr_readonly_root"
-        action="hr_org_chart.action_hr_org_chart"
+        action="hr_org_chart.action_hr_employee_org_chart"
         groups="sale_readonly_access.group_sale_readonly"
         sequence="20"/>
 
