@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_company_module_restriction_form" model="ir.ui.view">
+        <field name="name">res.company.module.restriction.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='general_information']" position="after">
+                <page string="Module Restriction" name="module_restriction">
+                    <group string="Module Visibility Control">
+                        <field name="restrict_modules"/>
+                        <field name="allowed_modules"
+                               attrs="{'invisible': [('restrict_modules', '=', False)], 'required': [('restrict_modules', '=', True)]}"
+                               placeholder="e.g. stock,stock_account,uom,product"
+                               widget="char"/>
+                    </group>
+                    <group string="Reference: Common Module Names"
+                           attrs="{'invisible': [('restrict_modules', '=', False)]}">
+                        <div colspan="2" class="text-muted">
+                            <p><strong>Inventory:</strong> stock, stock_account, uom, product</p>
+                            <p><strong>Sales:</strong> sale, sale_management, sale_stock</p>
+                            <p><strong>Purchase:</strong> purchase, purchase_stock</p>
+                            <p><strong>Accounting:</strong> account, account_accountant, l10n_id</p>
+                            <p><strong>Project:</strong> project, timesheet_grid, hr_timesheet</p>
+                            <p><strong>Manufacturing:</strong> mrp, mrp_account</p>
+                            <p><strong>Note:</strong> Core modules (base, web, mail, bus) selalu diizinkan otomatis.</p>
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
