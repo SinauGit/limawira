@@ -11,12 +11,12 @@
                     <group string="Module Visibility Control">
                         <field name="restrict_modules"/>
                         <field name="allowed_modules"
-                               attrs="{'invisible': [('restrict_modules', '=', False)], 'required': [('restrict_modules', '=', True)]}"
+                               invisible="not restrict_modules"
+                               required="restrict_modules"
                                placeholder="e.g. stock,stock_account,uom,product"
                                widget="char"/>
                     </group>
-                    <group string="Reference: Common Module Names"
-                           attrs="{'invisible': [('restrict_modules', '=', False)]}">
+                    <group string="Reference: Common Module Names" invisible="not restrict_modules">
                         <div colspan="2" class="text-muted">
                             <p><strong>Inventory:</strong> stock, stock_account, uom, product</p>
                             <p><strong>Sales:</strong> sale, sale_management, sale_stock</p>
