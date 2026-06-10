@@ -1,4 +1,4 @@
-from odoo import models, api
+from odoo import models, api, tools
 
 ALWAYS_ALLOWED = {
     'base',
@@ -15,6 +15,11 @@ ALWAYS_ALLOWED = {
 
 class IrUiMenu(models.Model):
     _inherit = 'ir.ui.menu'
+
+    @api.model
+    @tools.ormcache_context('self._uid', 'debug', keys=('lang', 'allowed_company_ids'))
+    def load_menus(self, debug):
+        return super().load_menus(debug)
 
     @api.model
     def _load_menus_blacklist(self):
