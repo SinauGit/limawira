@@ -1,6 +1,5 @@
 from odoo import models, api
 
-# Modules that must always be visible regardless of restriction
 ALWAYS_ALLOWED = {
     'base',
     'base_setup',
@@ -18,12 +17,12 @@ class IrUiMenu(models.Model):
     _inherit = 'ir.ui.menu'
 
     @api.model
-    def _visible_menu_ids(self, debug=False):
-        all_visible = super()._visible_menu_ids(debug=debug)
+    def _load_menus_blacklist(self):
+        blacklist = super()._load_menus_blacklist()
         company = self.env.company
 
         if not company.restrict_modules or not company.allowed_modules:
-            return all_visible
+            return blacklist
 
         allowed_set = ALWAYS_ALLOWED | {
             m.strip()
@@ -31,14 +30,15 @@ class IrUiMenu(models.Model):
             if m.strip()
         }
 
-        menu_module_map = self._get_menu_module_map(all_visible)
+        all_menu_ids = self.search([]).ids
+        menu_module_map = self._get_menu_module_map(all_menu_ids)
 
-        filtered = [
-            menu_id for menu_id in all_visible
-            if menu_module_map.get(menu_id, 'base') in allowed_set
+        restricted = [
+            menu_id for menu_id in all_menu_ids
+            if menu_module_map.get(menu_id, 'base') not in allowed_set
         ]
 
-        return filtered
+        return list(set(blacklist + restricted))
 
     @api.model
     def _get_menu_module_map(self, menu_ids):
@@ -54,7 +54,6 @@ class IrUiMenu(models.Model):
         for rec in xid_records:
             menu_module_map[rec['res_id']] = rec['module']
 
-        # Menus not found in ir.model.data are custom/dynamic — allow them
         for menu_id in menu_ids:
             if menu_id not in menu_module_map:
                 menu_module_map[menu_id] = 'base'
