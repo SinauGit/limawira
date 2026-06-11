@@ -1,4 +1,5 @@
 from odoo import api, models
+from odoo.addons.base.models.ir_ui_menu import IrUiMenu as IrUiMenuBase
 
 
 class IrUiMenu(models.Model):
@@ -23,3 +24,11 @@ class IrUiMenu(models.Model):
                 )
                 visible = set(allowed.ids)
         return visible
+
+    @api.model
+    def load_menus(self, debug):
+        return IrUiMenuBase.load_menus.__wrapped__(self, debug)
+
+    @api.model
+    def load_web_menus(self, debug):
+        return IrUiMenuBase.load_web_menus.__wrapped__(self, debug)
