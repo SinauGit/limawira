@@ -1,12 +1,10 @@
-from odoo import api, models, tools
+from odoo import api, models
 
 
 class IrUiMenu(models.Model):
     _inherit = 'ir.ui.menu'
 
     @api.model
-    @tools.ormcache('frozenset(self.env.user.groups_id.ids)', 'debug',
-                    'self.env.company.id', cache='templates')
     def _visible_menu_ids(self, debug=False):
         visible = super()._visible_menu_ids(debug=debug)
         param = self.env['ir.config_parameter'].sudo().get_param(
