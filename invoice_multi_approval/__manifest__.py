@@ -2,7 +2,7 @@
     'name': "Invoice Multi Level Approval",
     'version': '18.0.1.0.0',
     'category': 'Accounting',
-    'author': 'Cybrosys direvisi dan disesuaikan ulang oleh Rizky Abdi',
+    'author': 'Cybrosys  - Revised by Rizky Abdi S.H',
     'depends': ['account'],
     'data': [
         'security/invoice_multi_approval_groups.xml',

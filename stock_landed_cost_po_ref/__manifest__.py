@@ -1,8 +1,9 @@
 {
     "name": "Landed Cost: Show Single Related PO",
     "version": "18.0.1.0.0",
-    "author": "Rizky Abdi S.H",
-    "website": "www.lui.co.id",
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     "depends": [
         "stock_landed_costs",
         "purchase_stock"

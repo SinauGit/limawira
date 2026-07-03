@@ -2,7 +2,8 @@
 {
     'name': 'Lww customizations',
     'author': 'Rizky Abdi S.H',
-    'website': 'www.lui.co.id',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'version': '18.0.1.0',
     'depends': [
         'project',

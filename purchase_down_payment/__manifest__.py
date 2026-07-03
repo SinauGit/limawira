@@ -2,7 +2,7 @@
     'name': 'Purchase Down Payment',
     'version': '18.0.1.0.0',
     'category': 'Purchase',
-    'author': 'Cybrosys Di revisi dan disesuaikan ulang oleh Rizky Abdi S.H',
+    'author': 'Cybrosys  - Revised by Rizky Abdi S.H',
     'depends': ['purchase', 'sale'],
     'data': [
         'security/ir.model.access.csv',

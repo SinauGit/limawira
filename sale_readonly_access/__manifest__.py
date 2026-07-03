@@ -1,7 +1,9 @@
 {
     'name': 'Sale Read Only Access',
     'version': '18.0.1.0.0',
-    'category': 'Sales',
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['sale_management', 'sale_project','project','sale'],
     'data': [
         'security/sale_readonly_security.xml',

@@ -2,7 +2,8 @@
     'name': 'ship via dan employee di po',
     'version': '18.0.1.0.0',
     'author': 'Rizky Abdi S.H',
-    'website': 'www.lui.co.id',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['purchase'],
     'data': [
         'security/ir.model.access.csv',

@@ -1,9 +1,9 @@
 {
     'name': 'Project Transfer',
     'version': '18.0.1.0.0',
-    'category': 'Project',
     'author': 'Rizky Abdi S.H',
-    'website': 'www.lui.co.id',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': [
         'project',
         'sale_management',

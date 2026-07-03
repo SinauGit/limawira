@@ -2,7 +2,8 @@
     'name': 'No Duplicate Vendor, Product Categories Product',
     "version": "18.0.1.0.0",
     'author': 'Rizky Abdi S.H',
-    'website': 'www.lui.co.id',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['account', 'purchase', 'product', 'hak_purchase'],
     'data': [
         'security/ir.model.access.csv',

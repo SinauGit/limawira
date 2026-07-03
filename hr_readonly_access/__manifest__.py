@@ -1,7 +1,9 @@
 {
     'name': 'HR Readonly Access',
     'version': '18.0.1.0.0',
-    'category': 'Human Resources',
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['hr', 'hr_org_chart', 'sale_readonly_access'],
     'data': [
         'security/ir.model.access.csv',

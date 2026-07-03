@@ -3,7 +3,8 @@
     'version': '18.0.1.0.0',
     'depends': ['account', 'analytic', 'analytic_enterprise'],
     'author': 'Rizky Abdi S.H',
-    'website': 'www.lui.co.id',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'data': [
         'security/ir.model.access.csv',
         'views/analytic_line_views.xml',

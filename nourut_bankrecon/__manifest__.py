@@ -2,7 +2,8 @@
     'name': 'Bank Reconciliation Notes',
     'version': '18.0.1.0.0',
     'author': 'Rizky Abdi S.H',
-    'website': 'www.lui.co.id',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['account_accountant','account',],
     'data': [
                                                          

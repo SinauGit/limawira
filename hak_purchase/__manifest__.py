@@ -2,7 +2,8 @@
     'name': 'Hak Akses Purchase LWW',
     'version': '1.0',
     'author': 'Rizky Abdi S.H',
-    'website': 'www.lui.co.id',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['stock','stock_landed_costs', 'uom', 'purchase', 'sales_team', 'account'],
     'data': [
         'security/res_groups.xml',

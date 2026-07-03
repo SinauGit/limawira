@@ -2,8 +2,9 @@
 {
     "name": "LWW Custom View",
     "version": "1.0.0",
-    "author": "Rizky Abdi S.H",
-    "website": "www.lui.co.id",
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     "depends": ["account", "sale", "project","stock","sales_team","lww_sales","project_wip_monitoring",        
     ],
     "data": [
