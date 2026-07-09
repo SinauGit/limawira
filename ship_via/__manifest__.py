@@ -6,9 +6,9 @@
     'company': 'Pt Lintang Utama Infotek',
     'depends': ['purchase'],
     'data': [
-        'security/ir.model.access.csv',
+        # 'security/ir.model.access.csv',
         'views/ship_to_views.xml',
-        # 'views/employee_views.xml',
+        'views/employee_views.xml',
         'views/customer_views.xml',
     ],
     'installable': True,
