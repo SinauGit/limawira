@@ -1,33 +1,6 @@
-                       
-                                                                                
- 
-                                    
- 
-                                                                                
-                                        
- 
-                                                        
-                                                 
- 
-                                                                    
-                                                                   
-                                                                  
-                                                                  
- 
-                                                                             
-                                       
-                                                                              
 from odoo import fields, models
 
-
-class PurchaseOrderLine(models.Model):
-
-
-
-
-
-
-       
+class PurchaseOrderLine(models.Model):   
     _inherit = 'purchase.order.line'
 
     is_downpayment = fields.Boolean(
@@ -36,13 +9,7 @@ class PurchaseOrderLine(models.Model):
                                          "They are not copied when "
                                          "duplicating a purchase order.")
 
-    def _prepare_invoice_line(self, **optional_values):
-
-
-
-
-
-           
+    def _prepare_invoice_line(self, **optional_values):           
         self.ensure_one()
         res = {
             'display_type': 'product',
