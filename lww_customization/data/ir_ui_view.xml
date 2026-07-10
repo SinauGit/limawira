@@ -44,6 +44,10 @@
         <xpath expr="//field[@name='invoice_no']" position="attributes">
           <attribute name="required">True</attribute>
         </xpath>
+        <xpath expr="//field[@name='project_id']" position="attributes">
+          <attribute name="invisible">move_type in ["in_invoice", "out_receipt", "in_receipt", "in_refund"]</attribute>
+          <attribute name="options">{"no_create":true,"no_open":false}</attribute>
+        </xpath>
         <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='invoice_date'][2]" position="attributes">
           <attribute name="force_save">0</attribute>
           <attribute name="readonly">False</attribute>
@@ -270,6 +274,39 @@
     <field name="name">Odoo Studio: product.template.product.form customization</field>
     <field name="priority">160</field>
     <field name="type">form</field>
+  </record>
+  <record id="lww_customization.odoo_studio_sale_ord_7a83b18c-03be-4bef-9a79-b18b24379148" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
+    <field name="arch" type="xml">
+      <data>
+        <xpath expr="//field[@name='expected_date']" position="after">
+          <field name="project_id" optional="show"/>
+        </xpath>
+        <xpath expr="//field[@name='employee_id']" position="attributes">
+          <attribute name="string">Salesperson</attribute>
+        </xpath>
+      </data>
+    </field>
+    <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+    <field name="mode">extension</field>
+    <field name="model">sale.order</field>
+    <field name="name">Odoo Studio: sale.order.list customization</field>
+    <field name="priority">160</field>
+    <field name="type">list</field>
+  </record>
+  <record id="lww_customization.odoo_studio_sale_ord_d3840442-7532-45ec-b027-6cc57498dd90" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
+    <field name="arch" type="xml">
+      <data>
+        <xpath expr="//field[@name='employee_id']" position="attributes">
+          <attribute name="string">Salesperson</attribute>
+        </xpath>
+      </data>
+    </field>
+    <field name="inherit_id" ref="sale.view_order_tree"/>
+    <field name="mode">extension</field>
+    <field name="model">sale.order</field>
+    <field name="name">Odoo Studio: sale.order.list (orders) customization</field>
+    <field name="priority">320</field>
+    <field name="type">list</field>
   </record>
   <record id="lww_customization.odoo_studio_account__08830cca-518d-4be7-acbf-6fe440d3c431" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
