@@ -23,6 +23,7 @@
           <attribute name="invisible">move_type not in ["out_invoice", "out_refund", "in_invoice", "in_refund"] or check_approve_ability != True or document_fully_approved == True or is_approved == True or not department_id</attribute>
         </xpath>
         <xpath expr="//form[1]/header[1]/button[@name='action_post'][2]" position="attributes">
+          <attribute name="groups">account.group_account_invoice,purchase.group_purchase_user</attribute>
           <attribute name="invisible">hide_post_button or move_type == 'entry' or display_inactive_currency_warning</attribute>
         </xpath>
         <xpath expr="//form[1]/header[1]/button[@name='action_register_payment']" position="attributes">
@@ -31,8 +32,11 @@
         <xpath expr="//button[@name='action_reverse']" position="attributes">
           <attribute name="groups">account.group_account_user</attribute>
         </xpath>
+        <xpath expr="//form[1]/header[1]/button[@name='button_cancel'][2]" position="attributes">
+          <attribute name="groups">account.group_account_invoice,purchase.group_purchase_user</attribute>
+        </xpath>
         <xpath expr="//button[@name='button_draft']" position="attributes">
-          <attribute name="groups">account.group_account_user</attribute>
+          <attribute name="groups">account.group_account_user,purchase.group_purchase_user</attribute>
         </xpath>
         <xpath expr="//button[@name='button_draft']" position="after">
           <button string="Print Invoice" name="account.account_invoices_without_payment" type="action" class="oe_highlight" invisible="move_type not in [&quot;out_invoice&quot;, &quot;out_refund&quot;]"/>
@@ -100,11 +104,21 @@
           <attribute name="groups">hak_akses.group_admin_lww</attribute>
         </xpath>
         <xpath expr="//form[1]/header[1]/button[@name='button_confirm'][2]" position="attributes">
-          <attribute name="groups">hak_purchase.group_purchase_admin_lww,purchase.group_purchase_manager</attribute>
+          <attribute name="groups">hak_purchase.group_purchase_admin_lww,purchase.group_purchase_manager,purchase_restricted_access.group_purchase_own_user</attribute>
+        </xpath>
+        <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+          <attribute name="groups">hak_purchase.group_purchase_admin_lww,purchase.group_purchase_manager,purchase_restricted_access.group_purchase_own_user</attribute>
         </xpath>
         <xpath expr="//button[@name='button_draft']" position="attributes">
           <attribute name="groups">purchase.group_purchase_user</attribute>
           <attribute name="invisible">state != "cancel"</attribute>
+        </xpath>
+        <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='products']/group[1]/group[1]/field[@name='notes']" position="before">
+          <field name="discount_type"/>
+          <field name="discount_rate"/>
+        </xpath>
+        <xpath expr="//field[@name='tax_totals']" position="before">
+          <field name="amount_discount"/>
         </xpath>
       </data>
     </field>
@@ -122,7 +136,7 @@
           <attribute name="groups">hak_akses.group_user_lww,stock.group_stock_user</attribute>
         </xpath>
         <xpath expr="//form[1]/header[1]/button[@name='button_validate']" position="attributes">
-          <attribute name="groups">hak_akses.group_admin_lww</attribute>
+          <attribute name="groups">hak_akses.group_admin_lww,base.group_erp_manager</attribute>
         </xpath>
         <xpath expr="//form[1]/header[1]/button[@name='button_validate'][2]" position="attributes">
           <attribute name="groups">stock.group_stock_user,hak_akses.group_user_lww</attribute>
@@ -155,8 +169,13 @@
         <xpath expr="//field[@name='product_template_id']" position="after">
           <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='order_lines']/field[@name='order_line']/list[1]/field[@name='name']" position="move"/>
         </xpath>
-        
-        
+        <xpath expr="//field[@name='note']" position="before">
+          <field name="discount_type"/>
+          <field name="discount_rate"/>
+        </xpath>
+        <xpath expr="//field[@name='tax_totals']" position="before">
+          <field name="amount_discount"/>
+        </xpath>
         <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='order_lines']/field[@name='order_line']/list[1]/field[@name='name']" position="attributes">
           <attribute name="widget">text</attribute>
         </xpath>
@@ -186,14 +205,10 @@
     <field name="priority">99</field>
     <field name="type">list</field>
   </record>
-  
   <record id="lww_customization.odoo_studio_sale_ord_6bc10a8f-5951-4ad4-a894-e9808c6316bd" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
-        <xpath expr="//field[@name='employee_id']" position="attributes">
-          <attribute name="string">Salesperson</attribute>
-        </xpath>
-        <xpath expr="//field[@name='invoice_status']" position="after">
+        <xpath expr="//field[@name='partner_id']" position="after">
           <field name="project_id" optional="show"/>
         </xpath>
       </data>
@@ -245,6 +260,12 @@
           <attribute name="readonly">False</attribute>
           <attribute name="string">Part Number / Reference</attribute>
         </xpath>
+        <xpath expr="//form[@name='Product Template']/sheet[@name='product_form']/notebook[1]/page[@name='purchase']" position="attributes">
+          <attribute name="groups">purchase.group_purchase_user,stock.group_stock_user</attribute>
+        </xpath>
+        <xpath expr="//group[@name='bill']" position="attributes">
+          <attribute name="groups">purchase.group_purchase_manager,stock.group_stock_user</attribute>
+        </xpath>
       </data>
     </field>
     <field name="inherit_id" ref="product.product_template_only_form_view"/>
@@ -257,6 +278,9 @@
   <record id="lww_customization.odoo_studio_sale_ord_7a83b18c-03be-4bef-9a79-b18b24379148" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
+        <xpath expr="//field[@name='expected_date']" position="after">
+          <field name="project_id" optional="show"/>
+        </xpath>
         <xpath expr="//field[@name='employee_id']" position="attributes">
           <attribute name="string">Salesperson</attribute>
         </xpath>
@@ -276,7 +300,7 @@
           <attribute name="string">Salesperson</attribute>
         </xpath>
       </data>
-    </field>  
+    </field>
     <field name="inherit_id" ref="sale.view_order_tree"/>
     <field name="mode">extension</field>
     <field name="model">sale.order</field>
@@ -284,7 +308,7 @@
     <field name="priority">320</field>
     <field name="type">list</field>
   </record>
-  <record id="odoo_studio_account__08830cca-518d-4be7-acbf-6fe440d3c431" model="ir.ui.view" context="{'studio': True}">
+  <record id="lww_customization.odoo_studio_account__08830cca-518d-4be7-acbf-6fe440d3c431" model="ir.ui.view" context="{'studio': True}" forcecreate="1">
     <field name="arch" type="xml">
       <data>
         <xpath expr="//field[@name='document_fully_approved']" position="attributes">
@@ -297,6 +321,67 @@
     <field name="model">account.move</field>
     <field name="name">Odoo Studio: account.out.invoice.list customization</field>
     <field name="priority">99</field>
+    <field name="type">list</field>
+  </record>
+  <record id="odoo_studio_account__1741a6c3-c27e-4cb7-a425-e8246fe41cff" model="ir.ui.view" context="{'studio': True}">
+    <field name="arch" type="xml">
+      <data>
+        <xpath expr="//kanban[1]/templates[1]/t[@t-name='card']/div[2]/div[2]" position="after">
+          <field name="no_journal" display="full"/>
+        </xpath>
+      </data>
+    </field>
+    <field name="inherit_id" ref="account_accountant.view_bank_statement_line_kanban_bank_rec_widget"/>
+    <field name="mode">extension</field>
+    <field name="model">account.bank.statement.line</field>
+    <field name="name">Odoo Studio: account.bank.statement.line.kanban.bank_rec_widget customization</field>
+    <field name="priority">99</field>
+    <field name="type">kanban</field>
+  </record>
+  <record id="odoo_studio_account__aa311eac-732d-4e9b-beaa-cef6aa7e284a" model="ir.ui.view" context="{'studio': True}">
+    <field name="arch" type="xml">
+      <data>
+        <xpath expr="//list[1]/field[@name='name']" position="after">
+          <field name="invoice_no" optional="show"/>
+        </xpath>
+      </data>
+    </field>
+    <field name="inherit_id" ref="account.view_move_tree"/>
+    <field name="mode">extension</field>
+    <field name="model">account.move</field>
+    <field name="name">Odoo Studio: account.move.list customization</field>
+    <field name="priority">160</field>
+    <field name="type">list</field>
+  </record>
+  <record id="odoo_studio_account__22941028-f83d-4c6b-a625-b2eb29c0b8dc" model="ir.ui.view" context="{'studio': True}">
+    <field name="arch" type="xml">
+      <data>
+        <xpath expr="//button[@name='button_open_journal_entry']" position="attributes">
+          <attribute name="groups">account.group_account_user</attribute>
+          <attribute name="invisible">False</attribute>
+        </xpath>
+      </data>
+    </field>
+    <field name="inherit_id" ref="account.view_account_payment_form"/>
+    <field name="mode">extension</field>
+    <field name="model">account.payment</field>
+    <field name="name">Odoo Studio: account.payment.form customization</field>
+    <field name="priority">160</field>
+    <field name="type">form</field>
+  </record>
+  <record id="odoo_studio_product__a1211f71-28de-4765-ba2a-c4bb574adc4a" model="ir.ui.view" context="{'studio': True}">
+    <field name="arch" type="xml">
+      <data>
+        <xpath expr="//field[@name='qty_available']" position="attributes">
+          <attribute name="groups">stock.group_stock_user,sales_team.group_sale_salesman</attribute>
+        </xpath>
+      </data>
+    </field>
+    <field name="inherit_id" ref="product.product_template_tree_view"/>
+    <field name="mode">extension</field>
+    <field name="model">product.template</field>
+    <field name="name">Odoo Studio: product.template.product.list customization</field>
+    <field name="priority">160</field>
     <field name="type">list</field>
   </record>
 </odoo>
