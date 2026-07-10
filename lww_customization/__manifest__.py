@@ -15,6 +15,7 @@
         'web_studio',
         'account_accountant',
         'lww_customization',
+        'lww_custom_view',
     ],
     'data': [
         'data/ir_ui_view.xml',
