@@ -13,6 +13,8 @@
         'web_grid',
         'web_hierarchy',
         'web_studio',
+        'account_accountant',
+        'lww_customization',
     ],
     'data': [
         'data/ir_ui_view.xml',
