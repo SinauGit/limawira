@@ -44,10 +44,6 @@
         <xpath expr="//field[@name='invoice_no']" position="attributes">
           <attribute name="required">True</attribute>
         </xpath>
-        <xpath expr="//field[@name='project_id']" position="attributes">
-          <attribute name="invisible">move_type in ["in_invoice", "out_receipt", "in_receipt", "in_refund"]</attribute>
-          <attribute name="options">{"no_create":true,"no_open":false}</attribute>
-        </xpath>
         <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='invoice_date'][2]" position="attributes">
           <attribute name="force_save">0</attribute>
           <attribute name="readonly">False</attribute>
