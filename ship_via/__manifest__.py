@@ -4,7 +4,7 @@
     'author': 'Rizky Abdi S.H',
     'website': 'https://lui.co.id',
     'company': 'Pt Lintang Utama Infotek',
-    'depends': ['purchase'],
+    'depends': ['purchase','lww_purchase'],
     'data': [
         # 'security/ir.model.access.csv',
         'views/ship_to_views.xml',
