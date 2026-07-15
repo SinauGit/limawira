@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_sale_order_read_only,sale.order.read.only,sale.model_sale_order,group_sale_read_only,1,0,0,0
-access_sale_order_line_read_only,sale.order.line.read.only,sale.model_sale_order_line,group_sale_read_only,1,0,0,0
-access_crm_tag_read_only,crm.tag.read.only,sales_team.model_crm_tag,group_sale_read_only,1,0,0,0
-access_sale_order_spreadsheet_read_only,sale.order.spreadsheet.read.only,spreadsheet_sale_management.model_sale_order_spreadsheet,group_sale_read_only,1,0,0,0

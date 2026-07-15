@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="project_embedded_action_sales_orders_readonly" model="ir.embedded.actions">
+        <field name="parent_res_model">project.project</field>
+        <field name="sequence">50</field>
+        <field name="name">Sales Orders</field>
+        <field name="parent_action_id" ref="project.act_project_project_2_project_task_all"/>
+        <field name="python_method">action_view_sos</field>
+        <field name="context">{"from_embedded_action": true}</field>
+        <field name="groups_ids" eval="[(4, ref('custom_access.group_sales_read_only'))]"/>
+        <field name="domain">[('allow_billable', '=', True)]</field>
+    </record>
+</odoo>
