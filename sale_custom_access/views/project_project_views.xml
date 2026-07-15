@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_project_form_expose_sale_order_count" model="ir.ui.view">
-        <field name="name">project.project.view.expose.sale.order.count</field>
+    <record id="view_project_form_expose_sale_order_button" model="ir.ui.view">
+        <field name="name">project.project.view.expose.sale.order.button</field>
         <field name="model">project.project</field>
         <field name="inherit_id" ref="sale_project.view_edit_project_inherit_form"/>
         <field name="arch" type="xml">
-            <div name="button_box" position="inside">
-                <field name="sale_order_count" invisible="1"/>
-            </div>
+            <xpath expr="//button[@name='action_view_sos'][1]" position="attributes">
+                <attribute name="groups">sales_team.group_sale_salesman_all_leads,sale_custom_access.group_sale_read_only</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_view_sos'][2]" position="attributes">
+                <attribute name="groups">sales_team.group_sale_salesman_all_leads,sale_custom_access.group_sale_read_only</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>

@@ -9,7 +9,6 @@
         'security/ir.model.access.csv',
         'security/ir_rule.xml',
         'views/project_project_views.xml',
-        'data/embedded_actions_data.xml',
     ],
     'installable': True,
     'application': False,
