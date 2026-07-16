@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_sales_extra_right" model="ir.module.category">
+        <field name="name">Extra Right</field>
+        <field name="sequence">100</field>
+    </record>
+    <record id="group_sale_readonly" model="res.groups">
+        <field name="name">Read Only</field>
+        <field name="category_id" ref="module_category_sales_extra_right"/>
+    </record>
+</odoo>
