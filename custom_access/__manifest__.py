@@ -11,7 +11,7 @@
         'security/custom_access_groups.xml',
         'security/ir.model.access.csv',
         'security/custom_access_rules.xml',
-        'views/project_embedded_action.xml',
+        'views/project_so_button.xml',
     ],
     'installable': True,
     'application': False,
