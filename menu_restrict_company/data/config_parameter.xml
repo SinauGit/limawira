@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <record id="param_restricted_company_id" model="ir.config_parameter">
-        <field name="key">menu_restrict_company.restricted_company_id</field>
-        <field name="value">0</field>
-    </record>
-</odoo>
