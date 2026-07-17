@@ -20,4 +20,6 @@
     'data': [
         'data/ir_ui_view.xml',
     ],
+    "installable": True,
+    "application": False,
 }
