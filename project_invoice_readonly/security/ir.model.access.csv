@@ -3,3 +3,9 @@ access_account_move_sale_readonly,account.move.sale.readonly,account.model_accou
 access_account_move_line_sale_readonly,account.move.line.sale.readonly,account.model_account_move_line,sale_readonly_access.group_sale_readonly,1,0,0,0
 access_account_journal_sale_readonly,account.journal.sale.readonly,account.model_account_journal,sale_readonly_access.group_sale_readonly,1,0,0,0
 access_account_payment_term_sale_readonly,account.payment.term.sale.readonly,account.model_account_payment_term,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_sale_order_sale_readonly,sale.order.sale.readonly,sale.model_sale_order,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_sale_order_line_sale_readonly,sale.order.line.sale.readonly,sale.model_sale_order_line,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_stock_picking_sale_readonly,stock.picking.sale.readonly,stock.model_stock_picking,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_stock_move_sale_readonly,stock.move.sale.readonly,stock.model_stock_move,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_stock_move_line_sale_readonly,stock.move.line.sale.readonly,stock.model_stock_move_line,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_stock_picking_type_sale_readonly,stock.picking.type.sale.readonly,stock.model_stock_picking_type,sale_readonly_access.group_sale_readonly,1,0,0,0

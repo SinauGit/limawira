@@ -10,4 +10,24 @@
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
+    <record id="rule_sale_order_project_only" model="ir.rule">
+        <field name="name">Sale Order: hanya yang terkait project</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="groups" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+        <field name="domain_force">[('project_id', '!=', False)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_stock_picking_project_only" model="ir.rule">
+        <field name="name">Stock Picking: hanya yang terkait project</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="groups" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+        <field name="domain_force">[('project_id', '!=', False)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
 </odoo>
