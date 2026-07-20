@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_order_bs,purchase.order.bs,purchase.model_purchase_order,group_purchase_bs,1,1,1,1
+access_purchase_order_line_bs,purchase.order.line.bs,purchase.model_purchase_order_line,group_purchase_bs,1,1,1,1
+access_account_move_bs,account.move.bs,account.model_account_move,group_purchase_bs,1,1,1,1
+access_account_move_line_bs,account.move.line.bs,account.model_account_move_line,group_purchase_bs,1,1,1,1
+access_res_partner_bs,res.partner.bs,base.model_res_partner,group_purchase_bs,1,0,0,0
+access_account_tax_bs,account.tax.bs,account.model_account_tax,group_purchase_bs,1,0,0,0
+access_account_journal_bs,account.journal.bs,account.model_account_journal,group_purchase_bs,1,0,0,0
+access_account_payment_term_bs,account.payment.term.bs,account.model_account_payment_term,group_purchase_bs,1,0,0,0
+access_account_fiscal_position_bs,account.fiscal.position.bs,account.model_account_fiscal_position,group_purchase_bs,1,0,0,0
+access_account_account_bs,account.account.bs,account.model_account_account,group_purchase_bs,1,0,0,0
