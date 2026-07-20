@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_move_sale_readonly,account.move.sale.readonly,account.model_account_move,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_account_move_line_sale_readonly,account.move.line.sale.readonly,account.model_account_move_line,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_account_journal_sale_readonly,account.journal.sale.readonly,account.model_account_journal,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_account_payment_term_sale_readonly,account.payment.term.sale.readonly,account.model_account_payment_term,sale_readonly_access.group_sale_readonly,1,0,0,0

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="project_form_invoice_button_readonly" model="ir.ui.view">
+        <field name="name">project.project.form.invoice.button.readonly</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_open_project_invoices']" position="attributes">
+                <attribute name="groups">account.group_account_readonly,sale_readonly_access.group_sale_readonly</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
