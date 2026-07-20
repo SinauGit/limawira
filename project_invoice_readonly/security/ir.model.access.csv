@@ -9,3 +9,5 @@ access_stock_picking_sale_readonly,stock.picking.sale.readonly,stock.model_stock
 access_stock_move_sale_readonly,stock.move.sale.readonly,stock.model_stock_move,sale_readonly_access.group_sale_readonly,1,0,0,0
 access_stock_move_line_sale_readonly,stock.move.line.sale.readonly,stock.model_stock_move_line,sale_readonly_access.group_sale_readonly,1,0,0,0
 access_stock_picking_type_sale_readonly,stock.picking.type.sale.readonly,stock.model_stock_picking_type,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_purchase_order_sale_readonly,purchase.order.sale.readonly,purchase.model_purchase_order,sale_readonly_access.group_sale_readonly,1,0,0,0
+access_purchase_order_line_sale_readonly,purchase.order.line.sale.readonly,purchase.model_purchase_order_line,sale_readonly_access.group_sale_readonly,1,0,0,0

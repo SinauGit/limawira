@@ -15,6 +15,12 @@
     <record id="project_stock.project_embedded_action_to_wh" model="ir.embedded.actions">
         <field name="groups_ids" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
     </record>
+    <record id="project_purchase.project_embedded_action_purchase_orders" model="ir.embedded.actions">
+        <field name="groups_ids" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+    </record>
+    <record id="sale_project.project_embedded_action_vendor_bills" model="ir.embedded.actions">
+        <field name="groups_ids" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+    </record>
     <record id="project.project_embedded_action_project_updates" model="ir.embedded.actions">
         <field name="groups_ids" eval="[(6, 0, [ref('group_project_dashboard')])]"/>
     </record>
