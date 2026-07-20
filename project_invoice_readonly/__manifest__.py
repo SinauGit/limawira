@@ -6,6 +6,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/record_rules.xml',
+        'data/embedded_actions.xml',
         'views/project_views.xml',
     ],
     'installable': True,

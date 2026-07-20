@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_project.project_embedded_action_invoices" model="ir.embedded.actions">
+        <field name="groups_ids" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+    </record>
+    <record id="sale_project.project_embedded_action_invoices_dashboard" model="ir.embedded.actions">
+        <field name="groups_ids" eval="[(4, ref('sale_readonly_access.group_sale_readonly'))]"/>
+    </record>
+</odoo>
