@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="sale.menu_sale_quotations" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('sale_readonly.group_sale_readonly'))]"/>
+    </record>
+
+    <record id="sale.res_partner_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('sale_readonly.group_sale_readonly'))]"/>
+    </record>
+
     <record id="sale.menu_sale_order" model="ir.ui.menu">
         <field name="groups_id" eval="[(4, ref('sale_readonly.group_sale_readonly'))]"/>
     </record>
