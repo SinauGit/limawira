@@ -2,7 +2,7 @@
     'name': 'Project Invoice Readonly Access',
     'version': '18.0.1.3.0',
     'category': 'Kustom',
-    'depends': ['sale_readonly_access', 'sale_project', 'project_stock', 'project_purchase', 'account'],
+    'depends': ['sale_readonly_access', 'sale_project', 'project_stock', 'project_purchase', 'account','spreadsheet_sale_management'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
