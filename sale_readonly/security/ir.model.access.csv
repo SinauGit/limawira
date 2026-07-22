@@ -9,4 +9,4 @@ access_account_payment_term_readonly,account.payment.term.readonly,account.model
 access_account_journal_readonly,account.journal.readonly,account.model_account_journal,group_sale_readonly,1,0,0,0
 access_account_fiscal_position_readonly,account.fiscal.position.readonly,account.model_account_fiscal_position,group_sale_readonly,1,0,0,0
 access_crm_tag_readonly,crm.tag.readonly,sales_team.model_crm_tag,group_sale_readonly,1,0,0,0
-access_sale_order_spreadsheet_readonly,sale.order.spreadsheet.readonly,sale_management.model_sale_order_spreadsheet,group_sale_readonly,1,0,0,0
+access_sale_order_spreadsheet_readonly,sale.order.spreadsheet.readonly,spreadsheet_sale_management.model_sale_order_spreadsheet,group_sale_readonly,1,0,0,0
