@@ -1,6 +1,6 @@
 {
     'name': 'Landed Cost Access for Purchase & Billing',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Inventory',
     'summary': 'Allow Purchase User and Billing to create landed costs from vendor bills',
     'depends': ['stock_landed_costs', 'purchase'],
