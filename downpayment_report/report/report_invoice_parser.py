@@ -86,14 +86,7 @@ class AccountMove(models.Model):
         return downpayment_lines
 
     def get_all_downpayment_invoices_for_so(self):
-
-
-
-
-
-
-
-           
+      
         self.ensure_one()
         if not self.invoice_origin:
             return []
@@ -114,34 +107,11 @@ class AccountMove(models.Model):
         return downpayment_invoices
 
     def get_total_downpayment_count_for_so(self):
-
-
-
-
-           
+      
         self.ensure_one()
         return len(self.get_all_downpayment_invoices_for_so())
 
     def get_downpayment_lines_with_installment_numbers(self):
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
            
         self.ensure_one()
         
