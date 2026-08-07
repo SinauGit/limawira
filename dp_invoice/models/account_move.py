@@ -1,5 +1,7 @@
                         
 from odoo import models, fields, api, _
+import logging
+_logger = logging.getLogger(__name__)
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
@@ -18,6 +20,25 @@ class AccountMove(models.Model):
                 section.name = _('Down Payment / Termin')
         
         return moves
+
+    def unlink(self):
+        dp_lines = self.line_ids.filtered('is_downpayment')
+        orders = dp_lines.mapped('sale_line_ids.order_id')
+        _logger.info(">>> CUSTOM UNLINK CALLED, dp_lines=%s, orders=%s", dp_lines, orders)
+
+        result = super().unlink()
+
+        for order in orders:
+            remaining = order.order_line.filtered(lambda l: l.is_downpayment)
+            _logger.info(">>> ORDER %s remaining DP lines: %s", order.name, remaining)
+            if not remaining:
+                section = order.order_line.filtered(
+                    lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
+                )
+                _logger.info(">>> SECTION FOUND: %s", section)
+                section.unlink()
+
+        return result
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
@@ -90,19 +111,3 @@ class AccountMoveLine(models.Model):
         if self.custom_description:
             res['name'] = self.custom_description
         return res
-
-
-    def unlink(self):
-        dp_lines = self.filtered('is_downpayment')
-        orders = dp_lines.mapped('sale_line_ids.order_id')
-
-        result = super().unlink()
-
-        for order in orders:
-            if not order.order_line.filtered(lambda l: l.is_downpayment):
-                section = order.order_line.filtered(
-                    lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
-                )
-                section.unlink()
-
-        return result
