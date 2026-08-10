@@ -21,25 +21,6 @@ class AccountMove(models.Model):
         
         return moves
 
-    def unlink(self):
-        dp_lines = self.line_ids.filtered('is_downpayment')
-        orders = dp_lines.mapped('sale_line_ids.order_id')
-        _logger.info(">>> CUSTOM UNLINK CALLED, dp_lines=%s, orders=%s", dp_lines, orders)
-
-        result = super().unlink()
-
-        for order in orders:
-            remaining = order.order_line.filtered(lambda l: l.is_downpayment)
-            _logger.info(">>> ORDER %s remaining DP lines: %s", order.name, remaining)
-            if not remaining:
-                section = order.order_line.filtered(
-                    lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
-                )
-                _logger.info(">>> SECTION FOUND: %s", section)
-                section.unlink()
-
-        return result
-
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
     
