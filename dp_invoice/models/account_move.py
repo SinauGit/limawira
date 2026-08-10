@@ -10,7 +10,7 @@ class AccountMove(models.Model):
     def create(self, vals_list):
                                                                   
         moves = super().create(vals_list)
-        
+         
         for move in moves:
                                                              
             section_lines = move.line_ids.filtered(
