@@ -1,44 +1,44 @@
                         
 from odoo import models, fields, api, _
-# import logging
-# _logger = logging.getLogger(__name__)
+import logging
+_logger = logging.getLogger(__name__)
 
-# class AccountMove(models.Model):
-#     _inherit = 'account.move'
+class AccountMove(models.Model):
+    _inherit = 'account.move'
     
-#     @api.model_create_multi
-#     def create(self, vals_list):
+    @api.model_create_multi
+    def create(self, vals_list):
                                                                   
-#         moves = super().create(vals_list)
+        moves = super().create(vals_list)
         
-#         for move in moves:
+        for move in moves:
                                                              
-#             section_lines = move.line_ids.filtered(
-#                 lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
-#             )
-#             for section in section_lines:
-#                 section.name = _('Down Payment / Termin')
+            section_lines = move.line_ids.filtered(
+                lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
+            )
+            for section in section_lines:
+                section.name = _('Down Payment / Termin')
         
-#         return moves
+        return moves
 
-#     def unlink(self):
-#         dp_lines = self.line_ids.filtered('is_downpayment')
-#         orders = dp_lines.mapped('sale_line_ids.order_id')
-#         _logger.info(">>> CUSTOM UNLINK CALLED, dp_lines=%s, orders=%s", dp_lines, orders)
+    def unlink(self):
+        dp_lines = self.line_ids.filtered('is_downpayment')
+        orders = dp_lines.mapped('sale_line_ids.order_id')
+        _logger.info(">>> CUSTOM UNLINK CALLED, dp_lines=%s, orders=%s", dp_lines, orders)
 
-#         result = super().unlink()
+        result = super().unlink()
 
-#         for order in orders:
-#             remaining = order.order_line.filtered(lambda l: l.is_downpayment)
-#             _logger.info(">>> ORDER %s remaining DP lines: %s", order.name, remaining)
-#             if not remaining:
-#                 section = order.order_line.filtered(
-#                     lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
-#                 )
-#                 _logger.info(">>> SECTION FOUND: %s", section)
-#                 section.unlink()
+        for order in orders:
+            remaining = order.order_line.filtered(lambda l: l.is_downpayment)
+            _logger.info(">>> ORDER %s remaining DP lines: %s", order.name, remaining)
+            if not remaining:
+                section = order.order_line.filtered(
+                    lambda l: l.display_type == 'line_section' and 'Down Payment' in (l.name or '')
+                )
+                _logger.info(">>> SECTION FOUND: %s", section)
+                section.unlink()
 
-#         return result
+        return result
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
