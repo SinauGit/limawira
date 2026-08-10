@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from odoo import models
 
 
@@ -6,25 +5,25 @@ class SaleAdvancePaymentInv(models.TransientModel):
     _inherit = 'sale.advance.payment.inv'
 
     def create_invoices(self):
-        """Extend the standard down payment invoice creation.
+        order = self.sale_order_ids
+        invoices_before = order.invoice_ids
 
-        Standard behavior: creates a down payment invoice (percentage,
-        fixed, or delivered) and returns the action to view it.
-
-        Extension: when the down payment method is 'percentage', check
-        whether the cumulative amount already invoiced through down
-        payment lines on the order has reached (or exceeded) the order's
-        untaxed total. If so, automatically trigger the creation of the
-        final (regular) invoice, which deducts the existing down
-        payments. This ensures the order's invoice_status correctly
-        reflects 'Fully Invoiced' once the customer has been billed for
-        the full amount via down payment(s), instead of staying stuck on
-        'To Invoice'.
-        """
         action = super().create_invoices()
 
         if self.advance_payment_method == 'percentage':
-            order = self.sale_order_ids
+            new_invoices = order.invoice_ids - invoices_before
+            new_dp_invoices = new_invoices.filtered(
+                lambda inv: inv.move_type in ('out_invoice', 'out_refund') and not inv.dp_installment_no
+            )
+
+            if new_dp_invoices:
+                existing_count = self.env['account.move'].search_count([
+                    ('invoice_origin', '=', order.name),
+                    ('dp_installment_no', '>', 0),
+                    ('state', '!=', 'cancel'),
+                ])
+                for idx, invoice in enumerate(new_dp_invoices.sorted('id'), start=existing_count + 1):
+                    invoice.dp_installment_no = idx
 
             downpayment_lines = order.order_line.filtered(
                 lambda line: line.is_downpayment and not line.display_type

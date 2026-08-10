@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_invoice_downpayment_document" inherit_id="account.report_invoice_document">
-        
-        
+
         <xpath expr="//t[@t-set='lines']" position="attributes">
             <attribute name="t-value">o.get_invoice_lines_for_report()</attribute>
         </xpath>
-        
-        
+
         <xpath expr="//table[@name='invoice_line_table']/tbody" position="inside">
             <t t-if="o.should_show_downpayment_template()">
-                
+
                 <tr class="fw-bold o_line_section">
                     <td colspan="4">Sales Order Details</td>
                 </tr>
-                
+
                 <t t-foreach="o.get_related_sale_order_lines()" t-as="so_line">
                     <tr>
                         <td>
@@ -37,42 +35,42 @@
                             </span>
                         </td>
                     </tr>
-                </t>     
-                
-                <tr class="fw-bold o_line_section" style="border-bottom: 2px solid #35bdaf; border-top: 2px solid #35bdaf;">
-                    <td colspan="4">Down Payment / Termin</td>
-                </tr>
-                
-                
-                <t t-foreach="o.get_downpayment_lines_with_installment_numbers()" t-as="dp_item">
-                    <tr>
-                        <td>
-                            <span t-out="dp_item['display_name']"/>
-                        </td>
-                        <td class="text-end text-nowrap">
-                            <span t-esc="int(dp_item['quantity'])"/>
-                        </td>
-                        <td class="text-end text-nowrap">
-                            <span>
-                                <t t-esc="o.currency_id.symbol or 'Rp'"/>
-                                <t t-esc="'{:,.0f}'.format(dp_item['price_unit']).replace(',', '.')"/>
-                            </span>
-                        </td>
-                        <td class="text-end text-nowrap">
-                            <span>
-                                <t t-esc="o.currency_id.symbol or 'Rp'"/>
-                                <t t-esc="'{:,.0f}'.format(dp_item['price_subtotal']).replace(',', '.')"/>
-                            </span>
-                        </td>
+                </t>
+
+                <t t-if="o.should_show_downpayment_section()">
+                    <tr class="fw-bold o_line_section" style="border-bottom: 2px solid #35bdaf; border-top: 2px solid #35bdaf;">
+                        <td colspan="4">Down Payment / Termin</td>
                     </tr>
+
+                    <t t-foreach="o.get_downpayment_lines_with_installment_numbers()" t-as="dp_item">
+                        <tr>
+                            <td>
+                                <span t-out="dp_item['display_name']"/>
+                            </td>
+                            <td class="text-end text-nowrap">
+                                <span t-esc="int(dp_item['quantity'])"/>
+                            </td>
+                            <td class="text-end text-nowrap">
+                                <span>
+                                    <t t-esc="o.currency_id.symbol or 'Rp'"/>
+                                    <t t-esc="'{:,.0f}'.format(dp_item['price_unit']).replace(',', '.')"/>
+                                </span>
+                            </td>
+                            <td class="text-end text-nowrap">
+                                <span>
+                                    <t t-esc="o.currency_id.symbol or 'Rp'"/>
+                                    <t t-esc="'{:,.0f}'.format(dp_item['price_subtotal']).replace(',', '.')"/>
+                                </span>
+                            </td>
+                        </tr>
+                    </t>
                 </t>
             </t>
         </xpath>
-        
-        
+
         <xpath expr="//t[@t-foreach='lines']/tr" position="attributes">
             <attribute name="t-attf-style">{{ 'border-bottom: 2px solid #35bdaf; border-top: 2px solid #35bdaf;' if line.display_type == 'line_section' and line.name and ('Down Payment' in line.name or 'Termin' in line.name) else '' }}</attribute>
         </xpath>
-        
+
     </template>
 </odoo>

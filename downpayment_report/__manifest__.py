@@ -4,7 +4,7 @@
     'website': 'https://lui.co.id',
     'company': 'Pt Lintang Utama Infotek',
     "version": "1.0",
-    "depends": ["account", "sale"],
+    "depends": ["account", "sale","sale_dp_auto_final_invoice"],
     "data": [
                                                   
         "views/report_action.xml"
