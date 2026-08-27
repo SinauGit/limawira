@@ -5,7 +5,7 @@ class SaleAdvancePaymentInv(models.TransientModel):
         order = self.sale_order_ids
         invoices_before = order.invoice_ids
         action = super().create_invoices()
-        if self.advance_payment_method == 'percentage':
+        if self.advance_payment_method != 'delivered':
             new_invoices = order.invoice_ids - invoices_before
             new_dp_invoices = new_invoices.filtered(
                 lambda inv: inv.move_type in ('out_invoice', 'out_refund') and not inv.dp_installment_no

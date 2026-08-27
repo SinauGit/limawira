@@ -5,7 +5,7 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     @api.depends(
-        'order_line.invoice_lines.price_subtotal',
+        'order_line.invoice_lines.price_total',
         'order_line.invoice_lines.move_id.state',
     )
     def _compute_invoice_status(self):
@@ -21,7 +21,7 @@ class SaleOrder(models.Model):
             invoiced_amount = sum(
                 downpayment_lines.invoice_lines.filtered(
                     lambda line: line.move_id.state != 'cancel'
-                ).mapped('price_subtotal')
+                ).mapped('price_total')
             )
-            if order.currency_id.compare_amounts(invoiced_amount, order.amount_untaxed) >= 0:
+            if order.currency_id.compare_amounts(invoiced_amount, order.amount_total) >= 0:
                 order.invoice_status = 'invoiced'

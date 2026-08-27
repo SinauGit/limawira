@@ -1,5 +1,4 @@
-                           
-from odoo import models, fields, api, _
+                     from odoo import models, fields, api, _
 from odoo.tools import format_date
 
 class SaleOrderLine(models.Model):
@@ -23,7 +22,7 @@ class SaleOrderLine(models.Model):
                 line.payment_sequence = line._get_next_payment_sequence()
         
         return lines
-    
+        
     def _get_next_payment_sequence(self):
                                                              
         if not self.order_id:
