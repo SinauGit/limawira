@@ -1,4 +1,4 @@
-                     from odoo import models, fields, api, _
+from odoo import models, fields, api, _
 from odoo.tools import format_date
 
 class SaleOrderLine(models.Model):
