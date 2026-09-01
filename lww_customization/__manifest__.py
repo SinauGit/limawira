@@ -14,7 +14,6 @@
         'web_hierarchy',
         'web_studio',
         'account_accountant',
-        'lww_customization',
         'lww_custom_view',
     ],
     'data': [
