@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_wip_release" model="ir.ui.view">
+        <field name="name">sale.order.form.wip.release</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Contract Revisions" name="contract_revisions" invisible="state != 'sale'">
+                    <group>
+                        <group>
+                            <field name="x_original_contract_value"/>
+                            <field name="x_current_contract_value"/>
+                        </group>
+                        <group>
+                            <field name="x_contract_revision_count"/>
+                            <field name="x_pending_revision_count"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-warning" role="alert" invisible="x_pending_revision_count == 0">
+                        WIP release is blocked until every contract revision below has a reason.
+                    </div>
+                    <field name="x_revision_ids" readonly="0">
+                        <list editable="bottom" create="false" delete="false">
+                            <field name="revision_date" readonly="1"/>
+                            <field name="old_value" readonly="1"/>
+                            <field name="new_value" readonly="1"/>
+                            <field name="difference" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="reason" placeholder="Reason"/>
+                            <field name="currency_id" column_invisible="True"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

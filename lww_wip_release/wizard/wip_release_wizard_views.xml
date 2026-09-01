@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wip_release_wizard_form" model="ir.ui.view">
+        <field name="name">wip.release.wizard.form</field>
+        <field name="model">wip.release.wizard</field>
+        <field name="arch" type="xml">
+            <form string="WIP Release">
+                <group>
+                    <group>
+                        <field name="master_project_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="accounting_date"/>
+                    </group>
+                    <group>
+                        <field name="is_manual_override"/>
+                        <field name="override_reason" required="is_manual_override" invisible="not is_manual_override"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+                <group string="Remarks">
+                    <field name="remarks" nolabel="1"/>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="not is_manual_override">
+                    Manual Override ignores the release threshold. The reason is stored on the batch for audit.
+                </div>
+                <group string="Preview">
+                    <field name="line_ids" nolabel="1" readonly="1">
+                        <list create="false" delete="false">
+                            <field name="x_global_project_number"/>
+                            <field name="company_id"/>
+                            <field name="project_id"/>
+                            <field name="wip_amount" sum="Total"/>
+                            <field name="currency_id" column_invisible="True"/>
+                        </list>
+                    </field>
+                </group>
+                <group class="oe_subtotal_footer oe_right">
+                    <field name="total_amount"/>
+                </group>
+                <footer>
+                    <button name="action_release" type="object" string="Execute Release" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

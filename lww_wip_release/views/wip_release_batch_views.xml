@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wip_release_batch_list" model="ir.ui.view">
+        <field name="name">wip.release.batch.list</field>
+        <field name="model">wip.release.batch</field>
+        <field name="arch" type="xml">
+            <list string="WIP Release Batches" create="false">
+                <field name="name"/>
+                <field name="x_global_project_number"/>
+                <field name="master_project_id"/>
+                <field name="partner_id" optional="show"/>
+                <field name="release_date"/>
+                <field name="accounting_date"/>
+                <field name="release_type"/>
+                <field name="line_count" string="Companies"/>
+                <field name="total_released_amount" sum="Total Released"/>
+                <field name="is_manual_override" optional="hide"/>
+                <field name="approved_by_id" string="Approved By"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-muted="state == 'draft'"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_wip_release_batch_form" model="ir.ui.view">
+        <field name="name">wip.release.batch.form</field>
+        <field name="model">wip.release.batch</field>
+        <field name="arch" type="xml">
+            <form string="WIP Release Batch" create="false">
+                <header>
+                    <button name="action_view_moves" type="object" string="Journal Entries" class="btn-secondary" invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="x_global_project_number"/>
+                            <field name="master_project_id"/>
+                            <field name="sale_order_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="release_date"/>
+                            <field name="accounting_date"/>
+                            <field name="release_type"/>
+                            <field name="approved_by_id" string="Approved By"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Manual Override" invisible="not is_manual_override">
+                        <field name="is_manual_override"/>
+                        <field name="override_reason"/>
+                    </group>
+                    <group string="Remarks" invisible="not remarks">
+                        <field name="remarks" nolabel="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Release Lines" name="lines">
+                            <field name="line_ids" readonly="1">
+                                <list create="false" delete="false">
+                                    <field name="company_id"/>
+                                    <field name="project_id"/>
+                                    <field name="analytic_account_id"/>
+                                    <field name="wip_amount"/>
+                                    <field name="released_amount" sum="Released"/>
+                                    <field name="move_id"/>
+                                    <field name="move_state"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="total_released_amount"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_wip_release_batch_search" model="ir.ui.view">
+        <field name="name">wip.release.batch.search</field>
+        <field name="model">wip.release.batch</field>
+        <field name="arch" type="xml">
+            <search string="WIP Release Batches">
+                <field name="name"/>
+                <field name="x_global_project_number"/>
+                <field name="master_project_id"/>
+                <field name="partner_id"/>
+                <filter name="filter_initial" string="Initial Release" domain="[('release_type', '=', 'initial')]"/>
+                <filter name="filter_additional" string="Additional Release" domain="[('release_type', '=', 'additional')]"/>
+                <filter name="filter_override" string="Manual Override" domain="[('is_manual_override', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_gp" string="Global Project" context="{'group_by': 'x_global_project_number'}"/>
+                    <filter name="group_type" string="Release Type" context="{'group_by': 'release_type'}"/>
+                    <filter name="group_date" string="Accounting Date" context="{'group_by': 'accounting_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_wip_release_batch" model="ir.actions.act_window">
+        <field name="name">WIP Release Batches</field>
+        <field name="res_model">wip.release.batch</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_wip_release_batch_search"/>
+    </record>
+
+    <record id="view_wip_release_line_list" model="ir.ui.view">
+        <field name="name">wip.release.line.list</field>
+        <field name="model">wip.release.line</field>
+        <field name="arch" type="xml">
+            <list string="WIP Release Lines" create="false" delete="false">
+                <field name="batch_id"/>
+                <field name="x_global_project_number"/>
+                <field name="accounting_date"/>
+                <field name="company_id"/>
+                <field name="project_id"/>
+                <field name="analytic_account_id" optional="show"/>
+                <field name="released_amount" sum="Released"/>
+                <field name="move_id"/>
+                <field name="move_state"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_wip_release_line" model="ir.actions.act_window">
+        <field name="name">WIP Release History</field>
+        <field name="res_model">wip.release.line</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

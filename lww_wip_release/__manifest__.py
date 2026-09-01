@@ -1,0 +1,28 @@
+{
+    'name': 'LWW WIP Release',
+    'version': '18.0.1.0.0',
+    'category': 'Accounting',
+    'summary': 'Project based WIP release and automatic reconciliation',
+    'author': 'PT. Limawira Wisesa',
+    'license': 'LGPL-3',
+    'depends': [
+        'project',
+        'sale_management',
+        'account',
+        'analytic',
+    ],
+    'data': [
+        'security/wip_release_security.xml',
+        'security/ir.model.access.csv',
+        'data/ir_sequence_data.xml',
+        'data/ir_cron_data.xml',
+        'views/sale_contract_revision_views.xml',
+        'views/sale_order_views.xml',
+        'views/project_project_views.xml',
+        'views/wip_release_batch_views.xml',
+        'wizard/wip_release_wizard_views.xml',
+        'views/wip_release_menus.xml',
+    ],
+    'installable': True,
+    'application': False,
+}

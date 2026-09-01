@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_wip_release_batch_user,wip.release.batch.user,model_wip_release_batch,lww_wip_release.group_wip_release,1,1,1,1
+access_wip_release_line_user,wip.release.line.user,model_wip_release_line,lww_wip_release.group_wip_release,1,1,1,1
+access_wip_release_wizard_user,wip.release.wizard.user,model_wip_release_wizard,lww_wip_release.group_wip_release,1,1,1,1
+access_wip_release_wizard_line_user,wip.release.wizard.line.user,model_wip_release_wizard_line,lww_wip_release.group_wip_release,1,1,1,1
+access_sale_contract_revision_user,sale.contract.revision.user,model_sale_contract_revision,base.group_user,1,0,0,0
+access_sale_contract_revision_sale,sale.contract.revision.sale,model_sale_contract_revision,sales_team.group_sale_salesman,1,1,1,0
+access_sale_contract_revision_wip,sale.contract.revision.wip,model_sale_contract_revision,lww_wip_release.group_wip_release,1,1,1,1
+access_wip_release_batch_readonly,wip.release.batch.readonly,model_wip_release_batch,account.group_account_readonly,1,0,0,0
+access_wip_release_line_readonly,wip.release.line.readonly,model_wip_release_line,account.group_account_readonly,1,0,0,0

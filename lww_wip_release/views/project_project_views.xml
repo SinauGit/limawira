@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_project_form_wip_release" model="ir.ui.view">
+        <field name="name">project.project.form.wip.release</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="WIP Release" name="wip_release" groups="lww_wip_release.group_wip_release">
+                    <group string="Global Project">
+                        <group>
+                            <field name="x_is_master_project"/>
+                            <field name="x_parent_global_project_id" invisible="x_is_master_project" required="not x_is_master_project"/>
+                            <field name="x_global_project_number"/>
+                        </group>
+                        <group>
+                            <field name="x_company_role"/>
+                            <field name="x_project_group_name"/>
+                            <field name="x_sale_order_id" invisible="not x_is_master_project"/>
+                        </group>
+                    </group>
+                    <group string="WIP Release Configuration">
+                        <group>
+                            <field name="x_release_threshold" widget="percentage"/>
+                            <field name="x_wip_account_id"/>
+                            <field name="x_cogs_account_id"/>
+                            <field name="x_wip_journal_id"/>
+                        </group>
+                        <group>
+                            <field name="x_contract_value"/>
+                            <field name="x_invoiced_amount"/>
+                            <field name="x_invoice_progress"/>
+                            <field name="x_unreleased_wip"/>
+                            <field name="x_group_unreleased_wip" invisible="not x_is_master_project"/>
+                            <field name="x_wip_release_state"/>
+                            <field name="x_last_release_date"/>
+                        </group>
+                    </group>
+                    <group string="Child Projects" invisible="not x_is_master_project">
+                        <field name="x_child_project_ids" nolabel="1" readonly="1">
+                            <list create="false" delete="false">
+                                <field name="name"/>
+                                <field name="company_id"/>
+                                <field name="account_id"/>
+                                <field name="x_unreleased_wip"/>
+                                <field name="x_wip_release_state"/>
+                                <field name="currency_id" column_invisible="True"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="WIP Release History">
+                        <field name="x_release_line_ids" nolabel="1" readonly="1">
+                            <list create="false" delete="false">
+                                <field name="accounting_date"/>
+                                <field name="batch_id"/>
+                                <field name="company_id"/>
+                                <field name="released_amount"/>
+                                <field name="move_id"/>
+                                <field name="move_state"/>
+                                <field name="currency_id" column_invisible="True"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_project_wip_workbench_list" model="ir.ui.view">
+        <field name="name">project.project.wip.workbench.list</field>
+        <field name="model">project.project</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <list string="WIP Release Workbench" create="false" delete="false" edit="false">
+                <header>
+                    <button name="action_open_wip_release_wizard" type="object" string="Run WIP Release" class="btn-primary"/>
+                </header>
+                <field name="x_global_project_number"/>
+                <field name="name" string="Master Project"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="x_sale_order_id"/>
+                <field name="x_contract_value" sum="Contract Value"/>
+                <field name="x_invoiced_amount" sum="Invoiced"/>
+                <field name="x_invoice_progress" widget="progressbar"/>
+                <field name="x_release_threshold" optional="hide"/>
+                <field name="x_group_unreleased_wip" string="Unreleased WIP (Group)" sum="Unreleased WIP"/>
+                <field name="x_last_release_date" optional="show"/>
+                <field name="x_wip_release_state" widget="badge" decoration-success="x_wip_release_state == 'eligible'" decoration-info="x_wip_release_state in ('released', 'released_additional')" decoration-muted="x_wip_release_state == 'not_released'"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_project_wip_workbench_search" model="ir.ui.view">
+        <field name="name">project.project.wip.workbench.search</field>
+        <field name="model">project.project</field>
+        <field name="arch" type="xml">
+            <search string="WIP Release Workbench">
+                <field name="x_global_project_number"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="x_sale_order_id"/>
+                <filter name="filter_eligible" string="Eligible" domain="[('x_wip_release_state', '=', 'eligible')]"/>
+                <filter name="filter_not_released" string="Below Threshold" domain="[('x_wip_release_state', '=', 'not_released')]"/>
+                <filter name="filter_released" string="Released" domain="[('x_wip_release_state', 'in', ('released', 'released_additional'))]"/>
+                <separator/>
+                <filter name="filter_has_wip" string="Has Unreleased WIP" domain="[('x_group_unreleased_wip', '&gt;', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'x_wip_release_state'}"/>
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_wip_release_workbench" model="ir.actions.act_window">
+        <field name="name">WIP Release Workbench</field>
+        <field name="res_model">project.project</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('x_is_master_project', '=', True)]</field>
+        <field name="context">{'search_default_filter_has_wip': 1}</field>
+        <field name="search_view_id" ref="view_project_wip_workbench_search"/>
+    </record>
+
+    <record id="action_wip_release_workbench_list" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_project_wip_workbench_list"/>
+        <field name="act_window_id" ref="action_wip_release_workbench"/>
+    </record>
+</odoo>
