@@ -64,6 +64,8 @@ class WipReleaseLine(models.Model):
                     'account_id': project.x_cogs_account_id.id,
                     'debit': amount,
                     'credit': 0.0,
+                    'currency_id': project.company_id.currency_id.id,
+                    'amount_currency': amount,
                     'analytic_distribution': distribution,
                 }),
                 (0, 0, {
@@ -71,6 +73,8 @@ class WipReleaseLine(models.Model):
                     'account_id': project.x_wip_account_id.id,
                     'debit': 0.0,
                     'credit': amount,
+                    'currency_id': project.company_id.currency_id.id,
+                    'amount_currency': -amount,
                     'analytic_distribution': distribution,
                 }),
             ],
@@ -83,20 +87,16 @@ class WipReleaseLine(models.Model):
         self.ensure_one()
         wip_account = self.project_id.x_wip_account_id
         credit_line = move.line_ids.filtered(lambda l: l.account_id == wip_account)
-        if not credit_line:
-            raise UserError(_(
-                'Release journal entry %s does not contain a WIP counterpart line.'
-            ) % move.name)
-
-        (move_lines | credit_line).sudo().write({'x_wip_release_line_id': self.id})
-
         if wip_account.reconcile:
             to_reconcile = (move_lines | credit_line).sudo().filtered(
                 lambda l: not l.reconciled
             )
             if to_reconcile:
-                to_reconcile.reconcile()
-        return True
+                company = self.company_id
+                to_reconcile.with_company(company).with_context(
+                    allowed_company_ids=[company.id],
+                    no_exchange_difference=True,
+                ).reconcile()
 
     def action_view_move(self):
         self.ensure_one()
