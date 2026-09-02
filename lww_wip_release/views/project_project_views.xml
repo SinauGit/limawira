@@ -10,7 +10,7 @@
                     <group string="Global Project">
                         <group>
                             <field name="x_is_master_project"/>
-                            <field name="x_parent_global_project_id" invisible="x_is_master_project" required="not x_is_master_project"/>
+                            <field name="x_parent_global_project_id" invisible="x_is_master_project"/>
                             <field name="x_global_project_number"/>
                         </group>
                         <group>
