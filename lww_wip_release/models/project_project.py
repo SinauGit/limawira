@@ -253,14 +253,11 @@ class ProjectProject(models.Model):
         self.ensure_one()
         if not self.x_wip_account_id or not self.account_id:
             return self.env['account.move.line']
-        domain = [
+        lines = self.env['account.move.line'].sudo().search([
             ('account_id', '=', self.x_wip_account_id.id),
             ('parent_state', '=', 'posted'),
             ('x_wip_release_line_id', '=', False),
-        ]
-        if self.company_id:
-            domain.append(('company_id', '=', self.company_id.id))
-        lines = self.env['account.move.line'].sudo().search(domain)
+        ])
         key = str(self.account_id.id)
         return lines.filtered(lambda l: key in (l.analytic_distribution or {}))
 
@@ -281,14 +278,13 @@ class ProjectProject(models.Model):
             ])
             for line in lines:
                 for key in (line.analytic_distribution or {}):
-                    bucket = (line.account_id.id, line.company_id.id, key)
+                    bucket = (line.account_id.id, key)
                     balances[bucket] = balances.get(bucket, 0.0) + line.balance
 
         for project in self:
             if project.x_wip_account_id and project.account_id:
                 bucket = (
                     project.x_wip_account_id.id,
-                    project.company_id.id,
                     str(project.account_id.id),
                 )
                 project.x_unreleased_wip = balances.get(bucket, 0.0)
@@ -387,6 +383,8 @@ class ProjectProject(models.Model):
             gaps = []
             if not project.account_id:
                 gaps.append(_('Analytic Account'))
+            if not project.company_id:
+                gaps.append(_('Company'))
             if not project.x_wip_account_id:
                 gaps.append(_('WIP Account'))
             if not project.x_cogs_account_id:
