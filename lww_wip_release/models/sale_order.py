@@ -64,7 +64,6 @@ class SaleOrder(models.Model):
             new_value = order.amount_total
             if (
                 not order.x_original_contract_value
-                and not order.x_last_contract_value
                 and not order.x_revision_ids
             ):
                 order.with_context(**{SKIP_CTX: True}).sudo().write({

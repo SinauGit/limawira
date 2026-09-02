@@ -7,5 +7,5 @@ def post_init_hook(env):
            SET x_original_contract_value = amount_total,
                x_last_contract_value = amount_total
          WHERE state = 'sale'
-           AND COALESCE(x_last_contract_value, 0) = 0
+           AND COALESCE(x_original_contract_value, 0) = 0
     """)
