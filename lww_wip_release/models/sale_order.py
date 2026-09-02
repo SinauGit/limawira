@@ -62,6 +62,16 @@ class SaleOrder(models.Model):
                 continue
             old_value = order.x_last_contract_value
             new_value = order.amount_total
+            if (
+                not order.x_original_contract_value
+                and not order.x_last_contract_value
+                and not order.x_revision_ids
+            ):
+                order.with_context(**{SKIP_CTX: True}).sudo().write({
+                    'x_original_contract_value': new_value,
+                    'x_last_contract_value': new_value,
+                })
+                continue
             if order.currency_id.is_zero(new_value - old_value):
                 continue
             revision_model.create({

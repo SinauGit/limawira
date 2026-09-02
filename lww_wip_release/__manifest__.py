@@ -23,6 +23,7 @@
         'wizard/wip_release_wizard_views.xml',
         'views/wip_release_menus.xml',
     ],
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,
 }
