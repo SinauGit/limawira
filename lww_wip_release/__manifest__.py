@@ -3,9 +3,7 @@
     'version': '18.0.1.0.0',
     'category': 'Accounting',
     'summary': 'Project based WIP release and automatic reconciliation',
-    'author': 'Rizky Abdi S.H',
-    'website': 'https://lui.co.id',
-    'company': 'Pt Lintang Utama Infotek',
+    'author': 'PT. Limawira Wisesa',
     'license': 'LGPL-3',
     'depends': [
         'project',
@@ -22,9 +20,17 @@
         'views/sale_order_views.xml',
         'views/project_project_views.xml',
         'views/wip_release_batch_views.xml',
+        'views/wip_dashboard_views.xml',
         'wizard/wip_release_wizard_views.xml',
         'views/wip_release_menus.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'lww_wip_release/static/src/wip_dashboard/wip_dashboard.js',
+            'lww_wip_release/static/src/wip_dashboard/wip_dashboard.xml',
+            'lww_wip_release/static/src/wip_dashboard/wip_dashboard.scss',
+        ],
+    },
     'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,

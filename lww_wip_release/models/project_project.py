@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools import format_amount
 
 WIP_COMPUTED_FIELDS = [
     'x_contract_value',
@@ -381,10 +382,10 @@ class ProjectProject(models.Model):
         missing = []
         for project in self:
             gaps = []
-            if not project.account_id:
-                gaps.append(_('Analytic Account'))
             if not project.company_id:
                 gaps.append(_('Company'))
+            if not project.account_id:
+                gaps.append(_('Analytic Account'))
             if not project.x_wip_account_id:
                 gaps.append(_('WIP Account'))
             if not project.x_cogs_account_id:
@@ -421,6 +422,83 @@ class ProjectProject(models.Model):
         children._refresh_wip_fields()
         masters._refresh_wip_fields()
         return True
+
+    @api.model
+    def get_wip_dashboard_data(self, company_id=False, search='', status=False,
+                               offset=0, limit=10):
+        base_domain = [
+            ('x_is_master_project', '=', True),
+            ('x_global_project_number', '!=', False),
+        ]
+        if company_id:
+            base_domain.append(('company_id', '=', company_id))
+        if search:
+            base_domain += [
+                '|', '|',
+                ('name', 'ilike', search),
+                ('x_global_project_number', 'ilike', search),
+                ('partner_id', 'ilike', search),
+            ]
+
+        currency = self.env.company.currency_id
+        scope = self.search(base_domain)
+        kpi = {
+            'total': len(scope),
+            'eligible': len(scope.filtered(
+                lambda p: p.x_wip_release_state == 'eligible'
+            )),
+            'released': len(scope.filtered(
+                lambda p: p.x_wip_release_state in ('released', 'released_additional')
+            )),
+            'unreleased': format_amount(
+                self.env, sum(scope.mapped('x_group_unreleased_wip')), currency
+            ),
+        }
+
+        domain = list(base_domain)
+        if status == 'eligible':
+            domain.append(('x_wip_release_state', '=', 'eligible'))
+        elif status == 'released':
+            domain.append((
+                'x_wip_release_state', 'in', ('released', 'released_additional')
+            ))
+
+        records = self.search(
+            domain, offset=offset, limit=limit, order='x_global_project_number'
+        )
+        labels = dict(self._fields['x_wip_release_state'].selection)
+
+        projects = []
+        for project in records:
+            projects.append({
+                'id': project.id,
+                'name': project.name,
+                'global_number': project.x_global_project_number or '',
+                'customer': project.partner_id.display_name or '',
+                'company': project.company_id.name or '',
+                'contract_value': format_amount(
+                    self.env, project.x_contract_value, currency
+                ),
+                'progress': round(project.x_invoice_progress, 2),
+                'threshold': project.x_release_threshold,
+                'unreleased': format_amount(
+                    self.env, project.x_group_unreleased_wip, currency
+                ),
+                'state': project.x_wip_release_state,
+                'state_label': labels.get(project.x_wip_release_state, ''),
+                'last_release': (
+                    fields.Date.to_string(project.x_last_release_date) or '-'
+                ),
+            })
+
+        return {
+            'kpi': kpi,
+            'projects': projects,
+            'count': self.search_count(domain),
+            'companies': [
+                {'id': c.id, 'name': c.name} for c in self.env.user.company_ids
+            ],
+        }
 
     def action_open_wip_release_wizard(self):
         masters = self.filtered(lambda p: p.x_is_master_project)

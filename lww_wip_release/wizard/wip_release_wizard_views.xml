@@ -43,4 +43,11 @@
             </form>
         </field>
     </record>
+
+    <record id="action_wip_release_wizard" model="ir.actions.act_window">
+        <field name="name">Run WIP Release</field>
+        <field name="res_model">wip.release.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
 </odoo>

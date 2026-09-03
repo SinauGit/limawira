@@ -1,6 +1,3 @@
-from odoo import api, SUPERUSER_ID
-
-
 def post_init_hook(env):
     env.cr.execute("""
         UPDATE sale_order

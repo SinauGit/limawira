@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="lww_wip_release.WipDashboard">
+        <div class="o_wip_dashboard">
+            <div class="o_wip_header">
+                <h2>WIP Release Dashboard</h2>
+                <div class="o_wip_filters">
+                    <select class="form-select" t-on-change="onCompanyChange">
+                        <option value="">All Companies</option>
+                        <t t-foreach="state.companies" t-as="company" t-key="company.id">
+                            <option t-att-value="company.id" t-esc="company.name"/>
+                        </t>
+                    </select>
+                    <input type="text" class="form-control" placeholder="Search Project..." t-att-value="state.search" t-on-input="onSearchInput"/>
+                </div>
+            </div>
+
+            <div class="o_wip_kpi_row">
+                <div class="o_wip_kpi" t-on-click="() => this.toggleStatus(false)" t-att-class="{ o_wip_kpi_active: !state.status }">
+                    <div class="o_wip_kpi_title">Total Projects</div>
+                    <div class="o_wip_kpi_value" t-esc="state.kpi.total"/>
+                    <div class="o_wip_kpi_hint">All Global Projects</div>
+                </div>
+                <div class="o_wip_kpi" t-on-click="() => this.toggleStatus('eligible')" t-att-class="{ o_wip_kpi_active: state.status === 'eligible' }">
+                    <div class="o_wip_kpi_title">Eligible for Release</div>
+                    <div class="o_wip_kpi_value" t-esc="state.kpi.eligible"/>
+                    <div class="o_wip_kpi_hint">&gt;= Threshold</div>
+                </div>
+                <div class="o_wip_kpi" t-on-click="() => this.toggleStatus('released')" t-att-class="{ o_wip_kpi_active: state.status === 'released' }">
+                    <div class="o_wip_kpi_title">Released Projects</div>
+                    <div class="o_wip_kpi_value" t-esc="state.kpi.released"/>
+                    <div class="o_wip_kpi_hint">Completed</div>
+                </div>
+                <div class="o_wip_kpi o_wip_kpi_static">
+                    <div class="o_wip_kpi_title">Total Unreleased WIP</div>
+                    <div class="o_wip_kpi_value o_wip_kpi_amount" t-esc="state.kpi.unreleased"/>
+                    <div class="o_wip_kpi_hint">All Companies in Scope</div>
+                </div>
+            </div>
+
+            <div class="o_wip_table_wrapper">
+                <table class="table o_wip_table">
+                    <thead>
+                        <tr>
+                            <th>Global Project</th>
+                            <th>Customer</th>
+                            <th class="text-end">Contract Value</th>
+                            <th>Invoice Progress</th>
+                            <th class="text-end">Unreleased WIP</th>
+                            <th>Status</th>
+                            <th>Last Release</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-if="state.loading">
+                            <td colspan="7" class="text-center text-muted">Loading...</td>
+                        </tr>
+                        <tr t-if="!state.loading and !state.projects.length">
+                            <td colspan="7" class="text-center text-muted">No global project found.</td>
+                        </tr>
+                        <t t-foreach="state.projects" t-as="project" t-key="project.id">
+                            <tr t-on-click="() => this.openProject(project.id)">
+                                <td>
+                                    <div t-esc="project.global_number"/>
+                                    <small class="text-muted" t-esc="project.company"/>
+                                </td>
+                                <td t-esc="project.customer"/>
+                                <td class="text-end" t-esc="project.contract_value"/>
+                                <td>
+                                    <div class="o_wip_progress_cell">
+                                        <span class="o_wip_progress_label" t-esc="project.progress + '%'"/>
+                                        <div class="o_wip_progress">
+                                            <div t-att-class="'o_wip_progress_bar ' + (project.progress &gt;= project.threshold ? 'o_wip_bar_ready' : 'o_wip_bar_low')" t-att-style="'width: ' + Math.min(project.progress, 100) + '%'"/>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end" t-esc="project.unreleased"/>
+                                <td>
+                                    <span t-att-class="'o_wip_badge o_wip_badge_' + project.state" t-esc="project.state_label"/>
+                                </td>
+                                <td t-esc="project.last_release"/>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="o_wip_footer">
+                <button class="btn btn-primary" t-on-click="runRelease">Run WIP Release Now</button>
+                <div class="o_wip_pager">
+                    <span class="text-muted" t-esc="rangeLabel"/>
+                    <button class="btn btn-secondary btn-sm" t-on-click="previousPage" t-att-disabled="state.offset === 0">&#8592;</button>
+                    <button class="btn btn-secondary btn-sm" t-on-click="nextPage" t-att-disabled="state.offset + state.limit &gt;= state.count">&#8594;</button>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

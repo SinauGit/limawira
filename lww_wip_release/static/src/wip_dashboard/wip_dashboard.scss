@@ -1,0 +1,113 @@
+.o_wip_dashboard {
+    padding: 16px 24px;
+    overflow: auto;
+    height: 100%;
+    background-color: #f9f9f9;
+
+    .o_wip_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 16px;
+
+        h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+    }
+
+    .o_wip_filters {
+        display: flex;
+        gap: 8px;
+
+        .form-select { width: 200px; }
+        .form-control { width: 260px; }
+    }
+
+    .o_wip_kpi_row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .o_wip_kpi {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 12px 16px;
+        cursor: pointer;
+
+        &.o_wip_kpi_static { cursor: default; }
+        &.o_wip_kpi_active { border-color: #714b67; box-shadow: 0 0 0 1px #714b67; }
+        &:hover:not(.o_wip_kpi_static) { border-color: #714b67; }
+    }
+
+    .o_wip_kpi_title { font-size: 13px; font-weight: 600; color: #714b67; }
+    .o_wip_kpi_value { font-size: 28px; font-weight: 700; line-height: 1.2; }
+    .o_wip_kpi_amount { font-size: 20px; }
+    .o_wip_kpi_hint { font-size: 12px; color: #6c757d; }
+
+    .o_wip_table_wrapper {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow-x: auto;
+    }
+
+    .o_wip_table {
+        margin: 0;
+
+        thead th {
+            font-size: 13px;
+            background: #f6f6f6;
+            white-space: nowrap;
+        }
+
+        tbody tr { cursor: pointer; }
+        tbody tr:hover { background: #f3eef2; }
+        td { vertical-align: middle; }
+    }
+
+    .o_wip_progress_cell { min-width: 160px; }
+    .o_wip_progress_label { font-size: 12px; font-weight: 600; }
+
+    .o_wip_progress {
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .o_wip_progress_bar { height: 100%; }
+    .o_wip_bar_ready { background: #28a745; }
+    .o_wip_bar_low { background: #adb5bd; }
+
+    .o_wip_badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .o_wip_badge_not_released { background: #e9ecef; color: #495057; }
+    .o_wip_badge_eligible { background: #fff3cd; color: #8a6d00; }
+    .o_wip_badge_released,
+    .o_wip_badge_released_additional { background: #d4edda; color: #1b6b32; }
+
+    .o_wip_footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 12px;
+    }
+
+    .o_wip_pager {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}

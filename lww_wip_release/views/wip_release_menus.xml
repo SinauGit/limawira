@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_wip_release_root" name="WIP Release" sequence="95" groups="lww_wip_release.group_wip_release"/>
+    <menuitem id="menu_wip_release_dashboard" name="Dashboard" parent="menu_wip_release_root" action="lww_wip_release.action_wip_dashboard" sequence="5"/>
     <menuitem id="menu_wip_release_operations" name="Operations" parent="menu_wip_release_root" sequence="10"/>
     <menuitem id="menu_wip_release_workbench" name="Release Workbench" parent="menu_wip_release_operations" action="action_wip_release_workbench" sequence="10"/>
+    <menuitem id="menu_wip_release_run" name="Run WIP Release" parent="menu_wip_release_operations" action="lww_wip_release.action_wip_release_wizard" sequence="15"/>
     <menuitem id="menu_wip_release_batch" name="Release Batches" parent="menu_wip_release_operations" action="action_wip_release_batch" sequence="20"/>
     <menuitem id="menu_wip_release_line" name="Release History" parent="menu_wip_release_operations" action="action_wip_release_line" sequence="30"/>
     <menuitem id="menu_wip_release_contract_revision" name="Contract Revisions" parent="menu_wip_release_operations" action="action_sale_contract_revision" sequence="40"/>
