@@ -115,39 +115,17 @@
         </field>
     </record>
 
-    <record id="view_project_wip_dashboard" model="ir.ui.view">
-        <field name="name">project.project.wip.dashboard</field>
-        <field name="model">project.project</field>
-        <field name="arch" type="xml">
-            <dashboard>
-                <group col="4">
-                    <aggregate name="agg_total_projects" string="Total Projects" field="id" group_operator="count" help="All global projects"/>
-                    <aggregate name="agg_eligible_projects" string="Eligible for Release" field="id" group_operator="count" domain="[('x_wip_release_state', '=', 'eligible')]" help="Progress has reached the release threshold"/>
-                    <aggregate name="agg_released_projects" string="Released Projects" field="id" group_operator="count" domain="[('x_wip_release_state', 'in', ['released', 'released_additional'])]" help="Already released at least once"/>
-                    <aggregate name="agg_unreleased_wip" string="Total Unreleased WIP" field="x_group_unreleased_wip" group_operator="sum" widget="monetary" help="Across every company in the global project"/>
-                </group>
-                <view type="list" ref="lww_wip_release.view_project_wip_workbench_list"/>
-            </dashboard>
-        </field>
-    </record>
-
     <record id="action_wip_release_workbench" model="ir.actions.act_window">
-        <field name="name">WIP Release Dashboard</field>
+        <field name="name">WIP Release Workbench</field>
         <field name="res_model">project.project</field>
-        <field name="view_mode">dashboard,list,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('x_is_master_project', '=', True)]</field>
+        <field name="context">{'search_default_filter_has_wip': 1}</field>
         <field name="search_view_id" ref="view_project_wip_workbench_search"/>
     </record>
 
-    <record id="action_wip_release_workbench_dashboard" model="ir.actions.act_window.view">
-        <field name="sequence">1</field>
-        <field name="view_mode">dashboard</field>
-        <field name="view_id" ref="view_project_wip_dashboard"/>
-        <field name="act_window_id" ref="action_wip_release_workbench"/>
-    </record>
-
     <record id="action_wip_release_workbench_list" model="ir.actions.act_window.view">
-        <field name="sequence">2</field>
+        <field name="sequence">1</field>
         <field name="view_mode">list</field>
         <field name="view_id" ref="view_project_wip_workbench_list"/>
         <field name="act_window_id" ref="action_wip_release_workbench"/>
