@@ -12,6 +12,7 @@
         'sale_management',
         'account',
         'analytic',
+        'web_dashboard',
     ],
     'data': [
         'security/wip_release_security.xml',
