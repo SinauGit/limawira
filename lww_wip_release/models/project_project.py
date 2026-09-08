@@ -424,6 +424,15 @@ class ProjectProject(models.Model):
         return True
 
     @api.model
+    def action_refresh_wip_dashboard(self):
+        if not self.env.user.has_group('lww_wip_release.group_wip_release'):
+            raise UserError(_(
+                'You are not allowed to refresh WIP release data.'
+            ))
+        self._cron_update_wip_release_status()
+        return True
+
+    @api.model
     def get_wip_dashboard_data(self, company_id=False, search='', status=False,
                                offset=0, limit=10):
         base_domain = [

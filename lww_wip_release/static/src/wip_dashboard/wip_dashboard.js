@@ -13,6 +13,7 @@ export class WipDashboard extends Component {
         this.action = useService("action");
         this.state = useState({
             loading: true,
+            refreshing: false,
             kpi: { total: 0, eligible: 0, released: 0, unreleased: "" },
             projects: [],
             companies: [],
@@ -45,6 +46,16 @@ export class WipDashboard extends Component {
         this.state.companies = data.companies;
         this.state.count = data.count;
         this.state.loading = false;
+    }
+
+    async refresh() {
+        this.state.refreshing = true;
+        try {
+            await this.orm.call("project.project", "action_refresh_wip_dashboard", []);
+            await this.load();
+        } finally {
+            this.state.refreshing = false;
+        }
     }
 
     get rangeLabel() {
