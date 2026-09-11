@@ -12,10 +12,6 @@
                         </t>
                     </select>
                     <input type="text" class="form-control" placeholder="Search Project..." t-att-value="state.search" t-on-input="onSearchInput"/>
-                    <button class="btn btn-secondary o_wip_refresh" t-on-click="refresh" t-att-disabled="state.refreshing">
-                        <t t-if="state.refreshing">Refreshing...</t>
-                        <t t-else="">Refresh Data</t>
-                    </button>
                 </div>
             </div>
 

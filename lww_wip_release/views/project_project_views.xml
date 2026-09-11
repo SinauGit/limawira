@@ -16,7 +16,8 @@
                         <group>
                             <field name="x_company_role"/>
                             <field name="x_project_group_name"/>
-                            <field name="x_sale_order_id" invisible="not x_is_master_project"/>
+                            <field name="x_candidate_sale_order_ids" invisible="1"/>
+                            <field name="x_sale_order_id" invisible="not x_is_master_project" domain="[('id', 'in', x_candidate_sale_order_ids)]"/>
                         </group>
                     </group>
                     <group string="WIP Release Configuration">

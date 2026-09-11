@@ -16,6 +16,7 @@
         'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',
         'data/ir_cron_data.xml',
+        'views/res_company_wip_defaults_views.xml',
         'views/sale_contract_revision_views.xml',
         'views/sale_order_views.xml',
         'views/project_project_views.xml',

@@ -68,9 +68,14 @@ class ProjectProject(models.Model):
         copy=False,
         domain="[('state', '=', 'sale'), ('company_id', '=', company_id)]",
     )
+    x_candidate_sale_order_ids = fields.Many2many(
+        'sale.order',
+        string='Candidate Sales Orders',
+        compute='_compute_x_candidate_sale_order_ids',
+    )
     x_release_threshold = fields.Float(
         string='WIP Release Threshold (%)',
-        default=90.0,
+        default=lambda self: self.env.company.x_default_release_threshold or 90.0,
     )
     x_wip_account_id = fields.Many2one(
         'account.account',
@@ -200,6 +205,25 @@ class ProjectProject(models.Model):
                 )
             else:
                 project.x_project_group_name = project.x_project_group_name
+
+    @api.depends('company_id', 'account_id', 'x_is_master_project')
+    def _compute_x_candidate_sale_order_ids(self):
+        order_model = self.env['sale.order'].sudo()
+        for project in self:
+            if not project.x_is_master_project or not project.account_id:
+                project.x_candidate_sale_order_ids = order_model
+                continue
+            domain = [('state', '=', 'sale')]
+            if project.company_id:
+                domain.append(('company_id', '=', project.company_id.id))
+            key = str(project.account_id.id)
+            orders = order_model.search(domain).filtered(
+                lambda o: any(
+                    key in (line.analytic_distribution or {})
+                    for line in o.order_line
+                )
+            )
+            project.x_candidate_sale_order_ids = orders
 
     @api.depends(
         'x_master_project_id',
@@ -423,14 +447,63 @@ class ProjectProject(models.Model):
         masters._refresh_wip_fields()
         return True
 
-    @api.model
-    def action_refresh_wip_dashboard(self):
-        if not self.env.user.has_group('lww_wip_release.group_wip_release'):
-            raise UserError(_(
-                'You are not allowed to refresh WIP release data.'
-            ))
-        self._cron_update_wip_release_status()
-        return True
+    def _wip_defaults_from_company(self, company, current=None):
+        current = current or {}
+        values = {}
+        if not company:
+            return values
+        mapping = {
+            'x_wip_account_id': company.x_default_wip_account_id.id,
+            'x_cogs_account_id': company.x_default_cogs_account_id.id,
+            'x_wip_journal_id': company.x_default_wip_journal_id.id,
+        }
+        for field_name, default_id in mapping.items():
+            if default_id and not current.get(field_name):
+                values[field_name] = default_id
+        if not current.get('x_release_threshold') and company.x_default_release_threshold:
+            values['x_release_threshold'] = company.x_default_release_threshold
+        return values
+
+    @api.onchange('company_id')
+    def _onchange_company_id_wip_defaults(self):
+        for project in self:
+            current = {
+                'x_wip_account_id': project.x_wip_account_id.id,
+                'x_cogs_account_id': project.x_cogs_account_id.id,
+                'x_wip_journal_id': project.x_wip_journal_id.id,
+                'x_release_threshold': project.x_release_threshold,
+            }
+            values = project._wip_defaults_from_company(project.company_id, current)
+            if values:
+                project.update(values)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        projects = super().create(vals_list)
+        for project in projects:
+            values = project._wip_defaults_from_company(project.company_id, {
+                'x_wip_account_id': project.x_wip_account_id.id,
+                'x_cogs_account_id': project.x_cogs_account_id.id,
+                'x_wip_journal_id': project.x_wip_journal_id.id,
+                'x_release_threshold': project.x_release_threshold,
+            })
+            if values:
+                project.write(values)
+        return projects
+
+    def action_apply_company_wip_defaults(self):
+        updated = self.env['project.project']
+        for project in self:
+            values = project._wip_defaults_from_company(project.company_id, {
+                'x_wip_account_id': project.x_wip_account_id.id,
+                'x_cogs_account_id': project.x_cogs_account_id.id,
+                'x_wip_journal_id': project.x_wip_journal_id.id,
+                'x_release_threshold': project.x_release_threshold,
+            })
+            if values:
+                project.write(values)
+                updated |= project
+        return len(updated)
 
     @api.model
     def get_wip_dashboard_data(self, company_id=False, search='', status=False,
