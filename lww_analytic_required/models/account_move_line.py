@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class AccountMoveLine(models.Model):
@@ -23,3 +24,20 @@ class AccountMoveLine(models.Model):
                 and line.move_id.move_type in ('in_invoice', 'in_refund', 'entry')
                 and line.display_type not in ('line_section', 'line_note')
             )
+
+    @api.constrains('analytic_distribution', 'account_id', 'display_type')
+    def _check_x_analytic_required(self):
+        for line in self:
+            if (
+                line.account_id
+                and line.account_id.x_analytic_required
+                and line.move_id.move_type in ('in_invoice', 'in_refund', 'entry')
+                and line.display_type not in ('line_section', 'line_note')
+                and not line.analytic_distribution
+            ):
+                raise ValidationError(_(
+                    'Analytic Distribution wajib diisi untuk baris dengan akun "%(account)s" '
+                    'pada dokumen %(move)s.',
+                    account=line.account_id.display_name,
+                    move=line.move_id.display_name or _('baru'),
+                ))
