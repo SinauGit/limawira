@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_form_x_analytic_required" model="ir.ui.view">
+        <field name="name">account.account.form.x.analytic.required</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_form"/>
+        <field name="arch" type="xml">
+            <field name="account_type" position="after">
+                <field name="x_analytic_required"/>
+            </field>
+        </field>
+    </record>
+</odoo>

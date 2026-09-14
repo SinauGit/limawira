@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_x_analytic_required" model="ir.ui.view">
+        <field name="name">account.move.form.x.analytic.required</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!-- Vendor Bill lines (invoice_line_ids) -->
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='account_id']" position="after">
+                <field name="x_analytic_needed" column_invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='analytic_distribution']" position="attributes">
+                <attribute name="required">x_analytic_needed</attribute>
+            </xpath>
+
+            <!-- Journal Entry lines (line_ids) -->
+            <xpath expr="//field[@name='line_ids']//field[@name='account_id']" position="after">
+                <field name="x_analytic_needed" column_invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']//field[@name='analytic_distribution']" position="attributes">
+                <attribute name="required">x_analytic_needed</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
