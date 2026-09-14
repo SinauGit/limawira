@@ -37,7 +37,7 @@ class AccountMoveLine(models.Model):
             ):
                 raise ValidationError(_(
                     'The Analytic Distribution field is Required for rows with the account "%(account)s" '
-                    'in the Draft Bill document. %(move)s.',
+                    'in the %(move)s.',
                     account=line.account_id.display_name,
                     move=line.move_id.display_name or _('baru'),
                 ))

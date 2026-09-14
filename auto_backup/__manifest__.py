@@ -1,7 +1,6 @@
                        
 {
     'name': "mencadangkan",
-    'author': "Van Ginneken di revisi dan migrasi dari odoo 17 ke 18 oleh Rizky Abdi",
     'author': 'Van Ginneken - Revised and Porting to odoo 18 by Rizky Abdi S.H',
     'website': 'https://lui.co.id',
     'company': 'Pt Lintang Utama Infotek',

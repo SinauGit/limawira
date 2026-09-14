@@ -1,8 +1,9 @@
 {
     'name': 'Sale Read Only Access',
     'version': '18.0.1.0.1',
-    'category': 'Sales',
-    'summary': 'Read Only group for Sales Orders and related Invoices',
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['sale_management', 'account','spreadsheet_sale_management'],
     'data': [
         'security/sale_readonly_security.xml',

@@ -1,3 +1,14 @@
+<td class="text-left" style="font-size: 15px; max-width: 300px; word-wrap: break-word; white-space: normal; overflow: hidden;">
+    <t t-set="clean_name" t-value="line.name.split('] ', 1)[-1] if line.name and line.name.startswith('[') else (line.name or '')"/>
+    <span style="font-size: 15px;" t-esc="clean_name.split('\n')[0]"/>
+    <t t-if="'\n' in clean_name">
+        <br/>
+        <span style="font-size: 12px; font-style: italic; color: #888;"
+              t-esc="'\n'.join(clean_name.split('\n')[1:])"/>
+    </t>
+</td>
+
+
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>

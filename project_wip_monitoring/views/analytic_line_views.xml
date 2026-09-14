@@ -203,13 +203,16 @@
                     <field name="date"/>
                     <field name="display_name" string="Description"/>
                     <field name="account_id" string="Project"/>
-                    <field name="account_id" string="Project 2" optional="hide"/>
-                    <field name="account_id" string="project 3" optional="hide"/>
-                    <field name="company_id"/>
-                    <field name="amount" sum="Total"/>
                     <field name="ref" optional="hide"/>
+                    <field name="unit_amount" sum="Quantity" optional="hide"/>
+                    <field name="product_uom_id" optional="hide"/>
                     <field name="move_line_id" optional="hide"/>
                     <field name="general_account_id" column_invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                    <field name="amount" sum="Total"/>
+                    <field name="company_id" column_invisible="True"/>
+                    <field name="product_uom_category_id" column_invisible="True"/>
+                    <field name="currency_id" column_invisible="True"/>
                 </list>
             </field>
         </record>

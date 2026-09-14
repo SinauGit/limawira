@@ -1,8 +1,9 @@
 {
     'name': 'Landed Cost Access for Purchase & Billing',
     'version': '18.0.1.1.0',
-    'category': 'Inventory',
-    'summary': 'Allow Purchase User and Billing to create landed costs from vendor bills',
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['stock_landed_costs', 'purchase'],
     'data': [
         'security/ir.model.access.csv',
