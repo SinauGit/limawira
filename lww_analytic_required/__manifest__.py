@@ -1,9 +1,9 @@
 {
-    'name': 'LWW Analytic Distribution Required',
+    'name': 'Analytic Distribution Required',
     'version': '18.0.1.0.0',
-    'summary': 'Mewajibkan pengisian Analytic Distribution pada akun tertentu di Vendor Bill dan Journal Entry',
-    'category': 'Accounting',
-    'author': 'limawira',
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['account'],
     'data': [
         'views/account_account_views.xml',
