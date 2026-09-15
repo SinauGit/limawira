@@ -1,4 +1,4 @@
-from . import res_company
+from . import wip_release_config
 from . import sale_contract_revision
 from . import sale_order
 from . import wip_release_batch

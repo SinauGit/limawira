@@ -11,6 +11,13 @@
         <field name="comment">Allows monitoring and executing project WIP release, including manual override.</field>
     </record>
 
+    <record id="wip_release_config_rule_company" model="ir.rule">
+        <field name="name">WIP Release Config: multi company</field>
+        <field name="model_id" ref="model_wip_release_config"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
     <record id="wip_release_batch_rule_global" model="ir.rule">
         <field name="name">WIP Release Batch: cross company</field>
         <field name="model_id" ref="model_wip_release_batch"/>

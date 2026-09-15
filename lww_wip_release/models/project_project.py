@@ -75,7 +75,9 @@ class ProjectProject(models.Model):
     )
     x_release_threshold = fields.Float(
         string='WIP Release Threshold (%)',
-        default=lambda self: self.env.company.x_default_release_threshold or 90.0,
+        default=lambda self: self.env['wip.release.config']._get_for_company(
+            self.env.company
+        ).release_threshold or 90.0,
     )
     x_wip_account_id = fields.Many2one(
         'account.account',
@@ -452,16 +454,19 @@ class ProjectProject(models.Model):
         values = {}
         if not company:
             return values
+        config = self.env['wip.release.config']._get_for_company(company)
+        if not config:
+            return values
         mapping = {
-            'x_wip_account_id': company.x_default_wip_account_id.id,
-            'x_cogs_account_id': company.x_default_cogs_account_id.id,
-            'x_wip_journal_id': company.x_default_wip_journal_id.id,
+            'x_wip_account_id': config.wip_account_id.id,
+            'x_cogs_account_id': config.cogs_account_id.id,
+            'x_wip_journal_id': config.wip_journal_id.id,
         }
         for field_name, default_id in mapping.items():
             if default_id and not current.get(field_name):
                 values[field_name] = default_id
-        if not current.get('x_release_threshold') and company.x_default_release_threshold:
-            values['x_release_threshold'] = company.x_default_release_threshold
+        if not current.get('x_release_threshold') and config.release_threshold:
+            values['x_release_threshold'] = config.release_threshold
         return values
 
     @api.onchange('company_id')
@@ -504,6 +509,15 @@ class ProjectProject(models.Model):
                 project.write(values)
                 updated |= project
         return len(updated)
+
+    @api.model
+    def action_refresh_wip_dashboard(self):
+        if not self.env.user.has_group('lww_wip_release.group_wip_release'):
+            raise UserError(_(
+                'You are not allowed to refresh WIP release data.'
+            ))
+        self._cron_update_wip_release_status()
+        return True
 
     @api.model
     def get_wip_dashboard_data(self, company_id=False, search='', status=False,

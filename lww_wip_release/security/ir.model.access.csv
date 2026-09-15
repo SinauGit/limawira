@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_wip_release_config_user,wip.release.config.user,model_wip_release_config,lww_wip_release.group_wip_release,1,1,1,1
 access_wip_release_batch_user,wip.release.batch.user,model_wip_release_batch,lww_wip_release.group_wip_release,1,1,1,1
 access_wip_release_line_user,wip.release.line.user,model_wip_release_line,lww_wip_release.group_wip_release,1,1,1,1
 access_wip_release_wizard_user,wip.release.wizard.user,model_wip_release_wizard,lww_wip_release.group_wip_release,1,1,1,1

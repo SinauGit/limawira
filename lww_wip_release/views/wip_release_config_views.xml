@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wip_release_config_list" model="ir.ui.view">
+        <field name="name">wip.release.config.list</field>
+        <field name="model">wip.release.config</field>
+        <field name="arch" type="xml">
+            <list string="WIP Release Defaults" editable="bottom">
+                <field name="company_id" options="{'no_create': True}"/>
+                <field name="wip_account_id" options="{'no_create': True}"/>
+                <field name="cogs_account_id" options="{'no_create': True}"/>
+                <field name="wip_journal_id" options="{'no_create': True}"/>
+                <field name="release_threshold"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_wip_release_config" model="ir.actions.act_window">
+        <field name="name">WIP Release Defaults</field>
+        <field name="res_model">wip.release.config</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>
