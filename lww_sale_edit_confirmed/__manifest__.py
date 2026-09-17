@@ -1,9 +1,9 @@
 {
     'name': 'LWW - Edit Customer/UoM After SO Confirm',
     'version': '18.0.1.0.0',
-    'category': 'Sales',
-    'summary': 'Allow authorized users to edit Customer and UoM on confirmed Sales Orders',
-    'author': 'limawira',
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['sale'],
     'data': [
         'security/lww_sale_edit_confirmed_security.xml',
