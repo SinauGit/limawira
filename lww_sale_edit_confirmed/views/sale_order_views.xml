@@ -1,0 +1,24 @@
+<odoo>
+    <record id="view_order_form_edit_confirmed" model="ir.ui.view">
+        <field name="name">sale.order.form.edit.confirmed</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Header: partner_id -->
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="edit_confirmed_allowed" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="readonly">state in ('cancel', 'sale') and not edit_confirmed_allowed</attribute>
+            </xpath>
+
+            <!-- Order lines: product_uom -->
+            <xpath expr="//field[@name='order_line']/list" position="inside">
+                <field name="edit_confirmed_allowed" column_invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//field[@name='product_uom']" position="attributes">
+                <attribute name="readonly">product_uom_readonly and not edit_confirmed_allowed</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

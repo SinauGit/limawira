@@ -1,0 +1,7 @@
+<odoo>
+    <record id="group_sale_edit_confirmed" model="res.groups">
+        <field name="name">Sales: Edit Customer/UoM After Confirm</field>
+        <field name="category_id" ref="base.module_category_sales_sales"/>
+        <field name="comment">Users in this group can edit Customer and UoM on a Sales Order even after it has been confirmed (state = 'sale').</field>
+    </record>
+</odoo>

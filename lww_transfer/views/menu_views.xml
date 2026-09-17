@@ -12,13 +12,13 @@
         sequence="100"
         groups="project.group_project_manager"/>
 
-    <menuitem
+    <!-- <menuitem
         id="menu_project_analytic_transfer_log"
         name="Transfer Logs"
         parent="project.menu_project_config"
         action="project_analytic_transfer_log_action"
         sequence="101"
-        groups="project.group_project_manager"/>
+        groups="project.group_project_manager"/> -->
     
     
     
