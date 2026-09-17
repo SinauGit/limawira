@@ -216,24 +216,36 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
         """Process Sale Orders and their lines"""
         updated = []
 
+        sale_orders = self.env['sale.order']
         if self.source_project_id:
             sale_orders = self._search_in_batches(
                 'sale.order', [('project_id', '=', self.source_project_id.id)]
             )
-            updated.extend(self._batch_update_project(sale_orders, 'SO'))
 
+        # IMPORTANT: search for lines to update BEFORE writing the header
+        # project_id. If we searched after the header write, the domain
+        # ('order_id.project_id', '=', source) would no longer match
+        # anything, since the header would already point to the target -
+        # leaving lines with a stale analytic_distribution while the
+        # header looks correct (inconsistent data: order shows up under
+        # both the source and target project).
+        sol_records = self.env['sale.order.line']
         if self.source_analytic_account_id:
             sol_domain = [('analytic_distribution', '!=', False)]
             if self.source_project_id:
                 sol_domain.append(('order_id.project_id', '=', self.source_project_id.id))
             sol_records = self._search_in_batches('sale.order.line', sol_domain)
-            for line in sol_records:
-                if not line.exists():
-                    continue
-                new_distribution = self._update_analytic_distribution(line)
-                if new_distribution:
-                    line.write({'analytic_distribution': new_distribution})
-                    updated.append(f"SO Line: {line.order_id.name} - {line.name}")
+
+        # Now it is safe to move the headers.
+        updated.extend(self._batch_update_project(sale_orders, 'SO'))
+
+        for line in sol_records:
+            if not line.exists():
+                continue
+            new_distribution = self._update_analytic_distribution(line)
+            if new_distribution:
+                line.write({'analytic_distribution': new_distribution})
+                updated.append(f"SO Line: {line.order_id.name} - {line.name}")
 
         return updated
 
@@ -243,25 +255,33 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
     def _process_purchase_orders(self):
         """Process Purchase Orders and their lines"""
         updated = []
+        po_has_project = 'project_id' in self.env['purchase.order']._fields
 
-        if self.source_project_id and 'project_id' in self.env['purchase.order']._fields:
+        purchase_orders = self.env['purchase.order']
+        if self.source_project_id and po_has_project:
             purchase_orders = self._search_in_batches(
                 'purchase.order', [('project_id', '=', self.source_project_id.id)]
             )
-            updated.extend(self._batch_update_project(purchase_orders, 'PO'))
 
+        # Search lines BEFORE moving headers - same reasoning as sale orders,
+        # otherwise ('order_id.project_id', '=', source) matches nothing once
+        # the header has already been switched to the target project.
+        pol_records = self.env['purchase.order.line']
         if self.source_analytic_account_id:
             pol_domain = [('analytic_distribution', '!=', False)]
-            if self.source_project_id and 'project_id' in self.env['purchase.order']._fields:
+            if self.source_project_id and po_has_project:
                 pol_domain.append(('order_id.project_id', '=', self.source_project_id.id))
             pol_records = self._search_in_batches('purchase.order.line', pol_domain)
-            for line in pol_records:
-                if not line.exists():
-                    continue
-                new_distribution = self._update_analytic_distribution(line)
-                if new_distribution:
-                    line.write({'analytic_distribution': new_distribution})
-                    updated.append(f"PO Line: {line.order_id.name} - {line.name}")
+
+        updated.extend(self._batch_update_project(purchase_orders, 'PO'))
+
+        for line in pol_records:
+            if not line.exists():
+                continue
+            new_distribution = self._update_analytic_distribution(line)
+            if new_distribution:
+                line.write({'analytic_distribution': new_distribution})
+                updated.append(f"PO Line: {line.order_id.name} - {line.name}")
 
         return updated
 
@@ -413,39 +433,48 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
     def _process_stock_moves(self):
         """Process Stock Moves, Delivery Orders, and Receipts"""
         updated = []
+        picking_has_project = 'project_id' in self.env['stock.picking']._fields
 
-        if self.source_project_id and 'project_id' in self.env['stock.picking']._fields:
+        picking_records = self.env['stock.picking']
+        if self.source_project_id and picking_has_project:
             picking_records = self._search_in_batches(
                 'stock.picking', [('project_id', '=', self.source_project_id.id)]
             )
-            updated.extend(self._batch_update_project(picking_records, 'DO/Receipt'))
 
-        picking_has_project = 'project_id' in self.env['stock.picking']._fields
-
+        # Search move lines / moves BEFORE moving picking headers - same
+        # reasoning as sale/purchase orders above: a domain filtered by
+        # ('picking_id.project_id', '=', source) matches nothing once the
+        # picking has already been switched to the target project.
+        sml_records = self.env['stock.move.line']
+        sm_records = self.env['stock.move']
         if self.source_analytic_account_id:
             sml_domain = [('analytic_distribution', '!=', False)]
             if self.source_project_id and picking_has_project:
                 sml_domain.append(('picking_id.project_id', '=', self.source_project_id.id))
             sml_records = self._search_in_batches('stock.move.line', sml_domain)
-            for line in sml_records:
-                if not line.exists():
-                    continue
-                new_distribution = self._update_analytic_distribution(line)
-                if new_distribution:
-                    line.write({'analytic_distribution': new_distribution})
-                    updated.append(f"Stock Move Line: {line.move_id.name} - {line.product_id.name}")
 
             if 'analytic_distribution' in self.env['stock.move']._fields:
                 sm_domain = [('analytic_distribution', '!=', False)]
                 if self.source_project_id and picking_has_project:
                     sm_domain.append(('picking_id.project_id', '=', self.source_project_id.id))
                 sm_records = self._search_in_batches('stock.move', sm_domain)
-                for move in sm_records:
-                    if not move.exists():
-                        continue
-                    new_distribution = self._update_analytic_distribution(move)
-                    if new_distribution:
-                        move.write({'analytic_distribution': new_distribution})
-                        updated.append(f"Stock Move: {move.name} - {move.product_id.name}")
+
+        updated.extend(self._batch_update_project(picking_records, 'DO/Receipt'))
+
+        for line in sml_records:
+            if not line.exists():
+                continue
+            new_distribution = self._update_analytic_distribution(line)
+            if new_distribution:
+                line.write({'analytic_distribution': new_distribution})
+                updated.append(f"Stock Move Line: {line.move_id.name} - {line.product_id.name}")
+
+        for move in sm_records:
+            if not move.exists():
+                continue
+            new_distribution = self._update_analytic_distribution(move)
+            if new_distribution:
+                move.write({'analytic_distribution': new_distribution})
+                updated.append(f"Stock Move: {move.name} - {move.product_id.name}")
 
         return updated
