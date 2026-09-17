@@ -28,6 +28,7 @@
                     
                     <group string="Documents to Process" invisible="1">
                         <group>
+                            <field name="process_tasks"/>
                             <field name="process_sale_orders"/>
                             <field name="process_purchase_orders"/>
                             <field name="process_account_moves"/>

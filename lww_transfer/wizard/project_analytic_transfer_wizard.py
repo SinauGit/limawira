@@ -25,6 +25,7 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
     process_account_moves = fields.Boolean(string='Invoices/Bills/Journal Entries', default=True)
     process_expenses = fields.Boolean(string='Expenses', default=True)
     process_stock_moves = fields.Boolean(string='Stock Moves', default=True)
+    process_tasks = fields.Boolean(string='Tasks', default=True)
 
     @api.onchange('source_project_id')
     def _onchange_source_project_id(self):
@@ -82,6 +83,9 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
         try:
             updated_records = []
 
+            if self.process_tasks:
+                updated_records.extend(self._process_tasks())
+
             if self.process_sale_orders:
                 updated_records.extend(self._process_sale_orders())
 
@@ -115,6 +119,7 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
                     'title': _('Transfer Complete'),
                     'message': _('%d records updated successfully.') % len(updated_records),
                     'sticky': False,
+                    'next': {'type': 'ir.actions.act_window_close'},
                 }
             }
 
@@ -207,6 +212,29 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
             if new_distribution:
                 rec.write({'analytic_distribution': new_distribution})
                 updated.append(f"{label_prefix}{getattr(rec, label_field, rec.display_name)}")
+        return updated
+
+    # ------------------------------------------------------------------
+    # Tasks
+    # ------------------------------------------------------------------
+    def _process_tasks(self):
+        """Move Project Tasks from the source project to the target project.
+
+        This also covers what the project dashboard's "Sales Orders" (and
+        similar) smart buttons/tabs pick up - those are partly driven by
+        tasks still linked to the source project even when the underlying
+        SO/invoice/etc. data has already been correctly moved.
+        """
+        updated = []
+
+        if not self.source_project_id or not self.update_project or not self.target_project_id:
+            return updated
+
+        tasks = self._search_in_batches(
+            'project.task', [('project_id', '=', self.source_project_id.id)]
+        )
+        updated.extend(self._batch_update_project(tasks, 'Task'))
+
         return updated
 
     # ------------------------------------------------------------------
