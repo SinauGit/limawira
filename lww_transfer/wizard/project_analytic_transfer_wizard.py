@@ -65,9 +65,10 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
                 'Leaving both empty would match every record in the system.'
             ))
 
-        # Precompute string ids once per run instead of on every record.
-        self._source_id_str = str(self.source_analytic_account_id.id) if self.source_analytic_account_id else False
-        self._target_id_str = str(self.target_analytic_account_id.id) if self.target_analytic_account_id else False
+        # Note: recordset instances use __slots__, so these cannot be plain
+        # instance attributes (self._source_id_str = ... raises AttributeError).
+        # Exposed as properties instead - cheap, no extra query, just avoids
+        # re-typing str(self.source_analytic_account_id.id) everywhere below.
 
         log = self.env['project.analytic.transfer.log'].create({
             'source_project_id': self.source_project_id.id,
@@ -127,6 +128,14 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
+    @property
+    def _source_id_str(self):
+        return str(self.source_analytic_account_id.id) if self.source_analytic_account_id else False
+
+    @property
+    def _target_id_str(self):
+        return str(self.target_analytic_account_id.id) if self.target_analytic_account_id else False
+
     def _search_in_batches(self, model_name, domain):
         """Search a model in chunks so large tables don't load into memory at once.
 
