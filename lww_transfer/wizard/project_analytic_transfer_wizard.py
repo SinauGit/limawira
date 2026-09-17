@@ -263,14 +263,12 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
                 'purchase.order', [('project_id', '=', self.source_project_id.id)]
             )
 
-        # Search lines BEFORE moving headers - same reasoning as sale orders,
-        # otherwise ('order_id.project_id', '=', source) matches nothing once
-        # the header has already been switched to the target project.
+        # NOTE: deliberately NOT filtering by order_id.project_id here (see
+        # the same note in _process_account_moves). Rely on the per-line
+        # source-analytic check in _update_analytic_distribution() instead.
         pol_records = self.env['purchase.order.line']
         if self.source_analytic_account_id:
             pol_domain = [('analytic_distribution', '!=', False)]
-            if self.source_project_id and po_has_project:
-                pol_domain.append(('order_id.project_id', '=', self.source_project_id.id))
             pol_records = self._search_in_batches('purchase.order.line', pol_domain)
 
         updated.extend(self._batch_update_project(purchase_orders, 'PO'))
@@ -296,8 +294,17 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
             return updated
 
         domain = [('analytic_distribution', '!=', False)]
-        if self.source_project_id and 'project_id' in self.env['account.move']._fields:
-            domain.append(('move_id.project_id', '=', self.source_project_id.id))
+        # NOTE: deliberately NOT filtering by move_id.project_id here.
+        # account.move's project_id (when present, e.g. on invoices) is a
+        # related/read-only field that mirrors the originating sale.order's
+        # project_id - which by this point in action_transfer() has ALREADY
+        # been switched to the target project (sale orders are processed
+        # before account moves). Filtering on "= source" here would match
+        # nothing, since the value already reads as target. Vendor bills
+        # don't even have a project_id field at all, so the same filter
+        # would exclude every bill outright. The per-line source-analytic
+        # check in _update_analytic_distribution() is what actually scopes
+        # this correctly, regardless of project_id field quirks per model.
 
         aml_records = self._search_in_batches('account.move.line', domain)
 
@@ -441,22 +448,17 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
                 'stock.picking', [('project_id', '=', self.source_project_id.id)]
             )
 
-        # Search move lines / moves BEFORE moving picking headers - same
-        # reasoning as sale/purchase orders above: a domain filtered by
-        # ('picking_id.project_id', '=', source) matches nothing once the
-        # picking has already been switched to the target project.
+        # NOTE: deliberately NOT filtering by picking_id.project_id here (see
+        # the same note in _process_account_moves). Rely on the per-line
+        # source-analytic check in _update_analytic_distribution() instead.
         sml_records = self.env['stock.move.line']
         sm_records = self.env['stock.move']
         if self.source_analytic_account_id:
             sml_domain = [('analytic_distribution', '!=', False)]
-            if self.source_project_id and picking_has_project:
-                sml_domain.append(('picking_id.project_id', '=', self.source_project_id.id))
             sml_records = self._search_in_batches('stock.move.line', sml_domain)
 
             if 'analytic_distribution' in self.env['stock.move']._fields:
                 sm_domain = [('analytic_distribution', '!=', False)]
-                if self.source_project_id and picking_has_project:
-                    sm_domain.append(('picking_id.project_id', '=', self.source_project_id.id))
                 sm_records = self._search_in_batches('stock.move', sm_domain)
 
         updated.extend(self._batch_update_project(picking_records, 'DO/Receipt'))
