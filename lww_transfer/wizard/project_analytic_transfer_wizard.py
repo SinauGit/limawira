@@ -88,6 +88,15 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
 
             if self.process_sale_orders:
                 updated_records.extend(self._process_sale_orders())
+                # If the source project was itself auto-generated from a
+                # sale order (project.sale_order_id), and that originating
+                # SO's costing link just got moved to the target above,
+                # clear the origin link too - otherwise the source
+                # project's own dashboard/smart button keeps showing that
+                # SO forever, since that relation is separate from
+                # sale.order.project_id and _process_sale_orders() never
+                # touches it.
+                updated_records.extend(self._clear_source_project_origin_link())
 
             if self.process_purchase_orders:
                 updated_records.extend(self._process_purchase_orders())
@@ -275,6 +284,41 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
                 line.write({'analytic_distribution': new_distribution})
                 updated.append(f"SO Line: {line.order_id.name} - {line.name}")
 
+        return updated
+
+    def _clear_source_project_origin_link(self):
+        """Clear project.sale_order_id on the source project if it was the
+        project that auto-generated it (e.g. via a service product with
+        "Create a project" enabled).
+
+        This is a *provenance* link (Project -> SO that created it), the
+        reverse of sale.order.project_id (SO -> costing project) that
+        _process_sale_orders() moves. Odoo's own smart buttons/dashboards on
+        the project read this link, so without clearing it the source
+        project keeps showing that SO indefinitely even after its costing
+        data has correctly moved to the target project.
+
+        Only clears the field - never deletes, renames, or moves the
+        source project itself.
+        """
+        updated = []
+
+        if not self.source_project_id or not self.update_project or not self.target_project_id:
+            return updated
+
+        if 'sale_order_id' not in self.source_project_id._fields:
+            return updated
+
+        origin_so = self.source_project_id.sale_order_id
+        if not origin_so:
+            return updated
+
+        source_project_name = self.source_project_id.display_name
+        self.source_project_id.write({'sale_order_id': False})
+        updated.append(
+            f"Project origin link cleared: {source_project_name} "
+            f"(was created from {origin_so.name})"
+        )
         return updated
 
     # ------------------------------------------------------------------
