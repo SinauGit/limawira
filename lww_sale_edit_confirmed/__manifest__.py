@@ -1,10 +1,9 @@
 {
-    'name': 'LWW - Edit Customer/UoM After SO Confirm',
+    'name': 'Edit SO',
     'version': '18.0.2.0.0',
-    'category': 'Sales',
-    'summary': 'Tie Customer/UoM editability on confirmed Sales Orders to native Lock/Unlock, '
-               'and extend Lock/Unlock access to the order\'s own Salesperson',
-    'author': 'limawira',
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['sale'],
     'data': [
         'views/sale_order_views.xml',

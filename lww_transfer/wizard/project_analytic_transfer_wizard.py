@@ -20,7 +20,13 @@ class ProjectAnalyticTransferWizard(models.TransientModel):
     update_project = fields.Boolean(string='Update Project', default=True)
     update_analytic = fields.Boolean(string='Update Analytic', default=True)
 
-    process_sale_orders = fields.Boolean(string='Sales Orders', default=True)
+    process_sale_orders = fields.Boolean(
+        string='Sales Orders', default=False,
+        help='Off by default: Sales Orders are intentionally excluded from '
+             'transfer - they stay on their original project and analytic '
+             'account. The "Documents to Process" group is hidden in the '
+             'form, so this only matters as a code-level default.'
+    )
     process_purchase_orders = fields.Boolean(string='Purchase Orders', default=True)
     process_account_moves = fields.Boolean(string='Invoices/Bills/Journal Entries', default=True)
     process_expenses = fields.Boolean(string='Expenses', default=True)
