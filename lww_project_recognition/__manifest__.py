@@ -1,0 +1,20 @@
+{
+    'name': 'LWW Project DO Recognition',
+    'version': '18.0.1.0.0',
+    'summary': 'CR-ODOO-2026-005: Project DO Recognition Management & automatic prior-year DO cost recognition',
+    'category': 'Accounting',
+    'author': 'limawira',
+    'license': 'LGPL-3',
+    'depends': ['account', 'stock_account', 'sale_stock', 'sale_project', 'project'],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'wizard/recognition_override_wizard_views.xml',
+        'views/account_move_views.xml',
+        'views/stock_picking_views.xml',
+        'views/project_views.xml',
+        'views/res_config_settings_views.xml',
+    ],
+    'installable': True,
+    'application': False,
+}

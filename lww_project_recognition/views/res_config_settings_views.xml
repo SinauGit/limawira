@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_recognition" model="ir.ui.view">
+        <field name="name">res.config.settings.form.recognition</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='account']" position="inside">
+                <block title="Project Recognition" name="lww_recognition_setting_container">
+                    <setting string="Recognition Journal" help="Journal used for reclassification, backdated and reversal entries.">
+                        <field name="lww_rec_journal_id"/>
+                    </setting>
+                    <setting string="Project Cost Payable Account" help="Hutang Biaya Proyek account used by the recognition journals.">
+                        <field name="lww_rec_payable_account_id"/>
+                    </setting>
+                    <setting string="Billing Progress Threshold" help="Cumulative billing percentage that defines the recognition year.">
+                        <field name="lww_billing_threshold"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

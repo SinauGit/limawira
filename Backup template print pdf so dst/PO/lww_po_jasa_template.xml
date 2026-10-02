@@ -276,21 +276,6 @@
                                         <p style="font-size: 16px; text-align: right; margin-bottom: 5px; line-height: 1.2;"><span style=" font-weight: bold; float: left;">Grand Total</span> <span t-esc="'{:,.2f}'.format(o.amount_total)"/></p>
                                 </div>
                             </div>
-
-                            
-                            
-                                
-                                
-                                            
-                                                
-                                            
-                                                
-                                            
-                                                
-                                            
-                                                
-                                            
-                                
                                 
                                 <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
                                     <div class="col-12">

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_recognition_override_wizard_form" model="ir.ui.view">
+        <field name="name">lww.recognition.override.wizard.form</field>
+        <field name="model">lww.recognition.override.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Recognition">
+                <group>
+                    <field name="project_id"/>
+                    <field name="manual_override"/>
+                    <field name="year" invisible="not manual_override" required="manual_override"/>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object" string="Apply" class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

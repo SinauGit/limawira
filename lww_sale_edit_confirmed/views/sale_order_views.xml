@@ -4,18 +4,14 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <!-- Customer: editable when confirmed but not Locked (mengikuti mekanisme native) -->
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="readonly">state == 'cancel' or locked</attribute>
             </xpath>
 
-            <!-- Technical field untuk evaluasi akses Lock/Unlock di client -->
             <xpath expr="//button[@name='action_lock']" position="before">
                 <field name="can_lock_unlock" invisible="1"/>
             </xpath>
 
-            <!-- Lock/Unlock: buka akses untuk Sales Manager ATAU Salesperson pemilik SO ini,
-                 bukan cuma Sales Manager (default Odoo) -->
             <xpath expr="//button[@name='action_lock']" position="attributes">
                 <attribute name="groups"></attribute>
                 <attribute name="invisible">state != 'sale' or locked or not can_lock_unlock</attribute>

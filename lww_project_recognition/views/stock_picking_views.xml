@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="vpicktree_recognition" model="ir.ui.view">
+        <field name="name">stock.picking.list.recognition</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="x_project_id" string="Project" optional="show" groups="account.group_account_readonly"/>
+                <field name="x_recognition_mode" optional="show" groups="account.group_account_readonly"/>
+                <field name="x_recognition_year" optional="show" groups="account.group_account_readonly"/>
+                <field name="x_accounting_status" widget="badge" optional="show" groups="account.group_account_readonly"
+                       decoration-success="x_accounting_status == 'recognized'"
+                       decoration-warning="x_accounting_status == 'pending'"
+                       decoration-danger="x_accounting_status == 'awaiting'"
+                       decoration-info="x_accounting_status == 'returned'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_picking_form_recognition" model="ir.ui.view">
+        <field name="name">stock.picking.form.recognition</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='extra']" position="after">
+                <page string="Project Recognition" name="lww_recognition"
+                      invisible="not x_project_id" groups="account.group_account_readonly">
+                    <group>
+                        <group string="Accounting Information">
+                            <field name="x_project_id"/>
+                            <field name="x_recognition_mode"/>
+                            <field name="x_recognition_year"/>
+                            <field name="x_accounting_status" widget="badge"
+                                   decoration-success="x_accounting_status == 'recognized'"
+                                   decoration-warning="x_accounting_status == 'pending'"
+                                   decoration-danger="x_accounting_status == 'awaiting'"
+                                   decoration-info="x_accounting_status == 'returned'"/>
+                        </group>
+                        <group string="Journals">
+                            <field name="x_reclass_move_id" invisible="x_is_return"/>
+                            <field name="x_backdated_move_id" invisible="x_is_return"/>
+                            <field name="x_reclass_reversal_move_id" invisible="not x_is_return"/>
+                            <field name="x_backdated_reversal_move_id" invisible="not x_is_return"/>
+                            <field name="x_is_return" invisible="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
