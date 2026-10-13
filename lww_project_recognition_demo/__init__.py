@@ -4,14 +4,16 @@ from odoo import fields
 
 
 def _post_init(env):
-    company = env.company
+    company = env.company or env.companies[:1] or env['res.company'].search([], limit=1)
+    env = env(context=dict(env.context, allowed_company_ids=company.ids))
     today = fields.Date.context_today(env['res.users'])
     year = today.year
     Account = env['account.account']
     Journal = env['account.journal']
 
     def acc(code, name, atype, **kw):
-        return Account.create({'code': code, 'name': name, 'account_type': atype, **kw})
+        return Account.create({'code': code, 'name': name, 'account_type': atype,
+                              'company_ids': [(6, 0, company.ids)], **kw})
 
     wip = acc('DUM1061', 'DUMMY WIP Project', 'asset_current')
     stock = acc('DUM1101', 'DUMMY Inventory', 'asset_current')
