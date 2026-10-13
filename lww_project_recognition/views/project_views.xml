@@ -1,111 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="edit_project_recognition" model="ir.ui.view">
-        <field name="name">project.project.form.recognition</field>
+    <record id="lww_project_form" model="ir.ui.view">
+        <field name="name">project.project.form.lww.recognition</field>
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.edit_project"/>
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
-                <button name="action_open_recognition_wizard" type="object" string="Generate Recognition"
-                        class="btn-warning" groups="lww_project_recognition.group_recognition_manager"/>
+                <button name="action_lww_override" type="object" string="Override Recognition Year" groups="lww_project_recognition.group_recognition_manager" invisible="lww_auto_year"/>
+                <button name="action_lww_process_pending" type="object" string="Process Pending DOs" groups="lww_project_recognition.group_recognition_manager" invisible="lww_pending_count == 0"/>
             </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button class="oe_stat_button" type="object" name="action_view_lww_pickings"
-                        icon="fa-truck" groups="account.group_account_readonly">
-                    <field name="lww_do_count" widget="statinfo" string="Delivery Orders"/>
+                <button name="action_lww_view_awaiting" type="object" class="oe_stat_button" icon="fa-hourglass-half" invisible="lww_awaiting_count == 0">
+                    <field name="lww_awaiting_count" widget="statinfo" string="Awaiting DO"/>
                 </button>
-                <button class="oe_stat_button" type="object" name="action_view_lww_reclass"
-                        icon="fa-exchange" groups="account.group_account_readonly">
-                    <field name="lww_reclass_count" widget="statinfo" string="Reclass Journals"/>
+                <button name="action_lww_view_pending" type="object" class="oe_stat_button" icon="fa-exclamation-triangle" invisible="lww_pending_count == 0">
+                    <field name="lww_pending_count" widget="statinfo" string="Pending DO"/>
                 </button>
-                <button class="oe_stat_button" type="object" name="action_view_lww_backdated"
-                        icon="fa-calendar" groups="account.group_account_readonly">
-                    <field name="lww_backdated_count" widget="statinfo" string="Backdated Journals"/>
+                <button name="action_lww_view_recognized" type="object" class="oe_stat_button" icon="fa-check" invisible="lww_recognized_count == 0">
+                    <field name="lww_recognized_count" widget="statinfo" string="Recognized DO"/>
                 </button>
-                <button class="oe_stat_button" type="object" name="action_view_lww_returns"
-                        icon="fa-undo" groups="account.group_account_readonly">
-                    <field name="lww_return_count" widget="statinfo" string="Return Deliveries"/>
-                </button>
-                <button class="oe_stat_button" type="object" name="action_view_lww_reversals"
-                        icon="fa-reply" groups="account.group_account_readonly">
-                    <field name="lww_reversal_count" widget="statinfo" string="Reversal Journals"/>
+                <button name="action_lww_view_moves" type="object" class="oe_stat_button" icon="fa-book" invisible="lww_move_count == 0">
+                    <field name="lww_move_count" widget="statinfo" string="Recognition Journals"/>
                 </button>
             </xpath>
-            <xpath expr="//notebook" position="inside">
-                <page string="Project Recognition" name="lww_recognition" groups="account.group_account_readonly">
-                    <group>
-                        <group string="Recognition">
-                            <field name="lww_rec_mode"/>
-                            <field name="lww_billing_date"/>
-                            <field name="lww_rec_year"/>
-                            <field name="lww_rec_status" widget="badge"
-                                   decoration-success="lww_rec_status == 'recognized'"
-                                   decoration-warning="lww_rec_status == 'pending'"
-                                   decoration-danger="lww_rec_status == 'not_ready'"/>
-                        </group>
-                        <group string="Manual Override">
-                            <field name="lww_manual_override"/>
-                            <field name="lww_override_year" invisible="not lww_manual_override"/>
-                        </group>
-                    </group>
-                </page>
+            <xpath expr="//sheet" position="inside">
+                <group string="DO Recognition" name="lww_recognition">
+                    <field name="lww_rec_year"/>
+                    <field name="lww_rec_mode"/>
+                    <field name="lww_auto_year"/>
+                    <field name="lww_auto_date"/>
+                    <field name="lww_manual_override"/>
+                    <field name="lww_override_year" invisible="not lww_manual_override"/>
+                </group>
             </xpath>
         </field>
     </record>
-
-    <record id="view_project_recognition_list" model="ir.ui.view">
-        <field name="name">project.project.recognition.list</field>
+    <record id="lww_project_dashboard_list" model="ir.ui.view">
+        <field name="name">project.project.list.lww.recognition</field>
         <field name="model">project.project</field>
         <field name="arch" type="xml">
-            <list string="Project Recognition Dashboard" create="0" delete="0">
+            <list create="0" delete="0">
                 <field name="name"/>
-                <field name="sale_order_id" string="Sales Order"/>
-                <field name="lww_rec_mode"/>
+                <field name="partner_id"/>
+                <field name="lww_progress" widget="percentage" string="Progress"/>
                 <field name="lww_rec_year"/>
-                <field name="lww_rec_status" widget="badge"
-                       decoration-success="lww_rec_status == 'recognized'"
-                       decoration-warning="lww_rec_status == 'pending'"
-                       decoration-danger="lww_rec_status == 'not_ready'"/>
-                <field name="lww_do_count" string="DO Count" sum="Total"/>
-                <field name="lww_reclass_count" string="Reclass Count" sum="Total"/>
-                <field name="lww_backdated_count" string="Backdate Count" sum="Total"/>
-                <field name="lww_return_count" string="Return DO Count" sum="Total"/>
-                <field name="lww_reversal_count" string="Reversal Count" sum="Total"/>
-                <field name="company_id" optional="show" groups="base.group_multi_company"/>
+                <field name="lww_rec_mode"/>
+                <field name="lww_awaiting_count" string="Awaiting"/>
+                <field name="lww_pending_count" string="Pending"/>
+                <field name="lww_recognized_count" string="Recognized"/>
             </list>
         </field>
     </record>
-
-    <record id="view_project_recognition_search" model="ir.ui.view">
-        <field name="name">project.project.recognition.search</field>
-        <field name="model">project.project</field>
-        <field name="arch" type="xml">
-            <search string="Project Recognition">
-                <field name="name"/>
-                <field name="sale_order_id"/>
-                <field name="lww_rec_year"/>
-                <filter name="manual_override" string="Manual Override" domain="[('lww_manual_override', '=', True)]"/>
-                <separator/>
-                <filter name="recognized" string="Recognized" domain="[('lww_rec_status', '=', 'recognized')]"/>
-                <filter name="pending" string="Pending Recognition" domain="[('lww_rec_status', '=', 'pending')]"/>
-                <filter name="not_ready" string="Not Ready" domain="[('lww_rec_status', '=', 'not_ready')]"/>
-                <filter name="returned" string="Returned &amp; Reversed" domain="[('lww_has_return', '=', True)]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_year" string="Recognition Year" context="{'group_by': 'lww_rec_year'}"/>
-                    <filter name="group_status" string="Status" context="{'group_by': 'lww_rec_status'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
-
-    <record id="action_project_recognition_dashboard" model="ir.actions.act_window">
-        <field name="name">Project Recognition Dashboard</field>
+    <record id="lww_project_dashboard_action" model="ir.actions.act_window">
+        <field name="name">Project Recognition</field>
         <field name="res_model">project.project</field>
         <field name="view_mode">list,form</field>
-        <field name="view_id" ref="view_project_recognition_list"/>
-        <field name="search_view_id" ref="view_project_recognition_search"/>
-        <field name="domain">['|', ('sale_line_id', '!=', False), ('reinvoiced_sale_order_id', '!=', False)]</field>
+        <field name="domain">[('sale_line_id', '!=', False)]</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('lww_project_dashboard_list')}), (0, 0, {'view_mode': 'form', 'view_id': ref('project.edit_project')})]"/>
     </record>
-
-    <menuitem id="menu_project_recognition_dashboard" name="Project Recognition Dashboard" parent="account.menu_finance_reports" action="action_project_recognition_dashboard" sequence="5" groups="account.group_account_readonly"/>
 </odoo>

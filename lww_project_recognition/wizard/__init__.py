@@ -1,1 +1,1 @@
-from . import recognition_override_wizard
+from . import recognition_wizard

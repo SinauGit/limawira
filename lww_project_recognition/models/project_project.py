@@ -1,248 +1,142 @@
-from collections import defaultdict
-
 from odoo import api, fields, models, _
+from odoo.exceptions import UserError
+from odoo.tools import float_compare
 
 
 class ProjectProject(models.Model):
     _inherit = 'project.project'
 
-    lww_manual_override = fields.Boolean(
-        string='Manual Override', copy=False, readonly=True, tracking=True)
-    lww_override_year = fields.Integer(
-        string='Override Year', copy=False, readonly=True, tracking=True)
-    lww_billing_date = fields.Date(
-        string='Billing Threshold Date', copy=False, readonly=True,
-        help='Date on which cumulative progress billing reached the threshold (default 90%).')
-    lww_rec_year = fields.Integer(
-        string='Recognition Year', compute='_compute_lww_rec_year', store=True)
-    lww_rec_mode = fields.Selection(
-        [('automatic', 'Automatic (90% Rule)'), ('manual', 'Manual Override')],
-        string='Recognition Mode', compute='_compute_lww_rec_mode')
-    lww_rec_status = fields.Selection(
-        [('not_ready', 'Not Ready'),
-         ('pending', 'Pending Recognition'),
-         ('recognized', 'Recognized')],
-        string='Recognition Status', compute='_compute_lww_rec_status', store=True)
-    lww_has_return = fields.Boolean(
-        string='Has Return Delivery', compute='_compute_lww_has_return', store=True)
-    lww_picking_ids = fields.One2many('stock.picking', 'x_project_id', string='Transfers')
+    lww_manual_override = fields.Boolean(string='Manual Recognition Year', copy=False, tracking=False)
+    lww_override_year = fields.Integer(string='Override Year', copy=False)
+    lww_auto_year = fields.Integer(string='Billing Year', copy=False, readonly=True)
+    lww_auto_date = fields.Date(string='Threshold Date', copy=False, readonly=True)
+    lww_rec_year = fields.Integer(string='Recognition Year', compute='_compute_lww_rec_year', store=True)
+    lww_rec_mode = fields.Selection([('auto', 'Automatic'), ('manual', 'Manual')],
+                                    compute='_compute_lww_rec_year', store=True, string='Recognition Mode')
+    lww_progress = fields.Float(string='Billing Progress (%)', compute='_compute_lww_progress')
+    lww_awaiting_count = fields.Integer(compute='_compute_lww_counts')
+    lww_pending_count = fields.Integer(compute='_compute_lww_counts')
+    lww_recognized_count = fields.Integer(compute='_compute_lww_counts')
+    lww_move_count = fields.Integer(compute='_compute_lww_counts')
 
-    lww_do_count = fields.Integer(compute='_compute_lww_counts', string='Delivery Orders')
-    lww_reclass_count = fields.Integer(compute='_compute_lww_counts', string='Reclassification Journals')
-    lww_backdated_count = fields.Integer(compute='_compute_lww_counts', string='Backdated Journals')
-    lww_return_count = fields.Integer(compute='_compute_lww_counts', string='Return Deliveries')
-    lww_reversal_count = fields.Integer(compute='_compute_lww_counts', string='Reversal Journals')
-
-    # ------------------------------------------------------------------
-    # Computes
-    # ------------------------------------------------------------------
-    @api.depends('lww_manual_override', 'lww_override_year', 'lww_billing_date')
+    @api.depends('lww_manual_override', 'lww_override_year', 'lww_auto_year')
     def _compute_lww_rec_year(self):
         for project in self:
-            if project.lww_manual_override:
-                project.lww_rec_year = project.lww_override_year or 0
-            elif project.lww_billing_date:
-                project.lww_rec_year = project.lww_billing_date.year
+            if project.lww_manual_override and project.lww_override_year:
+                project.lww_rec_year = project.lww_override_year
+                project.lww_rec_mode = 'manual'
+            elif project.lww_auto_year:
+                project.lww_rec_year = project.lww_auto_year
+                project.lww_rec_mode = 'auto'
             else:
                 project.lww_rec_year = 0
+                project.lww_rec_mode = False
 
-    def _compute_lww_rec_mode(self):
-        for project in self:
-            project.lww_rec_mode = 'manual' if project.lww_manual_override else 'automatic'
-
-    @api.depends('lww_rec_year', 'lww_picking_ids.x_accounting_status', 'lww_picking_ids.state')
-    def _compute_lww_rec_status(self):
-        for project in self:
-            if not project.lww_rec_year:
-                project.lww_rec_status = 'not_ready'
-                continue
-            delivered = project.lww_picking_ids.filtered(
-                lambda p: not p.x_is_return and p.picking_type_code == 'outgoing' and p.state == 'done')
-            if delivered and all(p.x_accounting_status == 'recognized' for p in delivered):
-                project.lww_rec_status = 'recognized'
-            else:
-                project.lww_rec_status = 'pending'
-
-    @api.depends('lww_picking_ids.x_is_return', 'lww_picking_ids.state')
-    def _compute_lww_has_return(self):
-        for project in self:
-            project.lww_has_return = any(
-                p.x_is_return and p.state == 'done' for p in project.lww_picking_ids)
-
-    def _compute_lww_counts(self):
-        counts = defaultdict(lambda: defaultdict(int))
-        if self.ids:
-            Picking = self.env['stock.picking'].sudo()
-            Move = self.env['account.move'].sudo()
-            base = [('x_project_id', 'in', self.ids), ('state', '!=', 'cancel')]
-            for project, count in Picking._read_group(
-                    base + [('x_is_return', '=', False), ('picking_type_code', '=', 'outgoing')],
-                    ['x_project_id'], ['__count']):
-                counts[project.id]['do'] = count
-            for project, count in Picking._read_group(
-                    base + [('x_is_return', '=', True)], ['x_project_id'], ['__count']):
-                counts[project.id]['return'] = count
-            for project, entry_type, count in Move._read_group(
-                    [('lww_project_id', 'in', self.ids), ('lww_entry_type', '!=', False)],
-                    ['lww_project_id', 'lww_entry_type'], ['__count']):
-                counts[project.id][entry_type] = count
-        for project in self:
-            data = counts[project.id]
-            project.lww_do_count = data['do']
-            project.lww_return_count = data['return']
-            project.lww_reclass_count = data['reclass']
-            project.lww_backdated_count = data['backdated']
-            project.lww_reversal_count = data['reversal_reclass'] + data['reversal_backdated']
-
-    # ------------------------------------------------------------------
-    # Order / project linkage
-    # ------------------------------------------------------------------
-    @api.model
-    def _lww_projects_from_orders(self, orders):
-        orders = orders.sudo()
-        projects = orders.project_id
-        projects |= self.sudo().search([
-            '|',
-            ('sale_line_id.order_id', 'in', orders.ids),
-            ('reinvoiced_sale_order_id', 'in', orders.ids),
-        ])
-        return projects.sorted('id')
-
-    def _lww_orders(self):
+    def _lww_sale_order(self):
         self.ensure_one()
-        project = self.sudo()
-        orders = project.sale_order_id | project.reinvoiced_sale_order_id
-        orders |= self.env['sale.order'].sudo().search([('project_id', '=', project.id)])
-        return orders.filtered(lambda so: so.state == 'sale')
+        return (self.sale_order_id or self.reinvoiced_sale_order_id).sudo()
 
-    def _lww_relink_pickings(self):
-        """Recompute the project reference of the transfers of the project orders."""
-        Picking = self.env['stock.picking'].sudo()
-        for project in self:
-            orders = (project.sudo().sale_order_id | project.sudo().reinvoiced_sale_order_id
-                      | self.env['sale.order'].sudo().search([('project_id', '=', project.id)]))
-            pickings = Picking.search([('sale_id', 'in', orders.ids)])
-            if pickings:
-                self.env.add_to_compute(Picking._fields['x_project_id'], pickings)
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        projects = super().create(vals_list)
-        projects._lww_relink_pickings()
-        projects._lww_refresh_billing()
-        return projects
-
-    def write(self, vals):
-        res = super().write(vals)
-        if 'sale_line_id' in vals or 'reinvoiced_sale_order_id' in vals:
-            self._lww_relink_pickings()
-            self._lww_refresh_billing()
-        return res
-
-    # ------------------------------------------------------------------
-    # Billing milestone (FR-01)
-    # ------------------------------------------------------------------
-    def _lww_refresh_billing(self):
-        for project in self.sudo():
-            billing_date = project._lww_compute_billing_date()
-            if project.lww_billing_date != billing_date:
-                project.lww_billing_date = billing_date
-
-    def _lww_compute_billing_date(self):
-        """Date on which cumulative posted billing (invoices minus credit notes)
-        of the project sale order(s) reached the company threshold of the order
-        total (untaxed). Returns False if the threshold is not reached (anymore)."""
+    def _lww_invoices(self):
         self.ensure_one()
-        orders = self._lww_orders()
-        if not orders:
-            return False
-        total = sum(orders.mapped('amount_untaxed'))
-        if total <= 0:
-            return False
-        currency = orders[:1].currency_id
-        target = total * (self.company_id.lww_billing_threshold or 90.0) / 100.0
-
+        if not self.account_id:
+            return self.env['account.move']
         lines = self.env['account.move.line'].sudo().search([
-            ('sale_line_ids.order_id', 'in', orders.ids),
+            ('analytic_distribution', 'in', self.account_id.ids),
+            ('move_id.move_type', '=', 'out_invoice'),
             ('move_id.state', '=', 'posted'),
-            ('move_id.move_type', 'in', ('out_invoice', 'out_refund')),
-            ('display_type', '=', 'product'),
         ])
-        per_move = defaultdict(float)
-        for line in lines:
-            sign = 1.0 if line.move_id.move_type == 'out_invoice' else -1.0
-            per_move[line.move_id] += sign * line.price_subtotal
-        entries = sorted(
-            ((move.invoice_date or move.date, move.id, amount) for move, amount in per_move.items()))
+        return lines.move_id
 
+    def _lww_progress_data(self):
+        self.ensure_one()
+        order = self._lww_sale_order()
+        config = self.env['lww.recognition.config']._get(self.company_id)
+        total = order.amount_total if order else 0.0
+        invoices = self._lww_invoices().sorted(lambda m: (m.date, m.id))
         cumulative = 0.0
         reached = False
-        for entry_date, _move_id, amount in entries:
-            cumulative += amount
-            if currency.compare_amounts(cumulative, target) >= 0:
-                reached = reached or entry_date
-            else:
-                reached = False
-        return reached
+        for inv in invoices:
+            cumulative += inv.amount_total
+            if config and total > 0 and not reached and \
+                    float_compare(cumulative * 100.0, total * config.threshold, precision_digits=4) >= 0:
+                reached = inv.date
+        pct = (cumulative / total * 100.0) if total > 0 else 0.0
+        return pct, reached
 
-    # ------------------------------------------------------------------
-    # Actions
-    # ------------------------------------------------------------------
-    def action_open_recognition_wizard(self):
+    def _compute_lww_progress(self):
+        for project in self:
+            project.lww_progress = project._lww_progress_data()[0]
+
+    def _compute_lww_counts(self):
+        Picking = self.env['stock.picking'].sudo()
+        Move = self.env['account.move'].sudo()
+        for project in self:
+            data = Picking._read_group([('x_project_id', '=', project.id)], ['x_accounting_status'], ['__count'])
+            counts = {status: count for status, count in data}
+            project.lww_awaiting_count = counts.get('awaiting', 0)
+            project.lww_pending_count = counts.get('pending', 0)
+            project.lww_recognized_count = counts.get('recognized', 0) + counts.get('returned', 0)
+            project.lww_move_count = Move.search_count([('lww_project_id', '=', project.id)])
+
+    def _lww_refresh_auto(self):
+        for project in self.sudo():
+            if project.lww_auto_year or not project._lww_sale_order():
+                continue
+            config = self.env['lww.recognition.config']._get(project.company_id)
+            if not config:
+                continue
+            date = project._lww_progress_data()[1]
+            if not date:
+                continue
+            project.write({'lww_auto_year': date.year, 'lww_auto_date': date})
+            self.env['lww.recognition.log'].sudo().create({
+                'company_id': project.company_id.id, 'project_id': project.id, 'action': 'year_auto',
+                'new_year': date.year, 'note': _('Billing threshold reached on %s', date)})
+            if not (project.lww_manual_override and project.lww_override_year):
+                project.env['stock.picking'].sudo().search([
+                    ('x_project_id', '=', project.id), ('x_accounting_status', '=', 'awaiting')
+                ])._lww_year_appeared(project.lww_rec_year)
+
+    def _lww_tracked_pickings(self):
+        return self.env['stock.picking'].sudo().search([
+            ('x_project_id', '=', self.id), ('x_accounting_status', '!=', False), ('x_is_return', '=', False)])
+
+    def action_lww_override(self):
         self.ensure_one()
+        return self._lww_wizard_action('override')
+
+    def action_lww_process_pending(self):
+        self.ensure_one()
+        return self._lww_wizard_action('pending')
+
+    def _lww_wizard_action(self, mode):
+        wizard = self.env['lww.recognition.wizard'].create({'project_id': self.id, 'mode': mode})
         return {
-            'type': 'ir.actions.act_window',
-            'name': _('Generate Recognition'),
-            'res_model': 'lww.recognition.override.wizard',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {'default_project_id': self.id},
+            'type': 'ir.actions.act_window', 'res_model': 'lww.recognition.wizard',
+            'res_id': wizard.id, 'view_mode': 'form', 'target': 'new',
+            'name': _('Override Recognition Year') if mode == 'override' else _('Process Pending DOs'),
         }
 
-    def _lww_picking_action(self, is_return):
+    def _lww_picking_action(self, status):
         self.ensure_one()
-        action = self.env['ir.actions.actions']._for_xml_id('stock.action_picking_tree_all')
-        domain = [('x_project_id', '=', self.id), ('x_is_return', '=', is_return)]
-        if not is_return:
-            domain.append(('picking_type_code', '=', 'outgoing'))
-        action.update({
-            'name': _('Return Deliveries') if is_return else _('Delivery Orders'),
-            'domain': domain,
-            'context': {},
-        })
-        return action
+        domain = [('x_project_id', '=', self.id)]
+        if status == 'recognized':
+            domain.append(('x_accounting_status', 'in', ['recognized', 'returned']))
+        else:
+            domain.append(('x_accounting_status', '=', status))
+        return {'type': 'ir.actions.act_window', 'name': _('Delivery Orders'), 'res_model': 'stock.picking',
+                'view_mode': 'list,form', 'domain': domain}
 
-    def action_view_lww_pickings(self):
-        return self._lww_picking_action(False)
+    def action_lww_view_awaiting(self):
+        return self._lww_picking_action('awaiting')
 
-    def action_view_lww_returns(self):
-        return self._lww_picking_action(True)
+    def action_lww_view_pending(self):
+        return self._lww_picking_action('pending')
 
-    def _lww_journal_action(self, entry_types, name):
+    def action_lww_view_recognized(self):
+        return self._lww_picking_action('recognized')
+
+    def action_lww_view_moves(self):
         self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': name,
-            'res_model': 'account.move',
-            'views': [
-                (self.env.ref('lww_project_recognition.view_move_recognition_list').id, 'list'),
-                (False, 'form'),
-            ],
-            'domain': [('lww_project_id', '=', self.id), ('lww_entry_type', 'in', entry_types)],
-            'context': {'create': False},
-        }
-
-    def action_view_lww_reclass(self):
-        return self._lww_journal_action(['reclass'], _('Reclassification Journals'))
-
-    def action_view_lww_backdated(self):
-        return self._lww_journal_action(['backdated'], _('Backdated Journals'))
-
-    def action_view_lww_reversals(self):
-        return self._lww_journal_action(
-            ['reversal_reclass', 'reversal_backdated'], _('Reversal Journals'))
-
-    def action_view_lww_all_journals(self):
-        return self._lww_journal_action(
-            ['reclass', 'backdated', 'reversal_reclass', 'reversal_backdated'],
-            _('Recognition Journals'))
+        return {'type': 'ir.actions.act_window', 'name': _('Recognition Journals'), 'res_model': 'account.move',
+                'view_mode': 'list,form', 'domain': [('lww_project_id', '=', self.id)]}

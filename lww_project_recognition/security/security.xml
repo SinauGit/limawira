@@ -2,7 +2,17 @@
 <odoo>
     <record id="group_recognition_manager" model="res.groups">
         <field name="name">Project Recognition Manager</field>
+        <field name="category_id" ref="base.module_category_accounting_accounting"/>
         <field name="implied_ids" eval="[(4, ref('account.group_account_user'))]"/>
-        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="config_company_rule" model="ir.rule">
+        <field name="name">Recognition Config: multi-company</field>
+        <field name="model_id" ref="model_lww_recognition_config"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="log_company_rule" model="ir.rule">
+        <field name="name">Recognition Log: multi-company</field>
+        <field name="model_id" ref="model_lww_recognition_log"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
 </odoo>

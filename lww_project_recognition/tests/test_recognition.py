@@ -1,269 +1,302 @@
 from datetime import date
 
-from odoo import fields, Command
+from odoo import fields
+from odoo.exceptions import UserError
 from odoo.tests import tagged
-from odoo.tests.common import TransactionCase
+from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 
 
 @tagged('post_install', '-at_install')
-class TestProjectRecognition(TransactionCase):
+class TestRecognition(AccountTestInvoicingCommon):
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.company = cls.env.company
-        cls.company.anglo_saxon_accounting = True
-        Account = cls.env['account.account']
+        cls.env = cls.env(su=True)
+        env = cls.env
+        cls.company = env.company
+        cls.today = fields.Date.context_today(env.user)
+        cls.Y = cls.today.year
+        Account = env['account.account']
 
-        def acc(code, name, account_type, reconcile=False):
-            return Account.create({
-                'code': code, 'name': name, 'account_type': account_type, 'reconcile': reconcile})
-
-        cls.acc_stock = acc('LW1100', 'Stock Valuation', 'asset_current')
-        cls.acc_input = acc('LW1101', 'Stock Interim (Received)', 'asset_current', True)
-        cls.acc_wip = acc('LW1102', 'WIP Project', 'asset_current', True)
-        cls.acc_income = acc('LW4100', 'Project Revenue', 'income')
-        cls.acc_cogs = acc('LW5100', 'Project COGS', 'expense')
-        cls.acc_hutang = acc('LW2100', 'Hutang Biaya Proyek', 'liability_current')
-        cls.acc_receivable = acc('LW1200', 'Receivable', 'asset_receivable', True)
-
-        Journal = cls.env['account.journal']
-        cls.stock_journal = Journal.create({'name': 'Stock Journal', 'type': 'general', 'code': 'LWSTJ'})
-        cls.rec_journal = Journal.create({'name': 'Recognition', 'type': 'general', 'code': 'LWREC'})
-        cls.sale_journal = Journal.search(
-            [('type', '=', 'sale'), ('company_id', '=', cls.company.id)], limit=1) or Journal.create(
-            {'name': 'Sales', 'type': 'sale', 'code': 'LWSAL', 'default_account_id': cls.acc_income.id})
-        cls.company.write({
-            'lww_rec_journal_id': cls.rec_journal.id,
-            'lww_rec_payable_account_id': cls.acc_hutang.id,
-        })
-
-        cls.categ = cls.env['product.category'].create({
-            'name': 'Project Material',
-            'property_valuation': 'real_time',
-            'property_cost_method': 'fifo',
+        def acc(code, atype, **kw):
+            return Account.create({'code': code, 'name': code, 'account_type': atype, **kw})
+        cls.acc_wip = acc('LW1061', 'asset_current')
+        cls.acc_stock = acc('LW1101', 'asset_current')
+        cls.acc_payable = acc('LW2201', 'liability_current')
+        cls.acc_income = acc('LW4001', 'income')
+        cls.acc_recv = acc('LW1201', 'asset_receivable', reconcile=True)
+        cls.acc_pay = acc('LW2101', 'liability_payable', reconcile=True)
+        cls.journal_rec = env['account.journal'].create({'name': 'Recognition', 'code': 'LWR', 'type': 'general'})
+        cls.journal_stock = env['account.journal'].create({'name': 'Stock LW', 'code': 'LWS', 'type': 'general'})
+        cls.journal_sale = env['account.journal'].create({'name': 'Sales LW', 'code': 'LWI', 'type': 'sale'})
+        env['lww.recognition.config'].create({
+            'company_id': cls.company.id, 'journal_id': cls.journal_rec.id,
+            'payable_account_id': cls.acc_payable.id, 'threshold': 90.0,
+            'go_live_date': date(cls.Y - 5, 1, 1)})
+        cls.partner = env['res.partner'].create({
+            'name': 'Cust LW', 'property_account_receivable_id': cls.acc_recv.id,
+            'property_account_payable_id': cls.acc_pay.id})
+        cls.categ = env['product.category'].create({
+            'name': 'LW', 'property_cost_method': 'average', 'property_valuation': 'real_time',
             'property_stock_valuation_account_id': cls.acc_stock.id,
-            'property_stock_account_input_categ_id': cls.acc_input.id,
+            'property_stock_account_input_categ_id': cls.acc_wip.id,
             'property_stock_account_output_categ_id': cls.acc_wip.id,
-            'property_stock_journal': cls.stock_journal.id,
+            'property_account_expense_categ_id': cls.acc_wip.id,
             'property_account_income_categ_id': cls.acc_income.id,
-            'property_account_expense_categ_id': cls.acc_cogs.id,
-        })
-        cls.product = cls.env['product.product'].create({
-            'name': 'Material A', 'type': 'consu', 'is_storable': True,
-            'categ_id': cls.categ.id, 'standard_price': 100.0, 'list_price': 150.0,
-            'invoice_policy': 'order',
-        })
-        cls.partner = cls.env['res.partner'].create({
-            'name': 'PT ABC',
-            'property_account_receivable_id': cls.acc_receivable.id,
-        })
-        cls.year = fields.Date.today().year
-        cls.prev = cls.year - 1
+            'property_stock_journal': cls.journal_stock.id})
+        cls.product = env['product.product'].create({
+            'name': 'LW Product', 'is_storable': True, 'type': 'consu', 'categ_id': cls.categ.id,
+            'standard_price': 100.0, 'list_price': 1000.0})
+        wh = env['stock.warehouse'].search([('company_id', '=', cls.company.id)], limit=1)
+        quant = env['stock.quant'].with_context(inventory_mode=True).create({
+            'product_id': cls.product.id, 'location_id': wh.lot_stock_id.id, 'inventory_quantity': 1000})
+        quant.action_apply_inventory()
 
-        receipt = cls.env['stock.picking'].create({
-            'picking_type_id': cls.env.ref('stock.picking_type_in').id
-            if cls.env.ref('stock.picking_type_in', raise_if_not_found=False)
-            else cls.env['stock.picking.type'].search([('code', '=', 'incoming')], limit=1).id,
-            'location_id': cls.env.ref('stock.stock_location_suppliers').id,
-            'location_dest_id': cls.env['stock.picking.type'].search(
-                [('code', '=', 'incoming')], limit=1).default_location_dest_id.id,
-            'move_ids': [Command.create({
-                'name': 'receipt', 'product_id': cls.product.id, 'product_uom_qty': 100,
-                'product_uom': cls.product.uom_id.id,
-                'location_id': cls.env.ref('stock.stock_location_suppliers').id,
-                'location_dest_id': cls.env['stock.picking.type'].search(
-                    [('code', '=', 'incoming')], limit=1).default_location_dest_id.id,
-            })],
-        })
-        receipt.action_confirm()
-        receipt.move_ids.quantity = 100
-        receipt.move_ids.picked = True
-        receipt.button_validate()
-
-    # ------------------------------------------------------------------
-    def _make_so_project(self, qty=10):
-        so = self.env['sale.order'].create({
+    def _project(self, name='P1', qty=10, price=1000.0):
+        analytic_plan = self.env['account.analytic.plan'].search([], limit=1) or \
+            self.env['account.analytic.plan'].create({'name': 'Project'})
+        analytic = self.env['account.analytic.account'].create({'name': name, 'plan_id': analytic_plan.id})
+        order = self.env['sale.order'].create({
             'partner_id': self.partner.id,
-            'order_line': [Command.create({
-                'product_id': self.product.id, 'product_uom_qty': qty, 'price_unit': 150.0})],
-        })
-        so.action_confirm()
+            'order_line': [(0, 0, {'product_id': self.product.id, 'product_uom_qty': qty, 'price_unit': price,
+                                   'tax_id': [(5, 0, 0)],
+                                   'analytic_distribution': {str(analytic.id): 100}})]})
         project = self.env['project.project'].create({
-            'name': 'PROJ-%s' % so.name, 'allow_billable': True,
-            'partner_id': self.partner.id, 'sale_line_id': so.order_line[:1].id})
-        return so, project
+            'name': name, 'account_id': analytic.id, 'partner_id': self.partner.id,
+            'sale_line_id': order.order_line.id})
+        if order.state != 'sale':
+            order.action_confirm()
+        return project, order
 
-    def _bill(self, so, qty, invoice_date):
-        invoice = so._create_invoices()
-        invoice.invoice_date = invoice_date
-        invoice.invoice_line_ids.filtered(lambda l: l.display_type == 'product').quantity = qty
-        invoice.action_post()
-        return invoice
+    def _invoice(self, project, amount, inv_date, move_type='out_invoice'):
+        move = self.env['account.move'].create({
+            'move_type': move_type, 'partner_id': self.partner.id, 'invoice_date': inv_date,
+            'journal_id': self.journal_sale.id,
+            'invoice_line_ids': [(0, 0, {
+                'name': 'bill', 'quantity': 1, 'price_unit': amount, 'account_id': self.acc_income.id,
+                'tax_ids': [(5, 0, 0)], 'analytic_distribution': {str(project.account_id.id): 100}})]})
+        move.action_post()
+        return move
 
-    def _validate(self, picking, qty=None):
+    def _validate(self, order, qty=None):
+        picking = order.picking_ids.filtered(lambda p: p.state != 'done' and p.picking_type_code == 'outgoing')[:1]
+        picking.action_assign()
         for move in picking.move_ids:
             move.quantity = qty if qty is not None else move.product_uom_qty
             move.picked = True
-        res = picking.button_validate()
-        self.assertTrue(res is True, 'Validation returned a wizard: %s' % res)
+        picking.with_context(skip_backorder=True, skip_sms=True).button_validate()
+        return picking
 
-    def _delivery(self, so):
-        return so.picking_ids.filtered(lambda p: p.picking_type_code == 'outgoing')[:1]
+    def _return(self, picking, qty):
+        wiz = self.env['stock.return.picking'].with_context(
+            active_id=picking.id, active_model='stock.picking').create({})
+        wiz.product_return_moves.quantity = qty
+        res = wiz.action_create_returns()
+        ret = self.env['stock.picking'].browse(res['res_id'])
+        for move in ret.move_ids:
+            move.quantity = qty
+            move.picked = True
+        ret.with_context(skip_backorder=True, skip_sms=True).button_validate()
+        return ret
+
+    def _balance(self, project, account):
+        lines = self.env['account.move.line'].search([
+            ('account_id', '=', account.id), ('parent_state', '=', 'posted'),
+            ('analytic_distribution', 'in', project.account_id.ids)])
+        return round(sum(lines.mapped('balance')), 2)
+
+    def _entries(self, picking, etype=None, active=None):
+        moves = self.env['account.move'].search([('lww_picking_id', '=', picking.id)])
+        if etype:
+            moves = moves.filtered(lambda m: m.lww_entry_type == etype)
+        if active is not None:
+            moves = moves.filtered(lambda m: m.lww_active == active)
+        return moves
+
+    def _reach(self, project, year):
+        self._invoice(project, 6000, date(year, 3, 10))
+        self._invoice(project, 3000, date(year, 5, 20))
+
+    def _override(self, project, year):
+        wiz = self.env['lww.recognition.wizard'].create({
+            'project_id': project.id, 'mode': 'override', 'manual': bool(year), 'new_year': year or 0})
+        wiz.confirm = True
+        wiz.action_apply()
 
     # ------------------------------------------------------------------
-    def test_01_recognition_year_from_billing_milestone(self):
-        so, project = self._make_so_project()
-        self.assertEqual(project.lww_rec_status, 'not_ready')
-        self._bill(so, 5, date(self.prev - 1, 3, 1))           # 50 %
-        self.assertFalse(project.lww_billing_date)
+    def test_01_billing_year_reclass_backdate(self):
+        project, order = self._project()
+        self._invoice(project, 6000, date(self.Y - 1, 3, 10))
         self.assertEqual(project.lww_rec_year, 0)
-        picking = self._delivery(so)
-        self.assertEqual(picking.x_project_id, project)
-        self.assertEqual(picking.x_accounting_status, 'awaiting')
-        self._bill(so, 4.5, date(self.prev, 8, 15))             # 95 % cumulative
-        self.assertEqual(project.lww_billing_date, date(self.prev, 8, 15))
-        self.assertEqual(project.lww_rec_year, self.prev)
-        self.assertEqual(picking.x_accounting_status, 'pending')
-        self.assertEqual(picking.x_recognition_year, self.prev)
-
-    def test_02_delivery_creates_reclass_and_backdated(self):
-        so, project = self._make_so_project()
-        self._bill(so, 9.5, date(self.prev, 8, 15))
-        picking = self._delivery(so)
-        self._validate(picking)
+        self._invoice(project, 3000, date(self.Y - 1, 12, 20))
+        self.assertEqual(project.lww_rec_year, self.Y - 1)
+        self.assertEqual(project.lww_rec_mode, 'auto')
+        picking = self._validate(order)
+        self.assertEqual(picking.state, 'done')
         self.assertEqual(picking.x_accounting_status, 'recognized')
-        self.assertEqual(picking.x_recognition_year, self.prev)
-        reclass, backdated = picking.x_reclass_move_id, picking.x_backdated_move_id
-        self.assertTrue(reclass and backdated)
-        self.assertEqual(reclass.state, 'posted')
-        self.assertEqual(backdated.state, 'posted')
-        self.assertEqual(reclass.date, fields.Date.today())
-        self.assertEqual(backdated.date, date(self.prev, 12, 31))
-        # Standard Odoo entry: Dr WIP / Cr stock valuation (1000 = 10 x 100)
-        standard = picking.move_ids.stock_valuation_layer_ids.account_move_id
-        self.assertEqual(sum(standard.line_ids.filtered(
-            lambda l: l.account_id == self.acc_wip).mapped('balance')), 1000.0)
-        # Reclass: Dr Hutang / Cr WIP ; Backdated: Dr WIP / Cr Hutang
-        self.assertEqual(reclass.line_ids.filtered(lambda l: l.account_id == self.acc_hutang).balance, 1000.0)
-        self.assertEqual(reclass.line_ids.filtered(lambda l: l.account_id == self.acc_wip).balance, -1000.0)
-        self.assertEqual(backdated.line_ids.filtered(lambda l: l.account_id == self.acc_wip).balance, 1000.0)
-        self.assertEqual(backdated.line_ids.filtered(lambda l: l.account_id == self.acc_hutang).balance, -1000.0)
-        # Linkage
-        for move, kind in ((reclass, 'reclass'), (backdated, 'backdated')):
-            self.assertEqual(move.lww_project_id, project)
-            self.assertEqual(move.lww_picking_id, picking)
-            self.assertEqual(move.lww_entry_type, kind)
-        self.assertEqual(project.lww_do_count, 1)
-        self.assertEqual(project.lww_reclass_count, 1)
-        self.assertEqual(project.lww_backdated_count, 1)
-        self.assertEqual(project.lww_rec_status, 'recognized')
-        # Duplicate prevention
-        picking._lww_process_recognition()
-        self.assertEqual(project.lww_reclass_count, 1)
-        with self.assertRaises(Exception), self.cr.savepoint():
-            picking._lww_create_move('reclass', fields.Date.today(), {(self.acc_wip.id, '{}'): 1.0}, self.prev)
+        reclass = self._entries(picking, 'reclass')
+        backdated = self._entries(picking, 'backdated')
+        self.assertEqual(reclass.date, self.today)
+        self.assertEqual(backdated.date, date(self.Y - 1, 12, 31))
+        self.assertEqual(sum(reclass.line_ids.filtered(lambda l: l.account_id == self.acc_payable).mapped('debit')), 1000.0)
+        self.assertEqual(self._balance(project, self.acc_wip), 1000.0)
+        self.assertEqual(self._balance(project, self.acc_payable), 0.0)
+        self.assertEqual(picking.x_reclass_move_id, reclass)
+        self.assertEqual(picking.x_backdated_move_id, backdated)
 
-    def test_03_partial_return_reverses_proportionally(self):
-        so, project = self._make_so_project()
-        self._bill(so, 9.5, date(self.prev, 8, 15))
-        picking = self._delivery(so)
-        self._validate(picking)
-        wizard = self.env['stock.return.picking'].with_context(
-            active_id=picking.id, active_model='stock.picking').create({})
-        wizard.product_return_moves.quantity = 4
-        action = wizard.action_create_returns()
-        ret = self.env['stock.picking'].browse(action['res_id'])
+    def test_02_same_year_no_journal(self):
+        project, order = self._project()
+        self._reach(project, self.Y)
+        picking = self._validate(order)
+        self.assertEqual(picking.x_accounting_status, 'recognized')
+        self.assertFalse(self._entries(picking))
+
+    def test_03_awaiting_then_year_ge_do_year(self):
+        project, order = self._project()
+        picking = self._validate(order)
+        self.assertEqual(picking.x_accounting_status, 'awaiting')
+        self.assertFalse(self._entries(picking))
+        self._reach(project, self.Y)
+        self.assertEqual(picking.x_accounting_status, 'recognized')
+        self.assertFalse(self._entries(picking))
+
+    def test_04_awaiting_then_prior_year_pending_then_wizard(self):
+        project, order = self._project()
+        picking = self._validate(order)
+        self._reach(project, self.Y - 1)
+        self.assertEqual(picking.x_accounting_status, 'pending')
+        self.assertFalse(self._entries(picking))
+        self.assertEqual(project.lww_pending_count, 1)
+        wiz = self.env['lww.recognition.wizard'].create({'project_id': project.id, 'mode': 'pending'})
+        self.assertEqual(wiz.impacted_count, 1)
+        with self.assertRaises(UserError):
+            wiz.action_apply()
+        wiz.confirm = True
+        wiz.action_apply()
+        self.assertEqual(picking.x_accounting_status, 'recognized')
+        self.assertEqual(len(self._entries(picking, active=True)), 2)
+        self.assertEqual(self._balance(project, self.acc_wip), 1000.0)
+
+    def test_05_partial_and_full_return(self):
+        project, order = self._project()
+        self._reach(project, self.Y - 1)
+        picking = self._validate(order)
+        ret = self._return(picking, 4)
         self.assertTrue(ret.x_is_return)
-        self.assertEqual(ret.x_project_id, project)
-        self._validate(ret)
-        self.assertEqual(ret.x_accounting_status, 'returned')
-        rev_reclass, rev_back = ret.x_reclass_reversal_move_id, ret.x_backdated_reversal_move_id
-        self.assertTrue(rev_reclass and rev_back)
-        self.assertEqual(rev_reclass.date, fields.Date.today())
-        self.assertEqual(rev_back.date, date(self.prev, 12, 31))
-        # reversal reclass: Dr WIP / Cr Hutang (400)
-        self.assertEqual(rev_reclass.line_ids.filtered(lambda l: l.account_id == self.acc_wip).balance, 400.0)
-        self.assertEqual(rev_reclass.line_ids.filtered(lambda l: l.account_id == self.acc_hutang).balance, -400.0)
-        # reversal backdated: Dr Hutang / Cr WIP (400)
-        self.assertEqual(rev_back.line_ids.filtered(lambda l: l.account_id == self.acc_hutang).balance, 400.0)
-        self.assertEqual(rev_back.line_ids.filtered(lambda l: l.account_id == self.acc_wip).balance, -400.0)
-        self.assertEqual(rev_reclass.lww_origin_move_id, picking.x_reclass_move_id)
-        self.assertEqual(rev_back.lww_origin_move_id, picking.x_backdated_move_id)
-        self.assertEqual(project.lww_return_count, 1)
-        self.assertEqual(project.lww_reversal_count, 2)
-        self.assertTrue(project.lww_has_return)
-        # original delivery stays recognized
+        rr = self._entries(picking, 'reversal_reclass')
+        rb = self._entries(picking, 'reversal_backdated')
+        self.assertEqual(rr.date, self.today)
+        self.assertEqual(rb.date, date(self.Y - 1, 12, 31))
+        self.assertEqual(sum(rr.line_ids.filtered(lambda l: l.account_id == self.acc_payable).mapped('credit')), 400.0)
         self.assertEqual(picking.x_accounting_status, 'recognized')
+        self.assertTrue(picking.x_has_return)
+        self.assertEqual(self._balance(project, self.acc_wip), 600.0)
+        self._return(picking, 6)
+        self.assertEqual(picking.x_accounting_status, 'returned')
+        self.assertEqual(self._balance(project, self.acc_wip), 0.0)
+        self.assertEqual(self._balance(project, self.acc_payable), 0.0)
 
-    def test_04_manual_override(self):
-        so, project = self._make_so_project()
-        picking = self._delivery(so)
-        self.assertEqual(picking.x_accounting_status, 'awaiting')
-        wizard = self.env['lww.recognition.override.wizard'].with_context(
-            default_project_id=project.id).create({'manual_override': True, 'year': self.prev - 1})
-        wizard.action_apply()
-        self.assertEqual(project.lww_rec_year, self.prev - 1)
+    def test_06_override_flow(self):
+        project, order = self._project()
+        picking = self._validate(order)
+        self._override(project, self.Y - 1)
         self.assertEqual(project.lww_rec_mode, 'manual')
-        self.assertEqual(picking.x_accounting_status, 'pending')
-        self._validate(picking)
-        self.assertEqual(picking.x_recognition_mode, 'manual')
-        self.assertEqual(picking.x_backdated_move_id.date, date(self.prev - 1, 12, 31))
-        # changing the override afterwards does not alter the recognized DO
-        wizard = self.env['lww.recognition.override.wizard'].with_context(
-            default_project_id=project.id).create({'manual_override': True, 'year': self.prev})
-        wizard.action_apply()
-        self.assertEqual(picking.x_recognition_year, self.prev - 1)
-
-    def test_05_delivery_before_milestone_has_no_journal(self):
-        so, project = self._make_so_project()
-        picking = self._delivery(so)
-        self._validate(picking)
-        self.assertEqual(picking.state, 'done')
-        self.assertFalse(picking.x_reclass_move_id)
-        self.assertEqual(picking.x_accounting_status, 'awaiting')
-
-    def test_06_same_year_recognition_creates_no_extra_journal(self):
-        so, project = self._make_so_project()
-        self._bill(so, 9.5, fields.Date.today())
-        picking = self._delivery(so)
-        self._validate(picking)
         self.assertEqual(picking.x_accounting_status, 'recognized')
-        self.assertFalse(picking.x_reclass_move_id)
-        self.assertFalse(picking.x_backdated_move_id)
+        self.assertEqual(self._entries(picking, 'backdated').date, date(self.Y - 1, 12, 31))
+        self._override(project, self.Y - 3)
+        old = self._entries(picking, 'backdated').filtered(lambda m: m.date.year == self.Y - 1)
+        self.assertFalse(old.lww_active)
+        self.assertEqual(len(self._entries(picking, 'reversal_backdated')), 1)
+        self.assertEqual(self._entries(picking, 'backdated', active=True).date, date(self.Y - 3, 12, 31))
+        self.assertEqual(self._entries(picking, 'reclass', active=True).date, self.today)
+        self.assertEqual(self._balance(project, self.acc_wip), 1000.0)
+        self._override(project, self.Y)
+        self.assertFalse(self._entries(picking, active=True))
+        self.assertEqual(picking.x_accounting_status, 'recognized')
+        self.assertEqual(self._balance(project, self.acc_wip), 1000.0)
+        self.assertEqual(self._balance(project, self.acc_payable), 0.0)
+        self._override(project, False)
+        self.assertEqual(picking.x_accounting_status, 'awaiting')
+        self.assertEqual(project.lww_rec_year, 0)
 
-    def test_07_locked_period_does_not_block_warehouse(self):
-        so, project = self._make_so_project()
-        self._bill(so, 9.5, date(self.prev, 8, 15))
-        self.company.hard_lock_date = date(self.prev, 12, 31)
-        picking = self._delivery(so)
-        self._validate(picking)
-        self.assertEqual(picking.state, 'done')
-        self.assertFalse(picking.x_reclass_move_id)
-        self.assertFalse(picking.x_backdated_move_id)
-        self.assertEqual(picking.x_accounting_status, 'pending')
-        self.assertEqual(project.lww_reclass_count, 0)
-        self.assertTrue(project.message_ids.filtered(
-            lambda m: 'could not be generated' in (m.body or '')))
+    def test_07_override_blocked_after_threshold(self):
+        project, order = self._project()
+        self._reach(project, self.Y - 1)
+        with self.assertRaises(UserError):
+            self._override(project, self.Y - 2)
 
-    def test_08_actions_and_dashboard(self):
-        so, project = self._make_so_project()
-        self._bill(so, 9.5, date(self.prev, 8, 15))
-        picking = self._delivery(so)
-        self._validate(picking)
-        for method in ('action_view_lww_pickings', 'action_view_lww_returns', 'action_view_lww_reclass',
-                       'action_view_lww_backdated', 'action_view_lww_reversals', 'action_view_lww_all_journals'):
-            action = getattr(project, method)()
-            self.assertTrue(action['domain'])
-        reclass_action = project.action_view_lww_reclass()
-        self.assertEqual(self.env['account.move'].search_count(reclass_action['domain']), 1)
-        self.assertEqual(self.env['stock.picking'].search_count(
-            project.action_view_lww_pickings()['domain']), 1)
-        self.assertEqual(project.action_open_recognition_wizard()['res_model'],
-                         'lww.recognition.override.wizard')
-        dashboard = self.env['project.project'].search([
-            ('lww_rec_year', '=', self.prev), ('lww_rec_status', '=', 'recognized')])
-        self.assertIn(project, dashboard)
-        self.assertEqual(
-            self.env['project.project'].search([('lww_manual_override', '=', True), ('id', '=', project.id)]),
-            self.env['project.project'])
+    def test_08_override_before_threshold_keeps_override(self):
+        project, order = self._project()
+        picking = self._validate(order)
+        self._override(project, self.Y - 2)
+        self._reach(project, self.Y - 1)
+        self.assertEqual(project.lww_rec_year, self.Y - 2)
+        self.assertEqual(project.lww_auto_year, self.Y - 1)
+        self.assertEqual(self._entries(picking, 'backdated', active=True).date, date(self.Y - 2, 12, 31))
+
+    def test_09_lock_blocks_validation(self):
+        project, order = self._project()
+        self._reach(project, self.Y - 1)
+        self.company.fiscalyear_lock_date = date(self.Y - 1, 12, 31)
+        picking = order.picking_ids[:1]
+        picking.action_assign()
+        for move in picking.move_ids:
+            move.quantity = move.product_uom_qty
+            move.picked = True
+        with self.assertRaises(UserError):
+            picking.with_context(skip_backorder=True).button_validate()
+        self.assertNotEqual(picking.state, 'done')
+        self.assertFalse(self._entries(picking))
+
+    def test_10_lock_blocks_wizard(self):
+        project, order = self._project()
+        picking = self._validate(order)
+        self.company.fiscalyear_lock_date = date(self.Y - 2, 12, 31)
+        with self.assertRaises(UserError):
+            self._override(project, self.Y - 2)
+        self.assertEqual(picking.x_accounting_status, 'awaiting')
+        self.assertFalse(project.lww_manual_override)
+
+    def test_11_before_go_live_not_tracked(self):
+        self.env['lww.recognition.config'].search([]).go_live_date = date(self.Y + 1, 1, 1)
+        project, order = self._project()
+        picking = self._validate(order)
+        self.assertFalse(picking.x_accounting_status)
+
+    def test_12_return_before_journals_net(self):
+        project, order = self._project()
+        picking = self._validate(order)
+        self._return(picking, 4)
+        self.assertEqual(picking.x_accounting_status, 'awaiting')
+        self._override(project, self.Y - 1)
+        reclass = self._entries(picking, 'reclass')
+        self.assertEqual(sum(reclass.line_ids.filtered(lambda l: l.account_id == self.acc_payable).mapped('debit')), 600.0)
+        self.assertEqual(self._balance(project, self.acc_wip), 600.0)
+
+    def test_13_progress_ignores_credit_notes_and_no_so(self):
+        project, order = self._project()
+        self._invoice(project, 6000, date(self.Y - 1, 3, 10))
+        self._invoice(project, 5000, date(self.Y - 1, 4, 10), move_type='out_refund')
+        self.assertEqual(project.lww_rec_year, 0)
+        self.assertAlmostEqual(project.lww_progress, 60.0)
+        orphan = self.env['project.project'].create({'name': 'NoSO'})
+        self.assertEqual(orphan.lww_progress, 0.0)
+        self.assertFalse(orphan.lww_rec_year)
+
+    def test_14_actions_and_audit(self):
+        project, order = self._project()
+        self._reach(project, self.Y - 1)
+        picking = self._validate(order)
+        self.assertEqual(project.lww_recognized_count, 1)
+        self.assertEqual(project.lww_move_count, 2)
+        for action in (project.action_lww_view_recognized, project.action_lww_view_moves,
+                       project.action_lww_view_awaiting, project.action_lww_view_pending):
+            self.assertTrue(action()['res_model'])
+        logs = self.env['lww.recognition.log'].search([('project_id', '=', project.id)])
+        self.assertTrue(logs.filtered(lambda l: l.action == 'year_auto'))
+        self.assertTrue(logs.filtered(lambda l: l.action == 'journal'))
+        with self.assertRaises(Exception):
+            self.env['account.move'].create({
+                'move_type': 'entry', 'journal_id': self.journal_rec.id, 'lww_picking_id': picking.id,
+                'lww_entry_type': 'backdated', 'lww_active': True})
