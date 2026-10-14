@@ -11,12 +11,16 @@ def _post_init(env):
     Account = env['account.account']
     Journal = env['account.journal']
 
-    def acc(code, name, atype, **kw):
+    def acc(code, name, atype, exclude=(), **kw):
+        found = Account.search([('company_ids', 'in', company.id), ('account_type', '=', atype),
+                                ('id', 'not in', [a.id for a in exclude])], limit=1, order='code')
+        if found:
+            return found
         return Account.create({'code': code, 'name': name, 'account_type': atype,
-                              'company_ids': [(6, 0, company.ids)], **kw})
+                               'company_ids': [(6, 0, company.ids)], **kw})
 
     wip = acc('DUM1061', 'DUMMY WIP Project', 'asset_current')
-    stock = acc('DUM1101', 'DUMMY Inventory', 'asset_current')
+    stock = acc('DUM1101', 'DUMMY Inventory', 'asset_current', exclude=wip)
     payable = acc('DUM2201', 'DUMMY Hutang Biaya Proyek', 'liability_current')
     income = acc('DUM4001', 'DUMMY Income', 'income')
     journal_rec = Journal.create({'name': 'DUMMY Recognition', 'code': 'DUMR', 'type': 'general', 'company_id': company.id})
