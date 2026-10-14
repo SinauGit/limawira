@@ -91,6 +91,9 @@ def _post_init(env, company_id=None):
 
     def ready(order):
         picking = order.picking_ids.filtered(lambda p: p.picking_type_code == 'outgoing')[:1]
+        field = picking._fields.get('customer_id')
+        if field and field.type == 'many2one' and field.comodel_name == 'res.partner':
+            picking.customer_id = partner
         picking.action_assign()
         return picking
 
