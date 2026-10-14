@@ -60,8 +60,11 @@ def _post_init(env, company_id=None):
 
     def project(name):
         analytic = env['account.analytic.account'].create({'name': name, 'plan_id': plan.id, 'company_id': company.id})
+        so_vals = {}
+        if 'no_so' in env['sale.order']._fields:
+            so_vals['no_so'] = '%s-%s' % (name.split()[0], today.strftime('%y%m%d'))
         order = env['sale.order'].create({
-            'partner_id': partner.id, 'company_id': company.id,
+            'partner_id': partner.id, 'company_id': company.id, **so_vals,
             'order_line': [(0, 0, {'product_id': product.id, 'product_uom_qty': 10, 'price_unit': 1000.0,
                                    'tax_id': [(5, 0, 0)], 'analytic_distribution': {str(analytic.id): 100}})]})
         proj = env['project.project'].create({
