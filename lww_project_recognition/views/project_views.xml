@@ -29,8 +29,8 @@
                     <field name="lww_rec_mode"/>
                     <field name="lww_auto_year" options="{'enable_formatting': false}"/>
                     <field name="lww_auto_date"/>
-                    <field name="lww_manual_override"/>
-                    <field name="lww_override_year" invisible="not lww_manual_override" options="{'enable_formatting': false}"/>
+                    <field name="lww_manual_override" readonly="1"/>
+                    <field name="lww_override_year" readonly="1" invisible="not lww_manual_override" options="{'enable_formatting': false}"/>
                 </group>
             </xpath>
         </field>

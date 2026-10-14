@@ -154,6 +154,7 @@ class StockPicking(models.Model):
         self.ensure_one()
         config = self._lww_config()
         lines = []
+        partner = (self.sale_id.partner_id or self.partner_id).commercial_partner_id
         for (account_id, analytic), amount in wip_amounts.items():
             if float_is_zero(amount, precision_digits=2):
                 continue
@@ -161,13 +162,14 @@ class StockPicking(models.Model):
             debit = amount if amount > 0 else 0.0
             credit = -amount if amount < 0 else 0.0
             lines.append((0, 0, {'account_id': account_id, 'debit': debit, 'credit': credit,
-                                 'analytic_distribution': dist, 'name': ref}))
+                                 'analytic_distribution': dist, 'name': ref, 'partner_id': partner.id}))
             lines.append((0, 0, {'account_id': config.payable_account_id.id, 'debit': credit, 'credit': debit,
-                                 'analytic_distribution': dist, 'name': ref}))
+                                 'analytic_distribution': dist, 'name': ref, 'partner_id': partner.id}))
         if not lines:
             return self.env['account.move']
         move = self.env['account.move'].sudo().with_company(self.company_id).create({
             'move_type': 'entry', 'journal_id': config.journal_id.id, 'date': move_date, 'ref': ref,
+            'partner_id': partner.id,
             'company_id': self.company_id.id, 'line_ids': lines,
             'lww_project_id': self.x_project_id.id, 'lww_picking_id': self.id,
             'lww_entry_type': entry_type, 'lww_recognition_year': year,

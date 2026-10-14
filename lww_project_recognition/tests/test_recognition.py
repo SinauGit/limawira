@@ -140,6 +140,8 @@ class TestRecognition(AccountTestInvoicingCommon):
         self.assertEqual(reclass.date, self.today)
         self.assertEqual(backdated.date, date(self.Y - 1, 12, 31))
         self.assertEqual(sum(reclass.line_ids.filtered(lambda l: l.account_id == self.acc_payable).mapped('debit')), 1000.0)
+        self.assertEqual(reclass.partner_id, self.partner)
+        self.assertEqual(set(reclass.line_ids.partner_id.ids), {self.partner.id})
         self.assertEqual(self._balance(project, self.acc_wip), 1000.0)
         self.assertEqual(self._balance(project, self.acc_payable), 0.0)
         self.assertEqual(picking.x_reclass_move_id, reclass)
