@@ -3,8 +3,11 @@ from datetime import date
 from odoo import fields
 
 
-def _post_init(env):
-    company = env.company or env.companies[:1] or env['res.company'].search([], limit=1)
+def _post_init(env, company_id=None):
+    if company_id:
+        company = env['res.company'].browse(company_id)
+    else:
+        company = env.companies[:1] or env['res.company'].search([], limit=1)
     env = env(context=dict(env.context, allowed_company_ids=company.ids))
     today = fields.Date.context_today(env['res.users'])
     year = today.year
