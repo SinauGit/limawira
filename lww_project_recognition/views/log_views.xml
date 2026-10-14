@@ -10,8 +10,8 @@
                 <field name="project_id"/>
                 <field name="picking_id"/>
                 <field name="action"/>
-                <field name="old_year"/>
-                <field name="new_year"/>
+                <field name="old_year" options="{'format': false}"/>
+                <field name="new_year" options="{'format': false}"/>
                 <field name="move_ids" widget="many2many_tags"/>
                 <field name="note"/>
                 <field name="company_id" groups="base.group_multi_company"/>

@@ -26,22 +26,22 @@ def _post_init(env, company_id=None):
     stock = acc('DUM1101', 'DUMMY Inventory', 'asset_current', exclude=wip)
     payable = acc('DUM2201', 'DUMMY Hutang Biaya Proyek', 'liability_current')
     income = acc('DUM4001', 'DUMMY Income', 'income')
-    journal_rec = Journal.create({'name': 'DUMMY Recognition', 'code': 'DUMR', 'type': 'general', 'company_id': company.id})
-    journal_stock = Journal.create({'name': 'DUMMY Stock', 'code': 'DUMS', 'type': 'general', 'company_id': company.id})
-    journal_sale = Journal.create({'name': 'DUMMY Sales', 'code': 'DUMI', 'type': 'sale', 'company_id': company.id})
+    journal_rec = (Journal.search([('code', '=', 'DUMR'), ('company_id', '=', company.id)], limit=1) or Journal.create({'name': 'DUMMY Recognition', 'code': 'DUMR', 'type': 'general', 'company_id': company.id}))
+    journal_stock = (Journal.search([('code', '=', 'DUMS'), ('company_id', '=', company.id)], limit=1) or Journal.create({'name': 'DUMMY Stock', 'code': 'DUMS', 'type': 'general', 'company_id': company.id}))
+    journal_sale = (Journal.search([('code', '=', 'DUMI'), ('company_id', '=', company.id)], limit=1) or Journal.create({'name': 'DUMMY Sales', 'code': 'DUMI', 'type': 'sale', 'company_id': company.id}))
 
     if not env['lww.recognition.config'].search([('company_id', '=', company.id)]):
         env['lww.recognition.config'].create({
             'company_id': company.id, 'journal_id': journal_rec.id, 'payable_account_id': payable.id,
             'threshold': 90.0, 'go_live_date': date(year - 5, 1, 1)})
 
-    partner = env['res.partner'].create({'name': 'DUMMY Customer'})
+    partner = env['res.partner'].search([('name', '=', 'DUMMY Customer')], limit=1) or env['res.partner'].create({'name': 'DUMMY Customer'})
     if not partner.property_account_receivable_id:
         partner.property_account_receivable_id = acc('DUM1201', 'DUMMY Receivable', 'asset_receivable', reconcile=True)
     if not partner.property_account_payable_id:
         partner.property_account_payable_id = acc('DUM2101', 'DUMMY Payable', 'liability_payable', reconcile=True)
 
-    categ = env['product.category'].create({
+    categ = env['product.category'].search([('name', '=', 'DUMMY Project Goods')], limit=1) or env['product.category'].create({
         'name': 'DUMMY Project Goods', 'property_cost_method': 'average', 'property_valuation': 'real_time',
         'property_stock_valuation_account_id': stock.id,
         'property_stock_account_input_categ_id': wip.id,
@@ -49,20 +49,25 @@ def _post_init(env, company_id=None):
         'property_account_expense_categ_id': wip.id,
         'property_account_income_categ_id': income.id,
         'property_stock_journal': journal_stock.id})
-    product = env['product.product'].create({
+    product = env['product.product'].search([('name', '=', 'DUMMY Project Item')], limit=1) or env['product.product'].create({
         'name': 'DUMMY Project Item', 'is_storable': True, 'tracking': 'none', 'type': 'consu', 'categ_id': categ.id,
         'standard_price': 100.0, 'list_price': 1000.0})
     warehouse = env['stock.warehouse'].search([('company_id', '=', company.id)], limit=1)
+    on_hand = product.with_context(location=warehouse.lot_stock_id.id).qty_available
     env['stock.quant'].with_context(inventory_mode=True).create({
         'product_id': product.id, 'location_id': warehouse.lot_stock_id.id,
-        'inventory_quantity': 1000}).action_apply_inventory()
+        'inventory_quantity': on_hand + (100 if on_hand else 1000)}).action_apply_inventory()
     plan = env['account.analytic.plan'].search([], limit=1) or env['account.analytic.plan'].create({'name': 'Project'})
 
+    run = env['project.project'].search_count([('name', 'like', 'DUMMY-A %'), ('active', 'in', [True, False])]) + 1
+    tag = '#%s' % run
+
     def project(name):
+        name = name.replace(' ', ' %s ' % tag, 1)
         analytic = env['account.analytic.account'].create({'name': name, 'plan_id': plan.id, 'company_id': company.id})
         so_vals = {}
         if 'no_so' in env['sale.order']._fields:
-            so_vals['no_so'] = '%s-%s' % (name.split()[0], today.strftime('%y%m%d'))
+            so_vals['no_so'] = 'DUMMY-%s-%s-%s' % (name.split()[0][-1], today.strftime('%y%m%d'), run)
         order = env['sale.order'].create({
             'partner_id': partner.id, 'company_id': company.id, **so_vals,
             'order_line': [(0, 0, {'product_id': product.id, 'product_uom_qty': 10, 'price_unit': 1000.0,
@@ -80,7 +85,7 @@ def _post_init(env, company_id=None):
         counter[0] += 1
         inv_vals = {}
         if 'invoice_no' in env['account.move']._fields:
-            inv_vals['invoice_no'] = 'DUMMY-INV-%s-%s' % (today.strftime('%y%m%d'), counter[0])
+            inv_vals['invoice_no'] = 'DUMMY-INV-%s-%s-%s' % (today.strftime('%y%m%d'), run, counter[0])
         move = env['account.move'].create({
             'move_type': 'out_invoice', 'partner_id': partner.id, 'invoice_date': inv_date, **inv_vals,
             'journal_id': journal_sale.id,
@@ -123,3 +128,15 @@ def _post_init(env, company_id=None):
     picking.with_context(skip_backorder=True, skip_sms=True).button_validate()
     invoice(proj, 6000, date(year - 1, 4, 5))
     invoice(proj, 3000, date(year - 1, 9, 25))
+
+
+def _archive_dummy(env):
+    projects = env['project.project'].search([('name', 'like', 'DUMMY-')])
+    pickings = env['stock.picking'].search([
+        ('x_project_id', 'in', projects.ids), ('state', 'not in', ('done', 'cancel'))]) if 'x_project_id' in env['stock.picking']._fields else env['stock.picking']
+    pending = env['stock.picking'].search([
+        ('sale_id.order_line.analytic_distribution', '!=', False), ('sale_id.no_so', 'like', 'DUMMY-'),
+        ('state', 'not in', ('done', 'cancel'))]) if 'no_so' in env['sale.order']._fields else pickings
+    (pickings | pending).action_cancel()
+    projects.write({'active': False})
+    return len(projects)

@@ -8,9 +8,9 @@
                 <group>
                     <field name="project_id"/>
                     <field name="mode" invisible="1"/>
-                    <field name="current_year"/>
+                    <field name="current_year" options="{'format': false}"/>
                     <field name="manual" invisible="mode == 'pending'"/>
-                    <field name="new_year" invisible="mode == 'pending' or not manual"/>
+                    <field name="new_year" invisible="mode == 'pending' or not manual" options="{'format': false}"/>
                     <field name="impacted_count"/>
                     <field name="confirm" invisible="impacted_count == 0"/>
                 </group>

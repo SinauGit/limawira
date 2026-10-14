@@ -9,7 +9,7 @@
                 <field name="lww_entry_type" invisible="not lww_entry_type"/>
                 <field name="lww_picking_id" invisible="not lww_picking_id"/>
                 <field name="lww_project_id" invisible="not lww_project_id"/>
-                <field name="lww_recognition_year" invisible="not lww_entry_type"/>
+                <field name="lww_recognition_year" invisible="not lww_entry_type" options="{'format': false}"/>
             </xpath>
         </field>
     </record>

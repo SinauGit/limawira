@@ -25,12 +25,12 @@
             </xpath>
             <xpath expr="//sheet" position="inside">
                 <group string="DO Recognition" name="lww_recognition">
-                    <field name="lww_rec_year"/>
+                    <field name="lww_rec_year" options="{'format': false}"/>
                     <field name="lww_rec_mode"/>
-                    <field name="lww_auto_year"/>
+                    <field name="lww_auto_year" options="{'format': false}"/>
                     <field name="lww_auto_date"/>
                     <field name="lww_manual_override"/>
-                    <field name="lww_override_year" invisible="not lww_manual_override"/>
+                    <field name="lww_override_year" invisible="not lww_manual_override" options="{'format': false}"/>
                 </group>
             </xpath>
         </field>
@@ -42,8 +42,8 @@
             <list create="0" delete="0">
                 <field name="name"/>
                 <field name="partner_id"/>
-                <field name="lww_progress" widget="percentage" string="Progress"/>
-                <field name="lww_rec_year"/>
+                <field name="lww_progress" string="Progress (%)"/>
+                <field name="lww_rec_year" options="{'format': false}"/>
                 <field name="lww_rec_mode"/>
                 <field name="lww_awaiting_count" string="Awaiting"/>
                 <field name="lww_pending_count" string="Pending"/>
