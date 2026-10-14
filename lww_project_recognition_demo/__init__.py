@@ -47,7 +47,7 @@ def _post_init(env):
         'property_account_income_categ_id': income.id,
         'property_stock_journal': journal_stock.id})
     product = env['product.product'].create({
-        'name': 'DUMMY Project Item', 'is_storable': True, 'type': 'consu', 'categ_id': categ.id,
+        'name': 'DUMMY Project Item', 'is_storable': True, 'tracking': 'none', 'type': 'consu', 'categ_id': categ.id,
         'standard_price': 100.0, 'list_price': 1000.0})
     warehouse = env['stock.warehouse'].search([('company_id', '=', company.id)], limit=1)
     env['stock.quant'].with_context(inventory_mode=True).create({
