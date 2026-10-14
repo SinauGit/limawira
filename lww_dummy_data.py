@@ -74,9 +74,15 @@ def _post_init(env, company_id=None):
             order.action_confirm()
         return proj, order
 
+    counter = [0]
+
     def invoice(proj, amount, inv_date):
+        counter[0] += 1
+        inv_vals = {}
+        if 'invoice_no' in env['account.move']._fields:
+            inv_vals['invoice_no'] = 'DUMMY-INV-%s-%s' % (today.strftime('%y%m%d'), counter[0])
         move = env['account.move'].create({
-            'move_type': 'out_invoice', 'partner_id': partner.id, 'invoice_date': inv_date,
+            'move_type': 'out_invoice', 'partner_id': partner.id, 'invoice_date': inv_date, **inv_vals,
             'journal_id': journal_sale.id,
             'invoice_line_ids': [(0, 0, {
                 'name': 'DUMMY billing', 'quantity': 1, 'price_unit': amount, 'account_id': income.id,
