@@ -39,3 +39,13 @@ class AccountMove(models.Model):
         res = super()._post(soft=soft)
         self._lww_touched_projects()._lww_refresh_auto()
         return res
+
+    def button_draft(self):
+        res = super().button_draft()
+        self._lww_touched_projects()._lww_refresh_auto()
+        return res
+
+    def button_cancel(self):
+        res = super().button_cancel()
+        self._lww_touched_projects()._lww_refresh_auto()
+        return res

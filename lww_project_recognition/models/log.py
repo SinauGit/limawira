@@ -12,6 +12,8 @@ class LwwRecognitionLog(models.Model):
     action = fields.Selection([
         ('year_auto', 'Year Reached (Billing)'),
         ('year_override', 'Year Overridden'),
+        ('date_update', 'Threshold Date Updated'),
+        ('year_warning', 'Year Mismatch Warning'),
         ('recognized', 'Recognized'),
         ('pending', 'Set Pending'),
         ('journal', 'Journals Created'),

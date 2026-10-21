@@ -302,3 +302,57 @@ class TestRecognition(AccountTestInvoicingCommon):
             self.env['account.move'].create({
                 'move_type': 'entry', 'journal_id': self.journal_rec.id, 'lww_picking_id': picking.id,
                 'lww_entry_type': 'backdated', 'lww_active': True})
+
+    def _project_via_so(self, name='PSO'):
+        plan = self.env['account.analytic.plan'].search([], limit=1) or \
+            self.env['account.analytic.plan'].create({'name': 'Project'})
+        analytic = self.env['account.analytic.account'].create({'name': name, 'plan_id': plan.id})
+        project = self.env['project.project'].create({'name': name, 'account_id': analytic.id,
+                                                      'partner_id': self.partner.id})
+        order = self.env['sale.order'].create({
+            'partner_id': self.partner.id,
+            'order_line': [(0, 0, {'product_id': self.product.id, 'product_uom_qty': 10, 'price_unit': 1000.0,
+                                   'tax_id': [(5, 0, 0)], 'analytic_distribution': {str(analytic.id): 100}})]})
+        order.project_id = project
+        if order.state != 'sale':
+            order.action_confirm()
+        return project, order
+
+    def test_15_project_linked_by_so_project_id(self):
+        project, order = self._project_via_so()
+        self.assertFalse(project.sale_line_id)
+        self.assertEqual(project.lww_sale_order_id, order)
+        self.assertIn(project, self.env['project.project'].search([('lww_sale_order_id', '!=', False)]))
+        self._invoice(project, 6000, date(self.Y - 1, 3, 10))
+        self._invoice(project, 3000, date(self.Y - 1, 5, 20))
+        self.assertEqual(project.lww_rec_year, self.Y - 1)
+        picking = self._validate(order)
+        self.assertEqual(picking.x_project_id, project)
+        self.assertEqual(picking.x_accounting_status, 'recognized')
+        self.assertEqual(len(self._entries(picking, active=True)), 2)
+
+    def test_16_reset_to_draft_updates_threshold_date_keeps_year(self):
+        project, order = self._project()
+        self._invoice(project, 6000, date(self.Y - 1, 3, 10))
+        last = self._invoice(project, 3000, date(self.Y - 1, 5, 20))
+        self.assertEqual(project.lww_auto_date, date(self.Y - 1, 5, 20))
+        last.button_draft()
+        self.assertEqual(project.lww_auto_year, self.Y - 1)
+        self.assertEqual(project.lww_auto_date, date(self.Y - 1, 5, 20))
+        self.assertAlmostEqual(project.lww_progress, 60.0)
+        last.invoice_date = date(self.Y - 1, 11, 20)
+        last.action_post()
+        self.assertEqual(project.lww_auto_year, self.Y - 1)
+        self.assertEqual(project.lww_auto_date, date(self.Y - 1, 11, 20))
+        logs = self.env['lww.recognition.log'].search([('project_id', '=', project.id)])
+        self.assertTrue(logs.filtered(lambda l: l.action == 'date_update'))
+        self.assertFalse(logs.filtered(lambda l: l.action == 'year_warning'))
+        last.button_draft()
+        last.name = '/'
+        last.invoice_date = date(self.Y, 1, 15)
+        last.action_post()
+        self.assertEqual(project.lww_auto_year, self.Y - 1)
+        self.assertEqual(project.lww_rec_year, self.Y - 1)
+        warn = self.env['lww.recognition.log'].search([('project_id', '=', project.id), ('action', '=', 'year_warning')])
+        self.assertEqual(len(warn), 1)
+        self.assertEqual(warn.new_year, self.Y)
