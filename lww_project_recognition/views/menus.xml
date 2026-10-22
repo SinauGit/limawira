@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_lww_recognition_root" name="Project Recognition" parent="account.menu_finance_reports" sequence="90" groups="account.group_account_user"/>
+    <menuitem id="menu_lww_recognition_root" name="Project Recognition" web_icon="lww_project_recognition,static/description/icon.png" sequence="95" groups="account.group_account_user"/>
     <menuitem id="menu_lww_recognition_projects" name="Projects" parent="menu_lww_recognition_root" action="lww_project_dashboard_action" sequence="10"/>
     <menuitem id="menu_lww_recognition_pickings" name="Delivery Orders" parent="menu_lww_recognition_root" action="lww_picking_dashboard_action" sequence="20"/>
     <menuitem id="menu_lww_recognition_moves" name="Journals" parent="menu_lww_recognition_root" action="lww_recognition_move_action" sequence="30"/>
     <menuitem id="menu_lww_recognition_log" name="Audit Log" parent="menu_lww_recognition_root" action="lww_recognition_log_action" sequence="40"/>
-    <menuitem id="menu_lww_recognition_config" name="Project Recognition Settings" parent="account.menu_finance_configuration" action="lww_recognition_config_action" sequence="90" groups="group_recognition_manager"/>
+    <menuitem id="menu_lww_recognition_configuration" name="Configuration" parent="menu_lww_recognition_root" sequence="90" groups="group_recognition_manager"/>
+    <menuitem id="menu_lww_recognition_config" name="Settings" parent="menu_lww_recognition_configuration" action="lww_recognition_config_action" sequence="10" groups="group_recognition_manager"/>
 </odoo>
