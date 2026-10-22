@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_wip_release_root" name="WIP Release" web_icon="lww_project_recognition,static/description/icon.png" sequence="95" groups="lww_wip_release.group_wip_release"/>
+    <menuitem id="menu_wip_release_root" name="WIP Release" web_icon="lww_wip_release,static/description/icon.png" sequence="95" groups="lww_wip_release.group_wip_release"/>
     <menuitem id="menu_wip_release_dashboard" name="Dashboard" parent="menu_wip_release_root" action="lww_wip_release.action_wip_dashboard" sequence="5"/>
     <menuitem id="menu_wip_release_defaults" name="Company Defaults" parent="menu_wip_release_root" action="action_wip_release_config" sequence="90"/>
     <menuitem id="menu_wip_release_operations" name="Operations" parent="menu_wip_release_root" sequence="10"/>
