@@ -3,7 +3,7 @@
     'version': '18.0.2.0.0',
     'category': 'Accounting',
     'summary': 'Project DO cost recognition and automatic prior-year journals',
-    'depends': ['account', 'stock_account', 'sale_stock', 'sale_project', 'project'],
+    'depends': ['account', 'stock_account', 'sale_stock', 'sale_project', 'project', 'project_stock'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',

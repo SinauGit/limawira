@@ -81,6 +81,9 @@ class TestRecognition(AccountTestInvoicingCommon):
 
     def _validate(self, order, qty=None):
         picking = order.picking_ids.filtered(lambda p: p.state != 'done' and p.picking_type_code == 'outgoing')[:1]
+        picking.project_id = self.env['project.project'].search([
+            '|', ('sale_line_id', 'in', order.order_line.ids), ('sale_order_id', '=', order.id)], limit=1) \
+            or order.project_id
         picking.action_assign()
         for move in picking.move_ids:
             move.quantity = qty if qty is not None else move.product_uom_qty
@@ -242,6 +245,7 @@ class TestRecognition(AccountTestInvoicingCommon):
         self._reach(project, self.Y - 1)
         self.company.fiscalyear_lock_date = date(self.Y - 1, 12, 31)
         picking = order.picking_ids[:1]
+        picking.project_id = project
         picking.action_assign()
         for move in picking.move_ids:
             move.quantity = move.product_uom_qty

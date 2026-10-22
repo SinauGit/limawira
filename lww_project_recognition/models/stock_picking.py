@@ -65,19 +65,9 @@ class StockPicking(models.Model):
         self.ensure_one()
         if self.return_id:
             return self.return_id.x_project_id or self.return_id._lww_find_project()
-        keys = set()
-        for dist in self.move_ids.sale_line_id.mapped('analytic_distribution'):
-            for key in (dist or {}):
-                keys.update(int(k) for k in key.split(',') if k)
-        Project = self.env['project.project'].sudo()
-        project = Project
-        if keys:
-            project = Project.search([('account_id', 'in', list(keys)), ('company_id', '=', self.company_id.id)],
-                                     limit=1)
-        if not project and self.sale_id and 'project_id' in self.sale_id._fields:
-            project = self.sale_id.project_id.sudo()
+        project = self.project_id.sudo()
         if project and not project._lww_sale_order():
-            return Project
+            return self.env['project.project']
         return project
 
     @api.model
