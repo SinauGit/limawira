@@ -13,6 +13,7 @@
         'views/account_move_views.xml',
         'views/project_views.xml',
         'views/stock_picking_views.xml',
+        'views/dashboard_views.xml',
         'views/menus.xml',
     ],
     'license': 'LGPL-3',

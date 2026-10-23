@@ -5,16 +5,24 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='origin']" position="after">
-                <field name="x_accounting_status" invisible="not x_accounting_status"/>
-                <field name="x_project_id" invisible="not x_project_id"/>
-                <field name="x_recognition_year" invisible="not x_recognition_year" options="{'enable_formatting': false}"/>
-                <field name="x_recognition_mode" invisible="not x_recognition_mode"/>
-                <field name="x_has_return" invisible="not x_has_return"/>
-                <field name="x_reclass_move_id" invisible="not x_reclass_move_id"/>
-                <field name="x_backdated_move_id" invisible="not x_backdated_move_id"/>
-                <field name="x_reclass_reversal_move_id" invisible="not x_reclass_reversal_move_id"/>
-                <field name="x_backdated_reversal_move_id" invisible="not x_backdated_reversal_move_id"/>
+            <xpath expr="//page[@name='note']" position="after">
+                <page name="lww_recognition" string="DO Recognition" invisible="not x_accounting_status">
+                    <group>
+                        <group string="Recognition" name="lww_recognition_left">
+                            <field name="x_accounting_status"/>
+                            <field name="x_project_id"/>
+                            <field name="x_recognition_year" options="{'enable_formatting': false}"/>
+                            <field name="x_recognition_mode"/>
+                            <field name="x_has_return"/>
+                        </group>
+                        <group string="Journals" name="lww_recognition_right">
+                            <field name="x_reclass_move_id" invisible="not x_reclass_move_id"/>
+                            <field name="x_backdated_move_id" invisible="not x_backdated_move_id"/>
+                            <field name="x_reclass_reversal_move_id" invisible="not x_reclass_reversal_move_id"/>
+                            <field name="x_backdated_reversal_move_id" invisible="not x_backdated_reversal_move_id"/>
+                        </group>
+                    </group>
+                </page>
             </xpath>
         </field>
     </record>

@@ -363,3 +363,23 @@ class TestRecognition(AccountTestInvoicingCommon):
         warn = self.env['lww.recognition.log'].search([('project_id', '=', project.id), ('action', '=', 'year_warning')])
         self.assertEqual(len(warn), 1)
         self.assertEqual(warn.new_year, self.Y)
+
+    def test_17_dashboard(self):
+        project, order = self._project()
+        self._validate(order)
+        dash = self.env['lww.recognition.dashboard'].create({})
+        self.assertEqual(dash.awaiting_count, 1)
+        self.assertEqual(dash.no_year_count, 1)
+        self.assertEqual(dash.pending_count, 0)
+        self._invoice(project, 9000, date(self.Y, 3, 10))
+        dash = self.env['lww.recognition.dashboard'].create({})
+        self.assertEqual(dash.awaiting_count, 0)
+        self.assertEqual(dash.recognized_count, 1)
+        self.assertEqual(dash.no_year_count, 0)
+        p2, o2 = self._project('P2')
+        self._invoice(p2, 8000, date(self.Y, 3, 10))
+        dash = self.env['lww.recognition.dashboard'].create({})
+        self.assertEqual(dash.near_count, 1)
+        self.assertEqual(self.env['lww.recognition.dashboard'].action_open()['res_model'], 'lww.recognition.dashboard')
+        for name in ('awaiting', 'pending', 'recognized', 'no_year', 'near', 'override', 'journals'):
+            self.assertTrue(getattr(dash, 'action_' + name)()['res_model'])
