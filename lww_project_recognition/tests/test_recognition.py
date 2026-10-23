@@ -295,7 +295,10 @@ class TestRecognition(AccountTestInvoicingCommon):
         self._reach(project, self.Y - 1)
         picking = self._validate(order)
         self.assertEqual(project.lww_recognized_count, 1)
-        self.assertEqual(project.lww_move_count, 2)
+        self.assertEqual(project.lww_move_count, 3)
+        valuation = picking.move_ids.stock_valuation_layer_ids.account_move_id
+        self.assertTrue(valuation)
+        self.assertTrue(valuation <= self.env['account.move'].browse(project.action_lww_view_moves()['domain'][0][2]))
         for action in (project.action_lww_view_recognized, project.action_lww_view_moves,
                        project.action_lww_view_awaiting, project.action_lww_view_pending):
             self.assertTrue(action()['res_model'])

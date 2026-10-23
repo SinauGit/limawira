@@ -23,15 +23,21 @@
                     <field name="lww_move_count" widget="statinfo" string="Recognition Journals"/>
                 </button>
             </xpath>
-            <xpath expr="//sheet" position="inside">
-                <group string="DO Recognition" name="lww_recognition">
-                    <field name="lww_rec_year" options="{'enable_formatting': false}"/>
-                    <field name="lww_rec_mode"/>
-                    <field name="lww_auto_year" options="{'enable_formatting': false}"/>
-                    <field name="lww_auto_date"/>
-                    <field name="lww_manual_override" readonly="1"/>
-                    <field name="lww_override_year" readonly="1" invisible="not lww_manual_override" options="{'enable_formatting': false}"/>
-                </group>
+            <xpath expr="//page[@name='analytic']" position="after">
+                <page name="lww_recognition" string="DO Recognition">
+                    <group>
+                        <group string="Recognition Year" name="lww_recognition_left">
+                            <field name="lww_rec_year" options="{'enable_formatting': false}"/>
+                            <field name="lww_rec_mode"/>
+                            <field name="lww_manual_override" readonly="1"/>
+                            <field name="lww_override_year" readonly="1" invisible="not lww_manual_override" options="{'enable_formatting': false}"/>
+                        </group>
+                        <group string="Billing Threshold" name="lww_recognition_right">
+                            <field name="lww_auto_year" options="{'enable_formatting': false}"/>
+                            <field name="lww_auto_date"/>
+                        </group>
+                    </group>
+                </page>
             </xpath>
         </field>
     </record>

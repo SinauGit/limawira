@@ -85,16 +85,25 @@ class ProjectProject(models.Model):
         for project in self:
             project.lww_progress = project._lww_progress_data()[0]
 
+    def _lww_all_move_ids(self):
+        self.ensure_one()
+        Move = self.env['account.move'].sudo()
+        moves = Move.search([('lww_project_id', '=', self.id)])
+        pickings = moves.filtered(lambda m: m.lww_active and m.lww_entry_type in ('reclass', 'backdated')).lww_picking_id
+        if pickings:
+            layers = self.env['stock.valuation.layer'].sudo().search([('stock_move_id.picking_id', 'in', pickings.ids)])
+            moves |= layers.account_move_id
+        return moves.ids
+
     def _compute_lww_counts(self):
         Picking = self.env['stock.picking'].sudo()
-        Move = self.env['account.move'].sudo()
         for project in self:
             data = Picking._read_group([('x_project_id', '=', project.id)], ['x_accounting_status'], ['__count'])
             counts = {status: count for status, count in data}
             project.lww_awaiting_count = counts.get('awaiting', 0)
             project.lww_pending_count = counts.get('pending', 0)
             project.lww_recognized_count = counts.get('recognized', 0) + counts.get('returned', 0)
-            project.lww_move_count = Move.search_count([('lww_project_id', '=', project.id)])
+            project.lww_move_count = len(project._lww_all_move_ids())
 
     def _lww_refresh_auto(self):
         for project in self.sudo():
@@ -173,4 +182,4 @@ class ProjectProject(models.Model):
     def action_lww_view_moves(self):
         self.ensure_one()
         return {'type': 'ir.actions.act_window', 'name': _('Recognition Journals'), 'res_model': 'account.move',
-                'view_mode': 'list,form', 'domain': [('lww_project_id', '=', self.id)]}
+                'view_mode': 'list,form', 'domain': [('id', 'in', self._lww_all_move_ids())]}
