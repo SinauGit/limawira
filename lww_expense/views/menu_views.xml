@@ -4,7 +4,8 @@
         
         
         <menuitem id="menu_department_bill_root" 
-                  name="Department Expense Bills" 
+                  name="Department Expense Bills"
+                  web_icon="lww_expense,static/description/icon.png"
                   sequence="60"
                   groups="group_department_bill_user,group_department_bill_manager,group_department_bill_admin"/>
         
