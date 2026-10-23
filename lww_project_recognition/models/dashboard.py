@@ -13,6 +13,10 @@ class LwwRecognitionDashboard(models.TransientModel):
     override_count = fields.Integer(compute='_compute_counts')
     journal_count = fields.Integer(compute='_compute_counts')
 
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = 'Project DO Recognition Management Dashboard'
+
     def _company_ids(self):
         return self.env.companies.ids
 
@@ -56,7 +60,7 @@ class LwwRecognitionDashboard(models.TransientModel):
     @api.model
     def action_open(self):
         rec = self.create({})
-        return {'type': 'ir.actions.act_window', 'name': 'Dashboard', 'res_model': self._name,
+        return {'type': 'ir.actions.act_window', 'name': 'Project DO Recognition Management Dashboard', 'res_model': self._name,
                 'res_id': rec.id, 'view_mode': 'form', 'target': 'current'}
 
     def _open(self, xmlid, ids, name):
