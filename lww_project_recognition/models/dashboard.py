@@ -1,7 +1,7 @@
-from odoo import api, fields, models
+from odoo import fields, models
 
 
-class LwwRecognitionDashboard(models.TransientModel):
+class LwwRecognitionDashboard(models.Model):
     _name = 'lww.recognition.dashboard'
     _description = 'Project Recognition Dashboard'
 
@@ -56,12 +56,6 @@ class LwwRecognitionDashboard(models.TransientModel):
             rec.near_count = len(rec._near_projects())
             rec.override_count = len(rec._override_projects())
             rec.journal_count = len(rec._journals())
-
-    @api.model
-    def action_open(self):
-        rec = self.create({})
-        return {'type': 'ir.actions.act_window', 'name': 'Project DO Recognition Management Dashboard', 'res_model': self._name,
-                'res_id': rec.id, 'view_mode': 'form', 'target': 'current'}
 
     def _open(self, xmlid, ids, name):
         action = self.env['ir.actions.act_window']._for_xml_id(xmlid)

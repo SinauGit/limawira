@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_lww_recognition_root" name="Project Recognition" web_icon="lww_project_recognition,static/description/icon.png" sequence="95" groups="account.group_account_user"/>
-    <menuitem id="menu_lww_recognition_dashboard" name="Dashboard" parent="menu_lww_recognition_root" action="lww_dashboard_server_action" sequence="5"/>
+    <menuitem id="menu_lww_recognition_dashboard" name="Dashboard" parent="menu_lww_recognition_root" action="lww_dashboard_action" sequence="5"/>
     <menuitem id="menu_lww_recognition_projects" name="Projects" parent="menu_lww_recognition_root" action="lww_project_dashboard_action" sequence="10"/>
     <menuitem id="menu_lww_recognition_pickings" name="Delivery Orders" parent="menu_lww_recognition_root" action="lww_picking_dashboard_action" sequence="20"/>
     <menuitem id="menu_lww_recognition_moves" name="Journals" parent="menu_lww_recognition_root" action="lww_recognition_move_action" sequence="30"/>

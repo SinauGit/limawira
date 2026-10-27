@@ -380,6 +380,19 @@ class TestRecognition(AccountTestInvoicingCommon):
         self._invoice(p2, 8000, date(self.Y, 3, 10))
         dash = self.env['lww.recognition.dashboard'].create({})
         self.assertEqual(dash.near_count, 1)
-        self.assertEqual(self.env['lww.recognition.dashboard'].action_open()['res_model'], 'lww.recognition.dashboard')
         for name in ('awaiting', 'pending', 'recognized', 'no_year', 'near', 'override', 'journals'):
             self.assertTrue(getattr(dash, 'action_' + name)()['res_model'])
+
+    def test_18_dashboard_menu_visible(self):
+        user = self.env['res.users'].create({
+            'name': 'Acc LW', 'login': 'acc_lw', 'company_id': self.company.id, 'company_ids': [(6, 0, self.company.ids)],
+            'groups_id': [(6, 0, [self.env.ref('base.group_user').id, self.env.ref('account.group_account_user').id])]})
+        menu = self.env.ref('lww_project_recognition.menu_lww_recognition_dashboard')
+        self.assertIn(menu.id, self.env['ir.ui.menu'].with_user(user)._visible_menu_ids())
+        action = self.env.ref('lww_project_recognition.lww_dashboard_action')
+        self.assertEqual(action.res_id, self.env.ref('lww_project_recognition.lww_dashboard_record').id)
+        self.assertEqual(self.env['lww.recognition.dashboard'].with_user(user).browse(action.res_id).awaiting_count, 0)
+
+    def test_19_dashboard_title(self):
+        dash = self.env['lww.recognition.dashboard'].create({})
+        self.assertEqual(dash.display_name, 'Project DO Recognition Management Dashboard')

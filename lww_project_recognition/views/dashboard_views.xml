@@ -40,10 +40,12 @@
             </form>
         </field>
     </record>
-    <record id="lww_dashboard_server_action" model="ir.actions.server">
-        <field name="name">Dashboard</field>
-        <field name="model_id" ref="model_lww_recognition_dashboard"/>
-        <field name="state">code</field>
-        <field name="code">action = model.action_open()</field>
+    <record id="lww_dashboard_record" model="lww.recognition.dashboard"/>
+    <record id="lww_dashboard_action" model="ir.actions.act_window">
+        <field name="name">Project DO Recognition Management Dashboard</field>
+        <field name="res_model">lww.recognition.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="lww_dashboard_record"/>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'form', 'view_id': ref('lww_dashboard_form')})]"/>
     </record>
 </odoo>

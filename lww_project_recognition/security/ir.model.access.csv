@@ -4,4 +4,4 @@ access_config_manager,lww.recognition.config manager,model_lww_recognition_confi
 access_log_user,lww.recognition.log user,model_lww_recognition_log,account.group_account_user,1,0,0,0
 access_log_manager,lww.recognition.log manager,model_lww_recognition_log,group_recognition_manager,1,0,1,0
 access_wizard_manager,lww.recognition.wizard manager,model_lww_recognition_wizard,group_recognition_manager,1,1,1,1
-access_dashboard_user,lww.recognition.dashboard user,model_lww_recognition_dashboard,account.group_account_user,1,1,1,1
+access_dashboard_user,lww.recognition.dashboard user,model_lww_recognition_dashboard,account.group_account_user,1,0,0,0
