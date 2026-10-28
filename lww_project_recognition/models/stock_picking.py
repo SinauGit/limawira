@@ -25,12 +25,12 @@ class StockPicking(models.Model):
                                           string='Recognition Mode', readonly=True, copy=False)
     x_has_return = fields.Boolean(string='Has Return', readonly=True, copy=False)
     x_move_ids = fields.One2many('account.move', 'lww_picking_id', string='Recognition Journals')
-    x_reclass_move_id = fields.Many2one('account.move', compute='_compute_x_moves', string='Reclass Journal')
-    x_backdated_move_id = fields.Many2one('account.move', compute='_compute_x_moves', string='Backdated Journal')
-    x_reclass_reversal_move_id = fields.Many2one('account.move', compute='_compute_x_moves',
-                                                 string='Reclass Reversal Journal')
-    x_backdated_reversal_move_id = fields.Many2one('account.move', compute='_compute_x_moves',
-                                                   string='Backdated Reversal Journal')
+    x_reclass_move_ids = fields.Many2many('account.move', compute='_compute_x_moves', string='Reclass Journals')
+    x_backdated_move_ids = fields.Many2many('account.move', compute='_compute_x_moves', string='Backdated Journals')
+    x_reclass_reversal_move_ids = fields.Many2many('account.move', compute='_compute_x_moves',
+                                                   string='Reclass Reversal Journals')
+    x_backdated_reversal_move_ids = fields.Many2many('account.move', compute='_compute_x_moves',
+                                                     string='Backdated Reversal Journals')
 
     @api.depends('x_accounting_status')
     def _compute_x_recognized(self):
@@ -41,10 +41,10 @@ class StockPicking(models.Model):
     def _compute_x_moves(self):
         for picking in self:
             moves = picking.x_move_ids.sorted('id', reverse=True)
-            for fname, etype in (('x_reclass_move_id', 'reclass'), ('x_backdated_move_id', 'backdated'),
-                                 ('x_reclass_reversal_move_id', 'reversal_reclass'),
-                                 ('x_backdated_reversal_move_id', 'reversal_backdated')):
-                picking[fname] = moves.filtered(lambda m: m.lww_entry_type == etype)[:1]
+            for fname, etype in (('x_reclass_move_ids', 'reclass'), ('x_backdated_move_ids', 'backdated'),
+                                 ('x_reclass_reversal_move_ids', 'reversal_reclass'),
+                                 ('x_backdated_reversal_move_ids', 'reversal_backdated')):
+                picking[fname] = moves.filtered(lambda m: m.lww_entry_type == etype)
 
     # ------------------------------------------------------------------
     # helpers
@@ -101,9 +101,9 @@ class StockPicking(models.Model):
                 continue
             for line in move.line_ids:
                 if sign > 0 and line.debit > 0:
-                    res[(line.account_id.id, tuple(sorted((line.analytic_distribution or {}).items())))] += line.debit
+                    res[(svl.product_id.id, line.account_id.id, tuple(sorted((line.analytic_distribution or {}).items())))] += line.debit
                 elif sign < 0 and line.credit > 0:
-                    res[(line.account_id.id, tuple(sorted((line.analytic_distribution or {}).items())))] -= line.credit
+                    res[(svl.product_id.id, line.account_id.id, tuple(sorted((line.analytic_distribution or {}).items())))] -= line.credit
         return res
 
     def _lww_gross_lines(self):
@@ -129,47 +129,56 @@ class StockPicking(models.Model):
         return {k: v for k, v in net.items() if not float_is_zero(v, precision_digits=2)}
 
     def _lww_journal_net(self, types):
-        """Net WIP debit per key over active journals of the given entry types."""
+        """Net WIP debit per key over all posted journals of the given entry types."""
         self.ensure_one()
         payable = self._lww_config().payable_account_id
         res = defaultdict(float)
-        for move in self._lww_active_moves(types):
+        moves = self.x_move_ids.sudo().filtered(lambda m: m.state == 'posted' and m.lww_entry_type in types)
+        for move in moves:
             for line in move.line_ids.filtered(lambda l: l.account_id != payable):
-                key = (line.account_id.id, tuple(sorted((line.analytic_distribution or {}).items())))
+                key = (move.lww_product_id.id, line.account_id.id,
+                       tuple(sorted((line.analytic_distribution or {}).items())))
                 res[key] += line.debit - line.credit
         return {k: v for k, v in res.items() if not float_is_zero(v, precision_digits=2)}
 
-    def _lww_make_move(self, entry_type, move_date, wip_amounts, year, ref):
-        """wip_amounts: {key: signed wip debit amount}."""
+    def _lww_make_moves(self, entry_type, move_date, wip_amounts, year, prefix):
+        """wip_amounts: {(product_id, account_id, analytic): signed wip debit amount}. One journal per product."""
         self.ensure_one()
         config = self._lww_config()
-        lines = []
         partner = (self.sale_id.partner_id or self.partner_id).commercial_partner_id
-        for (account_id, analytic), amount in wip_amounts.items():
+        by_product = defaultdict(dict)
+        for (product_id, account_id, analytic), amount in wip_amounts.items():
             if float_is_zero(amount, precision_digits=2):
                 continue
-            dist = dict(analytic) or False
-            debit = amount if amount > 0 else 0.0
-            credit = -amount if amount < 0 else 0.0
-            lines.append((0, 0, {'account_id': account_id, 'debit': debit, 'credit': credit,
-                                 'analytic_distribution': dist, 'name': ref, 'partner_id': partner.id}))
-            lines.append((0, 0, {'account_id': config.payable_account_id.id, 'debit': credit, 'credit': debit,
-                                 'analytic_distribution': dist, 'name': ref, 'partner_id': partner.id}))
-        if not lines:
-            return self.env['account.move']
-        move = self.env['account.move'].sudo().with_company(self.company_id).create({
-            'move_type': 'entry', 'journal_id': config.journal_id.id, 'date': move_date, 'ref': ref,
-            'partner_id': partner.id,
-            'company_id': self.company_id.id, 'line_ids': lines,
-            'lww_project_id': self.x_project_id.id, 'lww_picking_id': self.id,
-            'lww_entry_type': entry_type, 'lww_recognition_year': year,
-            'lww_active': entry_type in ('reclass', 'backdated'),
-        })
-        move._post(soft=False)
-        if move.date != move_date:
-            raise UserError(_('Recognition journal date was moved by the system to %(d)s because of a lock date. '
-                              'Unlock the period manually first.', d=move.date))
-        return move
+            by_product[product_id][(account_id, analytic)] = amount
+        moves = self.env['account.move']
+        for product_id, amounts in by_product.items():
+            product = self.env['product.product'].browse(product_id)
+            ref = '%s %s - %s' % (prefix, self.name, product.name) if product else '%s %s' % (prefix, self.name)
+            lines = []
+            for (account_id, analytic), amount in amounts.items():
+                dist = dict(analytic) or False
+                debit = amount if amount > 0 else 0.0
+                credit = -amount if amount < 0 else 0.0
+                lines.append((0, 0, {'account_id': account_id, 'debit': debit, 'credit': credit,
+                                     'analytic_distribution': dist, 'name': ref, 'partner_id': partner.id}))
+                lines.append((0, 0, {'account_id': config.payable_account_id.id, 'debit': credit, 'credit': debit,
+                                     'analytic_distribution': dist, 'name': ref, 'partner_id': partner.id}))
+            move = self.env['account.move'].sudo().with_company(self.company_id).create({
+                'move_type': 'entry', 'journal_id': config.journal_id.id, 'date': move_date, 'ref': ref,
+                'partner_id': partner.id,
+                'company_id': self.company_id.id, 'line_ids': lines,
+                'lww_project_id': self.x_project_id.id, 'lww_picking_id': self.id,
+                'lww_product_id': product.id or False,
+                'lww_entry_type': entry_type, 'lww_recognition_year': year,
+                'lww_active': entry_type in ('reclass', 'backdated'),
+            })
+            move._post(soft=False)
+            if move.date != move_date:
+                raise UserError(_('Recognition journal date was moved by the system to %(d)s because of a lock date. '
+                                  'Unlock the period manually first.', d=move.date))
+            moves |= move
+        return moves
 
     def _lww_log(self, action, project, old_year=0, new_year=0, moves=None, note=False):
         self.ensure_one()
@@ -219,10 +228,11 @@ class StockPicking(models.Model):
             created = self.env['account.move']
             today = fields.Date.context_today(picking)
             if plan in ('rebuild', 'reverse'):
-                for entry_types, rev_type, rev_date_fn in (
+                for entry_types, rev_type, rev_date_fn, prefix in (
                         (('backdated', 'reversal_backdated'), 'reversal_backdated',
-                         lambda y: picking._lww_end_of_year(y)),
-                        (('reclass', 'reversal_reclass'), 'reversal_reclass', lambda y: today)):
+                         lambda y: picking._lww_end_of_year(y), _('Reversal Backdate')),
+                        (('reclass', 'reversal_reclass'), 'reversal_reclass', lambda y: today,
+                         _('Reversal Reclass'))):
                     if plan == 'rebuild' and rev_type == 'reversal_reclass':
                         continue
                     actives = picking._lww_active_moves(entry_types)
@@ -230,19 +240,17 @@ class StockPicking(models.Model):
                         continue
                     ref_year = actives[:1].lww_recognition_year
                     amounts = {k: -v for k, v in picking._lww_journal_net(entry_types).items()}
-                    move = picking._lww_make_move(rev_type, rev_date_fn(ref_year), amounts, ref_year,
-                                                  _('Reversal %s', picking.name))
+                    move = picking._lww_make_moves(rev_type, rev_date_fn(ref_year), amounts, ref_year,
+                                                   prefix)
                     actives.write({'lww_active': False})
                     actives.flush_recordset(['lww_active'])
                     created |= move
             if plan in ('create', 'rebuild') and net:
                 if plan == 'create':
-                    created |= picking._lww_make_move(
-                        'reclass', picking.x_do_date, {k: -v for k, v in net.items()}, year,
-                        _('Reclass %s', picking.name))
-                created |= picking._lww_make_move(
-                    'backdated', picking._lww_end_of_year(year), dict(net), year,
-                    _('Backdate %s', picking.name))
+                    created |= picking._lww_make_moves(
+                        'reclass', picking.x_do_date, {k: -v for k, v in net.items()}, year, _('Reclass'))
+                created |= picking._lww_make_moves(
+                    'backdated', picking._lww_end_of_year(year), dict(net), year, _('Backdate'))
             if not year:
                 status = 'awaiting'
             elif not net and (picking.x_has_return or picking._lww_return_lines()):
@@ -337,11 +345,10 @@ class StockPicking(models.Model):
                     self.move_ids.filtered(lambda m: m.state == 'done'), -1).items()}
                 year = origin.x_recognition_year
                 origin_self = origin
-                created |= origin_self._lww_make_move('reversal_reclass', today, ret, year,
-                                                      _('Return reclass reversal %s', self.name))
-                created |= origin_self._lww_make_move(
+                created |= origin_self._lww_make_moves('reversal_reclass', today, ret, year, _('Reversal Reclass'))
+                created |= origin_self._lww_make_moves(
                     'reversal_backdated', origin._lww_end_of_year(year), {k: -v for k, v in ret.items()}, year,
-                    _('Return backdate reversal %s', self.name))
+                    _('Reversal Backdate'))
             if not net:
                 origin.sudo().write({'x_accounting_status': 'returned'})
             origin._lww_log('return', origin.x_project_id, origin.x_recognition_year, origin.x_recognition_year,

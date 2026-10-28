@@ -48,12 +48,18 @@ class TestRecognition(AccountTestInvoicingCommon):
         cls.product = env['product.product'].create({
             'name': 'LW Product', 'is_storable': True, 'type': 'consu', 'categ_id': cls.categ.id,
             'standard_price': 100.0, 'list_price': 1000.0})
+        cls.product2 = env['product.product'].create({
+            'name': 'LW Product Two', 'is_storable': True, 'type': 'consu', 'categ_id': cls.categ.id,
+            'standard_price': 50.0, 'list_price': 800.0})
         wh = env['stock.warehouse'].search([('company_id', '=', cls.company.id)], limit=1)
         quant = env['stock.quant'].with_context(inventory_mode=True).create({
             'product_id': cls.product.id, 'location_id': wh.lot_stock_id.id, 'inventory_quantity': 1000})
         quant.action_apply_inventory()
+        quant2 = env['stock.quant'].with_context(inventory_mode=True).create({
+            'product_id': cls.product2.id, 'location_id': wh.lot_stock_id.id, 'inventory_quantity': 1000})
+        quant2.action_apply_inventory()
 
-    def _project(self, name='P1', qty=10, price=1000.0):
+    def _project(self, name='P1', qty=10, price=1000.0, two=False):
         analytic_plan = self.env['account.analytic.plan'].search([], limit=1) or \
             self.env['account.analytic.plan'].create({'name': 'Project'})
         analytic = self.env['account.analytic.account'].create({'name': name, 'plan_id': analytic_plan.id})
@@ -61,10 +67,13 @@ class TestRecognition(AccountTestInvoicingCommon):
             'partner_id': self.partner.id,
             'order_line': [(0, 0, {'product_id': self.product.id, 'product_uom_qty': qty, 'price_unit': price,
                                    'tax_id': [(5, 0, 0)],
-                                   'analytic_distribution': {str(analytic.id): 100}})]})
+                                   'analytic_distribution': {str(analytic.id): 100}})] + ([(0, 0, {
+                                       'product_id': self.product2.id, 'product_uom_qty': qty, 'price_unit': price,
+                                       'tax_id': [(5, 0, 0)],
+                                       'analytic_distribution': {str(analytic.id): 100}})] if two else [])})
         project = self.env['project.project'].create({
             'name': name, 'account_id': analytic.id, 'partner_id': self.partner.id,
-            'sale_line_id': order.order_line.id})
+            'sale_line_id': order.order_line[:1].id})
         if order.state != 'sale':
             order.action_confirm()
         return project, order
@@ -147,8 +156,8 @@ class TestRecognition(AccountTestInvoicingCommon):
         self.assertEqual(set(reclass.line_ids.partner_id.ids), {self.partner.id})
         self.assertEqual(self._balance(project, self.acc_wip), 1000.0)
         self.assertEqual(self._balance(project, self.acc_payable), 0.0)
-        self.assertEqual(picking.x_reclass_move_id, reclass)
-        self.assertEqual(picking.x_backdated_move_id, backdated)
+        self.assertEqual(picking.x_reclass_move_ids, reclass)
+        self.assertEqual(picking.x_backdated_move_ids, backdated)
 
     def test_02_same_year_no_journal(self):
         project, order = self._project()
@@ -308,7 +317,7 @@ class TestRecognition(AccountTestInvoicingCommon):
         with self.assertRaises(Exception):
             self.env['account.move'].create({
                 'move_type': 'entry', 'journal_id': self.journal_rec.id, 'lww_picking_id': picking.id,
-                'lww_entry_type': 'backdated', 'lww_active': True})
+                'lww_entry_type': 'backdated', 'lww_active': True, 'lww_product_id': self.product.id})
 
     def _project_via_so(self, name='PSO'):
         plan = self.env['account.analytic.plan'].search([], limit=1) or \
@@ -396,3 +405,58 @@ class TestRecognition(AccountTestInvoicingCommon):
     def test_19_dashboard_title(self):
         dash = self.env['lww.recognition.dashboard'].create({})
         self.assertEqual(dash.display_name, 'Project DO Recognition Management Dashboard')
+
+    def test_20_journals_per_product(self):
+        project, order = self._project('PP', two=True, price=500.0)
+        self._reach(project, self.Y - 1)
+        picking = self._validate(order)
+        reclass = self._entries(picking, 'reclass')
+        backdated = self._entries(picking, 'backdated')
+        self.assertEqual(len(reclass), 2)
+        self.assertEqual(len(backdated), 2)
+        self.assertEqual(set(reclass.lww_product_id.ids), {self.product.id, self.product2.id})
+        for move in reclass:
+            self.assertEqual(move.ref, 'Reclass %s - %s' % (picking.name, move.lww_product_id.name))
+            self.assertEqual(set(move.line_ids.mapped('name')), {move.ref})
+        for move in backdated:
+            self.assertEqual(move.ref, 'Backdate %s - %s' % (picking.name, move.lww_product_id.name))
+        self.assertEqual(self._balance(project, self.acc_wip), 1500.0)
+        self.assertEqual(self._balance(project, self.acc_payable), 0.0)
+        self.assertEqual(len(picking.x_reclass_move_ids), 2)
+
+    def test_21_return_reversal_per_product(self):
+        project, order = self._project('PR', two=True, price=500.0)
+        self._reach(project, self.Y - 1)
+        picking = self._validate(order)
+        wiz = self.env['stock.return.picking'].with_context(
+            active_id=picking.id, active_model='stock.picking').create({})
+        line = wiz.product_return_moves.filtered(lambda l: l.product_id == self.product)
+        (wiz.product_return_moves - line).unlink()
+        line.quantity = 4
+        res = wiz.action_create_returns()
+        ret = self.env['stock.picking'].browse(res['res_id'])
+        for move in ret.move_ids:
+            move.quantity = 4
+            move.picked = True
+        ret.with_context(skip_backorder=True, skip_sms=True).button_validate()
+        rev = self._entries(picking, 'reversal_reclass')
+        revb = self._entries(picking, 'reversal_backdated')
+        self.assertEqual(len(rev), 1)
+        self.assertEqual(rev.lww_product_id, self.product)
+        self.assertEqual(rev.ref, 'Reversal Reclass %s - %s' % (picking.name, self.product.name))
+        self.assertEqual(revb.ref, 'Reversal Backdate %s - %s' % (picking.name, self.product.name))
+        self.assertEqual(picking.x_accounting_status, 'recognized')
+        self.assertEqual(self._balance(project, self.acc_payable), 0.0)
+
+    def test_22_override_after_partial_return_keeps_net(self):
+        project, order = self._project('PO', two=True, price=500.0)
+        self._override(project, self.Y - 1)
+        picking = self._validate(order)
+        self._return(picking, 4)
+        self._override(project, self.Y - 2)
+        self.assertEqual(self._balance(project, self.acc_payable), 0.0)
+        self.assertEqual(self._balance(project, self.acc_wip), 900.0)
+        backdated_net = picking._lww_journal_net(('backdated', 'reversal_backdated'))
+        self.assertEqual(round(sum(backdated_net.values()), 2), 900.0)
+        reclass_net = picking._lww_journal_net(('reclass', 'reversal_reclass'))
+        self.assertEqual(round(sum(reclass_net.values()), 2), -900.0)

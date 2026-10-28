@@ -16,10 +16,38 @@
                             <field name="x_has_return"/>
                         </group>
                         <group string="Journals" name="lww_recognition_right">
-                            <field name="x_reclass_move_id" invisible="not x_reclass_move_id"/>
-                            <field name="x_backdated_move_id" invisible="not x_backdated_move_id"/>
-                            <field name="x_reclass_reversal_move_id" invisible="not x_reclass_reversal_move_id"/>
-                            <field name="x_backdated_reversal_move_id" invisible="not x_backdated_reversal_move_id"/>
+                            <separator string="Reclass Journals" colspan="2" invisible="not x_reclass_move_ids"/>
+                            <field name="x_reclass_move_ids" nolabel="1" colspan="2" invisible="not x_reclass_move_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="ref"/>
+                                    <field name="date"/>
+                                </list>
+                            </field>
+                            <separator string="Backdated Journals" colspan="2" invisible="not x_backdated_move_ids"/>
+                            <field name="x_backdated_move_ids" nolabel="1" colspan="2" invisible="not x_backdated_move_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="ref"/>
+                                    <field name="date"/>
+                                </list>
+                            </field>
+                            <separator string="Reclass Reversal Journals" colspan="2" invisible="not x_reclass_reversal_move_ids"/>
+                            <field name="x_reclass_reversal_move_ids" nolabel="1" colspan="2" invisible="not x_reclass_reversal_move_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="ref"/>
+                                    <field name="date"/>
+                                </list>
+                            </field>
+                            <separator string="Backdated Reversal Journals" colspan="2" invisible="not x_backdated_reversal_move_ids"/>
+                            <field name="x_backdated_reversal_move_ids" nolabel="1" colspan="2" invisible="not x_backdated_reversal_move_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="ref"/>
+                                    <field name="date"/>
+                                </list>
+                            </field>
                         </group>
                     </group>
                 </page>

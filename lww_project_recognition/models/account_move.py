@@ -12,14 +12,16 @@ class AccountMove(models.Model):
         ('reversal_reclass', 'Reclass Reversal'),
         ('reversal_backdated', 'Backdated Reversal'),
     ], string='Recognition Entry', copy=False, index='btree_not_null')
+    lww_product_id = fields.Many2one('product.product', string='Recognition Product', index='btree_not_null', copy=False)
     lww_recognition_year = fields.Integer(string='Recognition Year', copy=False)
     lww_active = fields.Boolean(string='Recognition Entry Active', copy=False, default=False)
 
     def init(self):
         super().init()
+        self.env.cr.execute("DROP INDEX IF EXISTS account_move_lww_unique_active")
         self.env.cr.execute("""
-            CREATE UNIQUE INDEX IF NOT EXISTS account_move_lww_unique_active
-            ON account_move (lww_picking_id, lww_entry_type)
+            CREATE UNIQUE INDEX IF NOT EXISTS account_move_lww_unique_active_product
+            ON account_move (lww_picking_id, lww_entry_type, COALESCE(lww_product_id, 0))
             WHERE lww_active AND lww_entry_type IN ('reclass', 'backdated')
         """)
 
