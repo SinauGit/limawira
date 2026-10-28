@@ -12,6 +12,8 @@ class LwwRecognitionConfig(models.Model):
                                  domain="[('company_id', '=', company_id)]")
     payable_account_id = fields.Many2one('account.account', string='Hutang Biaya Proyek Account', required=True,
                                          domain="[('company_ids', 'in', company_id)]")
+    down_payment_account_id = fields.Many2one('account.account', string='Down Payment Account',
+                                              domain="[('company_ids', 'in', company_id)]")
     threshold = fields.Float(string='Billing Threshold (%)', default=90.0, required=True)
     go_live_date = fields.Date(string='Start Date', required=True, default=fields.Date.context_today)
 

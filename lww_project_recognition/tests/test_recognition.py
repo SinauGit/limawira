@@ -25,6 +25,7 @@ class TestRecognition(AccountTestInvoicingCommon):
         cls.acc_stock = acc('LW1101', 'asset_current')
         cls.acc_payable = acc('LW2201', 'liability_current')
         cls.acc_income = acc('LW4001', 'income')
+        cls.acc_dp = acc('LW2401', 'liability_current')
         cls.acc_recv = acc('LW1201', 'asset_receivable', reconcile=True)
         cls.acc_pay = acc('LW2101', 'liability_payable', reconcile=True)
         cls.journal_rec = env['account.journal'].create({'name': 'Recognition', 'code': 'LWR', 'type': 'general'})
@@ -32,7 +33,7 @@ class TestRecognition(AccountTestInvoicingCommon):
         cls.journal_sale = env['account.journal'].create({'name': 'Sales LW', 'code': 'LWI', 'type': 'sale'})
         env['lww.recognition.config'].create({
             'company_id': cls.company.id, 'journal_id': cls.journal_rec.id,
-            'payable_account_id': cls.acc_payable.id, 'threshold': 90.0,
+            'payable_account_id': cls.acc_payable.id, 'down_payment_account_id': cls.acc_dp.id, 'threshold': 90.0,
             'go_live_date': date(cls.Y - 5, 1, 1)})
         cls.partner = env['res.partner'].create({
             'name': 'Cust LW', 'property_account_receivable_id': cls.acc_recv.id,
@@ -78,13 +79,14 @@ class TestRecognition(AccountTestInvoicingCommon):
             order.action_confirm()
         return project, order
 
-    def _invoice(self, project, amount, inv_date, move_type='out_invoice'):
+    def _invoice(self, project, amount, inv_date, move_type='out_invoice', account=None, tax=None):
         move = self.env['account.move'].create({
             'move_type': move_type, 'partner_id': self.partner.id, 'invoice_date': inv_date,
             'journal_id': self.journal_sale.id,
             'invoice_line_ids': [(0, 0, {
-                'name': 'bill', 'quantity': 1, 'price_unit': amount, 'account_id': self.acc_income.id,
-                'tax_ids': [(5, 0, 0)], 'analytic_distribution': {str(project.account_id.id): 100}})]})
+                'name': 'bill', 'quantity': 1, 'price_unit': amount, 'account_id': (account or self.acc_dp).id,
+                'tax_ids': [(6, 0, tax.ids)] if tax else [(5, 0, 0)],
+                'analytic_distribution': {str(project.account_id.id): 100}})]})
         move.action_post()
         return move
 
@@ -460,3 +462,21 @@ class TestRecognition(AccountTestInvoicingCommon):
         self.assertEqual(round(sum(backdated_net.values()), 2), 900.0)
         reclass_net = picking._lww_journal_net(('reclass', 'reversal_reclass'))
         self.assertEqual(round(sum(reclass_net.values()), 2), -900.0)
+
+    def test_23_progress_uses_dp_credit_without_tax(self):
+        tax = self.env['account.tax'].create({'name': 'LW Tax', 'amount': 10.0, 'type_tax_use': 'sale'})
+        tax_acc = self.env['account.account'].create({'code': 'LW2303', 'name': 'LW Tax Payable', 'account_type': 'liability_current'})
+        tax.invoice_repartition_line_ids.filtered(lambda r: r.repartition_type == 'tax').account_id = tax_acc
+        project, order = self._project('DPT')
+        self._invoice(project, 5000, date(self.Y - 1, 3, 10), tax=tax)
+        self.assertAlmostEqual(project._lww_progress_data()[0], 50.0)
+        self._invoice(project, 3000, date(self.Y - 1, 4, 10), account=self.acc_income)
+        self.assertAlmostEqual(project._lww_progress_data()[0], 50.0)
+        self._invoice(project, 1000, date(self.Y - 1, 5, 10), move_type='out_refund')
+        self.assertAlmostEqual(project._lww_progress_data()[0], 50.0)
+        self._invoice(project, 0.0, date(self.Y - 1, 6, 10), account=self.acc_income)
+        self.assertEqual(project.lww_rec_year, 0)
+        self._invoice(project, 4000, date(self.Y - 1, 12, 20), tax=tax)
+        self.assertAlmostEqual(project._lww_progress_data()[0], 90.0)
+        self.assertEqual(project.lww_rec_year, self.Y - 1)
+        self.assertEqual(project.lww_auto_date, date(self.Y - 1, 12, 20))

@@ -8,6 +8,7 @@
                 <field name="company_id"/>
                 <field name="journal_id"/>
                 <field name="payable_account_id"/>
+                <field name="down_payment_account_id"/>
                 <field name="threshold"/>
                 <field name="go_live_date"/>
             </list>
@@ -23,6 +24,7 @@
                         <field name="company_id" groups="base.group_multi_company"/>
                         <field name="journal_id"/>
                         <field name="payable_account_id"/>
+                        <field name="down_payment_account_id" required="1"/>
                         <field name="threshold"/>
                         <field name="go_live_date"/>
                     </group>

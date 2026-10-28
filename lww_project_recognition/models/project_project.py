@@ -54,30 +54,39 @@ class ProjectProject(models.Model):
             '|', '|', ('id', 'in', by_so), ('sale_line_id', '!=', False), ('reinvoiced_sale_order_id', '!=', False)])
         return [('id', 'in' if operator == '!=' else 'not in', projects.ids)]
 
-    def _lww_invoices(self):
+    def _lww_dp_credits(self):
+        """Posted customer invoices of this project with their credit on the Down Payment account."""
         self.ensure_one()
-        if not self.account_id:
-            return self.env['account.move']
+        config = self.env['lww.recognition.config']._get(self.company_id)
+        if not self.account_id or not config.down_payment_account_id:
+            return []
         lines = self.env['account.move.line'].sudo().search([
+            ('account_id', '=', config.down_payment_account_id.id),
             ('analytic_distribution', 'in', self.account_id.ids),
             ('move_id.move_type', '=', 'out_invoice'),
             ('move_id.state', '=', 'posted'),
+            ('credit', '>', 0),
         ])
-        return lines.move_id
+        res = []
+        for move in lines.move_id.sorted(lambda m: (m.date, m.id)):
+            res.append((move, sum(lines.filtered(lambda l: l.move_id == move).mapped('credit'))))
+        return res
 
     def _lww_progress_data(self):
         self.ensure_one()
         order = self._lww_sale_order()
         config = self.env['lww.recognition.config']._get(self.company_id)
-        total = order.amount_total if order else 0.0
-        invoices = self._lww_invoices().sorted(lambda m: (m.date, m.id))
+        total = 0.0
+        if order:
+            total = order.currency_id._convert(order.amount_untaxed, self.company_id.currency_id,
+                                               self.company_id, order.date_order or fields.Date.today())
         cumulative = 0.0
         reached = False
-        for inv in invoices:
-            cumulative += inv.amount_total
+        for move, credit in self._lww_dp_credits():
+            cumulative += credit
             if config and total > 0 and not reached and \
                     float_compare(cumulative * 100.0, total * config.threshold, precision_digits=4) >= 0:
-                reached = inv.date
+                reached = move.date
         pct = (cumulative / total * 100.0) if total > 0 else 0.0
         return pct, reached
 
