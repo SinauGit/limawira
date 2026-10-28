@@ -1,8 +1,9 @@
 {
     'name': 'Project DO Recognition',
     'version': '18.0.2.0.0',
-    'category': 'Accounting',
-    'summary': 'Project DO cost recognition and automatic prior-year journals',
+    'author': 'Rizky Abdi S.H',
+    'website': 'https://lui.co.id',
+    'company': 'Pt Lintang Utama Infotek',
     'depends': ['account', 'stock_account', 'sale_stock', 'sale_project', 'project', 'project_stock'],
     'data': [
         'security/security.xml',
